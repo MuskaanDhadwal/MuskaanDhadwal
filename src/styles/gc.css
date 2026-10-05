@@ -101,7 +101,9 @@
 .gc-device:first-child img { width: 140px; }
 .gc-device:last-child img { width: 220px; }
 .gc-devices-note { grid-column: 1 / -1; text-align: center; margin: 0; }
-.gc-awards { max-width: 720px; margin: 0 auto; }
+.gc-awards { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.gc-awards-note { margin: 12px 0 0; }
+@media (max-width: 760px) { .gc-awards { grid-template-columns: 1fr; } }
 .gc-take .tx-loop-art { background: #10171C; }
 .gc-take .tx-loop-art img { object-fit: contain; }
 
@@ -116,3 +118,14 @@
 .gc-map-frame iframe { display: block; width: 100%; height: min(70vh, 620px); border: 0; }
 .gc-map-frame figcaption { padding: 8px 12px; }
 @media (max-width: 700px) { .gc-maps { grid-template-columns: 1fr; } }
+
+/* 05.2: two work-in-progress photos beside the intro, then the finished robot */
+.gc-wip-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.gc-wip-row .tx-measure { margin: 0; }
+.gc-wip { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.gc-wip button { all: unset; box-sizing: border-box; cursor: zoom-in; aspect-ratio: 3 / 4; overflow: hidden; border: 1.5px solid var(--white); transition: transform var(--dur-micro); }
+.gc-wip button:hover { transform: translateY(-3px); }
+.gc-wip button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gc-wip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gc-make-label { display: block; margin-top: 24px; }
+@media (max-width: 760px) { .gc-wip-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gc-wip-row .tx-measure { grid-column: 1 / -1; } }

@@ -237,7 +237,7 @@ export function CaseStudy({ mission: m }: { mission: Mission }) {
         <div style={{ display: "flex", justifyContent: "space-between", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
           <div>
             <button className="label dimlink" onClick={() => go("#/work")} style={{ display: "block", background: "none", border: 0, cursor: "pointer", padding: "8px 0", minHeight: 44, marginBottom: 12 }}>← all prints</button>
-            <h1 id="cs-name" className="display" style={{ background: "var(--white)", color: "var(--blueprint-dk)", fontSize: "clamp(48px, 7vw, 96px)", padding: "6px 16px 2px", display: "inline-block", marginTop: 8 }}>{m.label}</h1>
+            <h1 id="cs-name" className="display" style={{ background: "var(--white)", color: "var(--blueprint-dk)", fontSize: "clamp(40px, 7vw, 96px)", padding: "6px 16px 2px", display: "inline-block", maxWidth: "100%", boxSizing: "border-box", overflowWrap: "anywhere", marginTop: 8 }}>{m.label}</h1>
             <p style={{ maxWidth: 460, marginTop: 14 }}>{m.slug === "traxen" ? "Multi-app driving, made safer: the Traxen floating window experience." : m.slug === "buymyspot" ? "Parking, booked like a stay: the buyer web app for a peer-to-peer parking marketplace." : m.slug === "gm" ? "Luxury, made personal: an in-vehicle experience for GM's luxury segment, across four connected screens." : m.slug === "guardiancare" ? "Redefining senior living: Ava, a companion robot that keeps seniors safe without watching them." : `${m.brief.split(". ")[0]}.`}</p>
           </div>
           <div style={{ minWidth: 280, maxWidth: 380, flex: "0 1 380px" }}>

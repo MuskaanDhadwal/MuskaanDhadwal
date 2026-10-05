@@ -395,11 +395,19 @@ const PARTS: { k: string; t: string; d: string; img?: string; alt?: string }[] =
   { k: "safety", t: "Safety + privacy", d: "Emergency alerts notify contacts and services. Data access is strictly limited to authorised people and emergency responders." },
 ];
 
+// building her, mid-way: [file, alt, caption]
+const WIP: [string, string, string][] = [
+  ["wip-body.webp", "Ava half built: a tablet set into a white foam-board head with a purple button, a glowing blue light ring on the body and yellow wheels, on a carpeted floor.", "WIP · the body takes shape"],
+  ["wip-drawer.webp", "Two hands joining wires above the open medicine drawer: a breadboard and microcontroller inside, a green LED strip on the drawer's edge.", "WIP · wiring the drawer"],
+];
+
 export function GcBuildWide() {
   const [k, setK] = useState("face");
   const [ph, setPh] = useState<number | null>(null);
   const x = PARTS.find(p => p.k === k)!;
-  const photos = Array.from({ length: 9 }, (_, i) => ({ src: A(`make-${i + 1}.webp`), alt: ["Ava's face on a tablet screen in the cardboard body, with a glowing blue ring.", "The medicine drawer open, a red light ring on its front.", "The side of the robot body with a cardboard arm.", "Ava in a long university hallway, wheels on the floor.", "Ava in a window alcove, winking.", "Ava's screen saying 'Time to take your medicines!'.", "A close-up of Ava's face: two round eyes and a small smile.", "The drawer pulled open with a green light ring: medicine taken.", "A close-up of Ava's wheels."][i] }));
+  // work in progress first, then the finished robot
+  const wip = WIP.map(([src, alt]) => ({ src: A(src), alt }));
+  const photos = [...wip, ...Array.from({ length: 9 }, (_, i) => ({ src: A(`make-${i + 1}.webp`), alt: ["Ava's face on a tablet screen in the cardboard body, with a glowing blue ring.", "The medicine drawer open, a red light ring on its front.", "The side of the robot body with a cardboard arm.", "Ava in a long university hallway, wheels on the floor.", "Ava in a window alcove, winking.", "Ava's screen saying 'Time to take your medicines!'.", "A close-up of Ava's face: two round eyes and a small smile.", "The drawer pulled open with a green light ring: medicine taken.", "A close-up of Ava's wheels."][i] }))];
   return (
     <>
       <Band no="05.1" kicker="system architecture" title="Every part, and what it does">
@@ -414,9 +422,18 @@ export function GcBuildWide() {
         </div>
       </Band>
       <Band no="05.2" kicker="creating Ava" title="From cardboard to hallway">
-        <p className="tx-measure">We had the most fun building her: a tablet for the face, a drawer for medicine, a light ring for feedback and wheels to get around.</p>
+        <div className="gc-wip-row">
+          <p className="tx-measure">We had the most fun building her: a tablet for the face, a drawer for medicine, a light ring for feedback and wheels to get around.</p>
+          {WIP.map(([src, alt, cap], i) => (
+            <figure key={src} className="gc-wip">
+              <button onClick={() => setPh(i)} aria-label={`Open photo: ${alt}`}><img src={A(src)} alt="" loading="lazy" /></button>
+              <figcaption className="label">{cap}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <span className="label mid gc-make-label">and the finished robot</span>
         <div className="gc-make">
-          {photos.map((p, i) => <button key={p.src} onClick={() => setPh(i)} aria-label={`Open photo ${i + 1}: ${p.alt}`}><img src={p.src} alt="" loading="lazy" /></button>)}
+          {photos.slice(wip.length).map((p, i) => <button key={p.src} onClick={() => setPh(i + wip.length)} aria-label={`Open photo ${i + 1}: ${p.alt}`}><img src={p.src} alt="" loading="lazy" /></button>)}
         </div>
       </Band>
       {ph !== null && <Lightbox title="Creating Ava" imgs={photos} start={ph} onClose={() => setPh(null)} />}
@@ -460,6 +477,10 @@ export function GcImpactWide({ next }: { next: { slug: string; label: string } }
       <Band no="06.1" kicker="the showcase" title="Most convincing demo">
         <div className="gc-awards">
           <Shot src={A("awards.webp")} alt="The team of four smiling and holding two award certificates." caption="SPEC. G3-06 · both certificates" />
+          <div>
+            <Shot src={A("expo.webp")} alt="Muskaan smiling beside the GuardianCare poster at the UMSI Expo '24, with Ava's face on a tablet and the project video on a laptop in front of her." caption="SPEC. G3-06b · Ava on tour, UMSI Expo '24" />
+            <p className="gc-awards-note">Then Ava went on tour: the UMSI Student Project Exposition, April 2024.</p>
+          </div>
         </div>
       </Band>
       <Band no="06.2" kicker="reflection" title="What we'd do next">

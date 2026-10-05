@@ -219,3 +219,58 @@
   .ab-side { order: -1; flex-direction: row; justify-content: center; gap: 12px; margin: 0 0 14px; padding: 0; }
   .ab-story-row .ab-photo, .ab-hello .ab-float { max-width: 46%; }
 }
+
+/* Out and about (2026-10-05): Andrea-style scattered snapshots + one Yash-style live MoMA tile */
+.ab-out .ab-story-text p { margin: 0 0 14px; }
+.ab-out .ab-h2 { margin: 6px 0 16px; }
+.ab-scatter { gap: 0; }
+.ab-scatter .ab-float { position: relative; left: auto; top: auto; width: min(84%, 230px); }
+/* earlier snapshots sit on top, so each caption stays readable and only the next photo's top edge tucks under */
+.ab-scatter > :nth-child(1) { z-index: 3; }
+.ab-scatter > :nth-child(2) { z-index: 2; }
+.ab-scatter > :nth-child(3) { z-index: 1; }
+.ab-side-l.ab-scatter .ab-float:nth-child(2) { margin: -26px 16% 0 0; }
+.ab-side-l.ab-scatter .ab-float:nth-child(3) { margin: -18px -8px 0 0; }
+.ab-side-r.ab-scatter .ab-float { margin: -14px 0 0 44px; width: min(100%, 190px); }
+.ab-out-aurora img { aspect-ratio: 3 / 4; }
+.ab-out-statue-of-liberty img { object-position: 50% 15%; }
+.ab-moma { margin: 0; width: min(100%, 270px); background: var(--paper); color: var(--blueprint-dk); padding: 10px 10px 8px; box-sizing: border-box; box-shadow: 6px 6px 0 var(--shadow); position: relative; }
+.ab-moma-wall { all: unset; display: block; position: relative; width: 100%; aspect-ratio: 1; background: #EDEAE3; cursor: pointer; overflow: hidden; }
+.ab-moma-wall:focus-visible { outline: 2px solid var(--blueprint-dk); outline-offset: 2px; }
+.ab-moma-wall img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .7s var(--ease-out); }
+.ab-moma-wall img.on { opacity: 1; }
+.ab-moma figcaption { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "l l" "c d"; align-items: center; gap: 2px 8px; padding-top: 8px; }
+.ab-moma figcaption .label { grid-area: l; color: var(--blueprint-dk); }
+.ab-moma-cap { grid-area: c; font-size: 18px; line-height: 1.1; }
+.ab-moma-dots { grid-area: d; }
+.ab-moma-dots { display: flex; gap: 2px; }
+.ab-moma-dots button { all: unset; box-sizing: border-box; width: 22px; height: 22px; cursor: pointer; display: grid; place-items: center; }
+.ab-moma-dots button::before { content: ""; width: 7px; height: 7px; border: 1.5px solid var(--blueprint-dk); }
+.ab-moma-dots button.on::before { background: var(--blueprint-dk); }
+.ab-moma-dots button:focus-visible { outline: 2px solid var(--blueprint-dk); }
+@media (prefers-reduced-motion: reduce) { .ab-moma-wall img { transition: none; } }
+@media (max-width: 1100px) {
+  .ab-side-l.ab-scatter .ab-float:nth-child(n), .ab-side-r.ab-scatter .ab-float { margin: 0; }
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+  .ab-out .ab-tri { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "m m" "l r"; gap: 24px 32px; }
+  .ab-out .ab-tri > .ab-mid { max-width: 680px; }
+  .ab-scatter .ab-float { width: min(100%, 210px); }
+  .ab-side-l.ab-scatter .ab-float:nth-child(n+2) { margin-top: -18px; }
+  .ab-side-l.ab-scatter .ab-float:nth-child(2) { margin-left: 30%; }
+  .ab-side-r.ab-scatter .ab-float { margin-top: -14px; margin-left: 30%; }
+}
+@media (max-width: 700px) {
+  .ab-out .ab-side-r { order: 1; margin: 16px 0 0; align-items: flex-start; }
+  .ab-out .ab-side-l .ab-float { max-width: 31%; }
+  .ab-out .ab-side-r .ab-float { max-width: 40%; }
+  .ab-moma { width: 56%; }
+}
+
+/* facts: five photo cards, 3 + 2 centred like polaroids on a desk */
+.ab-facts { display: flex; flex-wrap: wrap; justify-content: center; }
+.ab-facts > .ab-fact { width: calc((100% - 40px) / 3); }
+@media (max-width: 1200px) { .ab-facts > .ab-fact { width: calc((100% - 20px) / 2); } }
+@media (max-width: 560px) { .ab-facts > .ab-fact { width: 100%; } }
+.ab-more-list { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 900px; }
+@media (max-width: 900px) { .ab-more-list { grid-template-columns: 1fr; } }
