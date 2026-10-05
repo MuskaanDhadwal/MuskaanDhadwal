@@ -1,9 +1,10 @@
-// ABOUT — the person, not the portfolio. Hello (a wall of her snapshots) → how I got here (her own story,
-// a little her walks it) → facts nobody asked for (each with its photo) → side hustles → say hi.
+// ABOUT — the person, not the portfolio (after Andrea Da Silva's about page: read it, don't hunt for it).
+// Hello (a photo stack that spreads on hover) → how I got here (her story as one column, photos in the
+// margin) → facts nobody asked for (each with its photo) → side hustles → say hi.
 // Every small her on this page is a different pose (Minis.tsx).
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Mini, type PoseName } from "./Minis";
-import { Chamfer, SpecTable, useInView, useReducedMotion } from "./ui";
+import { Chamfer, SpecTable, useInView } from "./ui";
 import { go } from "./nav";
 
 /** A real photo, taped in like a polaroid. */
@@ -17,38 +18,16 @@ function Photo({ src, alt, caption, tilt = -2 }: { src: string; alt: string; cap
 }
 
 // ── 01 hello ────────────────────────────────────────────────────────────────
-// A wall of her snapshots that fly out of the MD logo when the page opens (the logo leads here, after
-// Andrea Da Silva's site; on About, clicking MD replays it via the "md-snaps" event). Tap a photo to bring
-// it to the front. Positions are % of the wall.
-type P2 = [number, number];
-const SNAPS: { src: string; alt: string; cap: string; x: number; y: number; r: number }[] = [
-  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", cap: "hi, it's me", x: 0, y: 3, r: -6 },
-  { src: "graduation.webp", alt: "Muskaan in a white dress and a maize Michigan stole, tossing her graduation cap in front of a stone university building.", cap: "cap toss. Go Blue", x: 50, y: 0, r: 5 },
-  { src: "coding.webp", alt: "Code open in a dark editor.", cap: "where it started: code", x: 5, y: 50, r: 4 },
-  { src: "automotive-ux.webp", alt: "A red race car numbered 21 on a rooftop parking deck.", cap: "now: automotive UX", x: 50, y: 47, r: -4 },
+// A small stack of snapshots next to the hello (after Andrea Da Silva's about page): hover, focus or tap
+// the stack and it spreads out with captions. Spread positions are % of each photo's own size.
+const DECK: { src: string; alt: string; cap: string; x: number; y: number; r: number }[] = [
+  { src: "michigan.webp", alt: "The atrium of a University of Michigan building, with a giant yellow block M hanging from the glass roof.", cap: "the big M", x: 58, y: 30, r: 7 },
+  { src: "graduation.webp", alt: "Muskaan in a white dress and a maize Michigan stole, tossing her graduation cap in front of a stone university building.", cap: "cap toss. Go Blue", x: -58, y: 26, r: -6 },
+  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", cap: "hi, it's me", x: 0, y: -22, r: -2 },
 ];
 
 function Hello() {
-  const [open, setOpen] = useState(false);
-  const [top, setTop] = useState<number | null>(null);
-  const [from, setFrom] = useState<P2[]>([]);
-  const wall = useRef<HTMLDivElement>(null);
-  const play = useCallback(() => { // start each photo on top of the MD logo, then let it fly to its spot
-    setOpen(false); setTop(null);
-    const logo = document.querySelector(".logo-stamp")?.getBoundingClientRect(), w = wall.current;
-    if (logo && w) {
-      const r = w.getBoundingClientRect();
-      setFrom([...w.querySelectorAll<HTMLElement>(".ab-wsnap")].map(el => [
-        logo.left + logo.width / 2 - (r.left + el.offsetLeft + el.offsetWidth / 2),
-        logo.top + logo.height / 2 - (r.top + el.offsetTop + el.offsetHeight / 2)]));
-    }
-    setTimeout(() => setOpen(true), 40); // after the reset has painted
-  }, []);
-  useEffect(() => {
-    const id = setTimeout(play, 160);
-    addEventListener("md-snaps", play);
-    return () => { clearTimeout(id); removeEventListener("md-snaps", play); };
-  }, [play]);
+  const [spread, setSpread] = useState(false);
   return (
     <section className="sheet ab-hello" aria-labelledby="ab-title" style={{ minHeight: "min(86vh, 760px)" }}>
       <div className="rail" aria-hidden><span className="rail-label">About · 01 hello</span><span className="rail-line" /></div>
@@ -71,15 +50,16 @@ function Hello() {
           </div>
         </div>
         <div className="ab-hello-me">
-          <div ref={wall} className={`ab-wall ${open ? "open" : ""}`} role="group" aria-label="Snapshots of Muskaan">
-            {SNAPS.map((p, i) => (
-              <button key={p.src} className={`ab-wsnap ${top === i ? "top" : ""}`} onClick={() => setTop(t => (t === i ? null : i))} aria-pressed={top === i}
-                style={{ ["--x" as string]: `${p.x}%`, ["--y" as string]: `${p.y}%`, ["--r" as string]: `${p.r}deg`, ["--fx" as string]: `${from[i]?.[0] ?? 0}px`, ["--fy" as string]: `${from[i]?.[1] ?? -40}px`, transitionDelay: open && top === null ? `${i * 110}ms` : "0ms" }}>
+          <button className={`ab-deck ${spread ? "spread" : ""}`} onClick={() => setSpread(v => !v)} onMouseEnter={() => setSpread(true)} onMouseLeave={() => setSpread(false)}
+            aria-expanded={spread} aria-label={spread ? "Stack the photos" : "Spread out the photos"}>
+            {DECK.map((p, i) => (
+              <span key={p.src} className="ab-dsnap" style={{ ["--x" as string]: `${p.x}%`, ["--y" as string]: `${p.y}%`, ["--r" as string]: `${p.r}deg`, ["--s" as string]: `${(i - 1) * 4}deg` }}>
                 <img src={`/about/${p.src}`} alt={p.alt} />
                 <span className="hand">{p.cap}</span>
-              </button>
+              </span>
             ))}
-          </div>
+            <span className="ab-deck-hint label" aria-hidden>{spread ? "" : "hover or tap"}</span>
+          </button>
           <div className="ab-hello-wave">
             <span className="ab-bubble hand">hello! you found the fun page.</span>
             <Mini pose="abWave" label="A small Muskaan holding a tablet and waving hello" unit="var(--ab-u)" />
@@ -90,59 +70,55 @@ function Hello() {
   );
 }
 
-// ── 02 how I got here: her own story, one stop at a time, a small her walks the path ──
-const STOPS: { tag: string; title: string; text: string; photos?: [string, string, string][] }[] = [
-  { tag: "start", title: "The rigid logic of code", text: "My story began in the rigid logic of Computer Science Engineering. I learned how systems speak, but I quickly realized I wanted to know how they felt to the person using them.",
+// ── 02 how I got here: her own story as one readable column, photos in the margin ──
+// (after Andrea Da Silva's about page: no buttons to find it, just scroll and read)
+const STOPS: { tag: string; title: string; text: string; mark: string; walk?: boolean; photos?: [string, string, string][] }[] = [
+  { tag: "start", title: "The rigid logic of code", mark: "how they felt to the person using them", text: "My story began in the rigid logic of Computer Science Engineering. I learned how systems speak, but I quickly realized I wanted to know how they felt to the person using them.",
     photos: [["face-api-neutral.webp", "A laptop running face-api.js on a webcam feed of Muskaan: face landmarks traced, labelled neutral (0.99).", "face-api.js, reading me: neutral (0.99)"],
       ["face-api-happy.webp", "Code in an editor next to the same webcam test, now labelled happy (0.99) as Muskaan smiles.", "…then: happy (0.99)"]] },
-  { tag: "UX", title: "Learning by doing", text: "That curiosity led me to UX and the world of entrepreneurship. I co-founded a startup because I believed, and still do, that the best way to learn is by doing." },
-  { tag: "trenches", title: "In the trenches", text: "I spent my time in the trenches: building SaaS platforms, designing for the fitness sector, and mastering branding as a way to tell human stories." },
-  { tag: "AR/VR + IoT", title: "The world went 3D", text: "I was looking for something deeper than a flat screen. In AR/VR and IoT I fell in love with the idea that design could be an environment you live in, not just an interface you touch." },
-  { tag: "now", title: "Automotive", text: "Today that obsession with immersive systems has led me to automotive design, where engineering precision, digital immersion and physical movement finally converge." },
+  { tag: "UX", title: "Learning by doing", mark: "the best way to learn is by doing", walk: true, text: "That curiosity led me to UX and the world of entrepreneurship. I co-founded a startup because I believed, and still do, that the best way to learn is by doing." },
+  { tag: "trenches", title: "In the trenches", mark: "a way to tell human stories", text: "I spent my time in the trenches: building SaaS platforms, designing for the fitness sector, and mastering branding as a way to tell human stories.",
+    photos: [["coding.webp", "Code open in a dark editor.", "building, building, building"]] },
+  { tag: "AR/VR + IoT", title: "The world went 3D", mark: "an environment you live in", text: "I was looking for something deeper than a flat screen. In AR/VR and IoT I fell in love with the idea that design could be an environment you live in, not just an interface you touch." },
+  { tag: "now", title: "Automotive", mark: "finally converge", text: "Today that obsession with immersive systems has led me to automotive design, where engineering precision, digital immersion and physical movement finally converge.",
+    photos: [["automotive-ux.webp", "A red race car numbered 21 on a rooftop parking deck.", "now: automotive UX"]] },
 ];
-function Journey() {
+
+/** the text with one phrase marked like a highlighter pass */
+function Marked({ text, mark }: { text: string; mark: string }) {
+  const i = text.indexOf(mark);
+  if (i < 0) return <>{text}</>;
+  return <>{text.slice(0, i)}<mark className="ab-mark">{mark}</mark>{text.slice(i + mark.length)}</>;
+}
+
+function StoryStop({ s, n }: { s: (typeof STOPS)[number]; n: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
-  const seen = useInView(ref, true);
-  const [i, setI] = useState(0);
-  useEffect(() => { // the first time it scrolls into view, walk the whole path once
-    if (!seen || reduced) return;
-    let n = 0; const id = setInterval(() => { n++; setI(n); if (n >= STOPS.length - 1) clearInterval(id); }, 1500);
-    return () => clearInterval(id);
-  }, [seen, reduced]);
-  const xs = [8, 29, 50, 71, 92];
-  const s = STOPS[i];
+  const seen = useInView(ref, true, "0px 0px -15% 0px");
+  return (
+    <div ref={ref} className={`ab-story-row ${seen ? "in" : ""}`}>
+      <div className="ab-story-text">
+        <span className="label mid">{String(n).padStart(2, "0")} · {s.tag}</span>
+        <h3 className="display ab-story-title">{s.title}</h3>
+        <p><Marked text={s.text} mark={s.mark} /></p>
+      </div>
+      <div className="ab-story-side">
+        {s.photos && s.photos.map(([src, alt, cap], k) => <Photo key={src} src={src} alt={alt} caption={cap} tilt={k ? 3 : -2.4} />)}
+        {s.walk && <div className="ab-story-walk"><Mini pose="abTrek" label="A small Muskaan walking with a backpack" unit={1.3} /></div>}
+      </div>
+    </div>
+  );
+}
+
+function Journey() {
   return (
     <section className="sheet" aria-labelledby="ab-path-title" style={{ minHeight: 0 }}>
       <div className="rail" aria-hidden><span className="rail-label">About · 02 the path</span><span className="rail-line" /></div>
       <div className="ab-head">
         <h2 id="ab-path-title" className="display ab-h2">How I got here</h2>
-        <span className="label mid">there is more than meets the eye · five stops</span>
+        <span className="label mid">there is more than meets the eye</span>
       </div>
-      <div ref={ref} className="ab-path">
-        <svg className="ab-path-line" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden><path d="M0 16 C20 4 30 18 50 10 S80 4 100 12" /></svg>
-        <div className="ab-walker" style={{ left: `${xs[i]}%` }} aria-hidden><Mini pose="abTrek" unit={1.2} /></div>
-        <ol className="ab-stops">
-          {STOPS.map((b, k) => (
-            <li key={b.tag} style={{ left: `${xs[k]}%` }}>
-              <button className={`ab-stop ${k === i ? "on" : ""} ${k < i ? "past" : ""}`} onClick={() => setI(k)} aria-current={k === i ? "step" : undefined}>
-                <span className="label">{b.tag}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div className="ab-beat-row">
-        <div className="ab-beat" aria-live="polite">
-          <span className="label">{String(i + 1).padStart(2, "0")} / 05 · {s.tag}</span>
-          <span className="display" style={{ fontSize: "clamp(26px, 3vw, 38px)", lineHeight: 1.05 }}>{s.title}</span>
-          <p style={{ margin: 0 }}>{s.text}</p>
-        </div>
-        {s.photos && <div className="ab-photos" key={s.tag}>{s.photos.map(([src, alt, cap], k) => <Photo key={src} src={src} alt={alt} caption={cap} tilt={k ? 2.4 : -2} />)}</div>}
-      </div>
-      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-        <Chamfer onClick={() => setI(v => Math.max(0, v - 1))} ariaLabel="Previous stop">←</Chamfer>
-        <Chamfer onClick={() => setI(v => Math.min(STOPS.length - 1, v + 1))} ariaLabel="Next stop">→</Chamfer>
+      <div className="ab-story-col">
+        {STOPS.map((s, k) => <StoryStop key={s.tag} s={s} n={k + 1} />)}
       </div>
     </section>
   );

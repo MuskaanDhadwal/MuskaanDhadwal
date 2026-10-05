@@ -25,7 +25,7 @@ import { LabPage } from "./print/LabPage";
 import { RailWalker, TapCursor } from "./print/ui";
 import { missionBySlug } from "./print/story";
 import { go } from "./print/nav";
-import { Dock } from "./print/Dock";
+import { Dock, LogoMD } from "./print/Dock";
 
 type Route = { page: string; slug?: string; anchor?: string };
 function parse(hash: string): Route {
@@ -65,7 +65,7 @@ export default function App() {
       <TapCursor />
       {!booted && <Loader onDone={boot} />}
       <header className="nav">
-        <button className="logo-stamp" onClick={() => { if (route.page === "about") { scrollTo(0, 0); dispatchEvent(new Event("md-snaps")); } else go("#/about"); }} aria-label="About Muskaan">MD</button>
+        <LogoMD page={route.page} />
         <button className="nav-menu-btn label" aria-expanded={menu} aria-controls="main-nav" onClick={() => setMenu(v => !v)}>{menu ? "Close ✕" : "Menu ☰"}</button>
         <nav id="main-nav" className={`nav-links ${menu ? "open" : ""}`} aria-label="Main">
           {([["Work", "#/work", isWork], ["Lab", "#/lab", route.page === "lab"], ["Garage", "#/garage", route.page === "garage"], ["About", "#/about", route.page === "about"], ["Contact", "#/contact", route.page === "contact"], ["Resume", "#/resume", route.page === "resume"]] as [string, string, boolean][]).map(([l, h, on]) => (

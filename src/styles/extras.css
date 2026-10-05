@@ -73,6 +73,22 @@
 .ai-status { color: var(--accent); }
 .ai-course-title { font-size: clamp(24px, 2.4vw, 32px); margin: 0; }
 
+/* ── LOGO: MD stamp; hover/focus pops three small snapshots out from behind it + "learn about me" ── */
+.logo-md { all: unset; box-sizing: border-box; position: relative; display: block; cursor: pointer; flex: none; }
+.logo-md .logo-stamp { position: relative; z-index: 2; background: var(--bg); }
+.logo-md-snaps { position: absolute; left: 4px; top: 4px; width: 54px; height: 54px; z-index: 1; pointer-events: none; }
+.logo-md-snap { position: absolute; left: 0; top: 0; width: 54px; height: 54px; max-width: none; object-fit: cover; background: #fff; border: 3px solid #fff; border-bottom-width: 9px;
+  box-shadow: 3px 3px 0 var(--shadow); opacity: 0; transform: translate(0, 0) rotate(0deg) scale(.4); transition: opacity .2s var(--ease-out), transform .45s var(--ease-spring); }
+.logo-md-tag { position: absolute; left: 58px; top: 104px; white-space: nowrap; font-size: 20px; color: var(--accent); opacity: 0; transform: translateY(-6px); transition: opacity .2s, transform .3s var(--ease-out); pointer-events: none; }
+.logo-md:hover .logo-md-snap, .logo-md:focus-visible .logo-md-snap { opacity: 1; }
+.logo-md:hover .s0, .logo-md:focus-visible .s0 { transform: translate(40px, 34px) rotate(-9deg); transition-delay: 0s; }
+.logo-md:hover .s1, .logo-md:focus-visible .s1 { transform: translate(92px, 22px) rotate(6deg); transition-delay: .05s; }
+.logo-md:hover .s2, .logo-md:focus-visible .s2 { transform: translate(142px, 38px) rotate(-4deg); transition-delay: .1s; }
+.logo-md:hover .logo-md-tag, .logo-md:focus-visible .logo-md-tag { opacity: 1; transform: none; }
+.logo-md:focus-visible .logo-stamp { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (hover: none) { .logo-md-snaps, .logo-md-tag { display: none; } }
+@media (prefers-reduced-motion: reduce) { .logo-md-snap, .logo-md-tag { transition: opacity .2s; } }
+
 /* ── DOCK: the floating way back (every page except Home) ── */
 .dock { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 60; display: flex; gap: 2px; padding: 4px;
   background: var(--blueprint-dk); border: 1.5px solid var(--white); box-shadow: 4px 4px 0 var(--shadow, rgba(0,0,0,.3)); }
