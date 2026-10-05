@@ -621,7 +621,7 @@ button.ship-art > img { position: absolute; inset: 12px; width: calc(100% - 24px
 @media (max-width: 1200px) {
   .home-v4 { grid-template-columns: minmax(250px, 34%) minmax(0, 1fr); gap: 32px; padding-left: clamp(16px, 4vw, 56px); }
   .name-side { position: sticky; }
-  .side-rail { display: none; }
+  .side-rail:not(.case-rail) { display: none; } /* home's own rail only: the page walker stays on every page */
 }
 @media (max-width: 900px) {
   .home-v4 { grid-template-columns: minmax(0, 1fr); }
@@ -761,6 +761,17 @@ main.sheet-in { padding-top: 0 !important; }
   .home-v4 { padding-left: 52px; }
   .sheet { padding-left: max(52px, clamp(16px, 5vw, 72px)); }
   .sheet .rail { display: none; }
+}
+/* the section name travels with the walker (its label), so the sheets' own fixed rail labels are gone:
+   the walker used to walk over them (her call, 2026-10-05) */
+.sheet .rail { display: none !important; }
+/* home between 1001 and 1200px has no timed rail of its own, so the page walker covers it there too */
+@media (min-width: 1001px) and (max-width: 1200px) {
+  body:has(.home-v4) .case-rail { display: block; }
+  .home-v4 { padding-left: 72px; }
+}
+@media (min-width: 1001px) {
+  .case-rail .side-rail-me .label { display: block; margin-top: 6px; padding: 6px 0; color: var(--white); opacity: .8; }
 }
 /* walker circle: a touch bigger and lifted so it reads on every page */
 .side-rail-me > .walk-fig, .side-rail-me > .mn, .side-rail-me > img { width: 52px; height: 52px; box-shadow: 3px 3px 0 var(--shadow); }

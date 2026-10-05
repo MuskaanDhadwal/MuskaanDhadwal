@@ -1,14 +1,16 @@
-// ABOUT — the person, not the portfolio (after Andrea Da Silva's about page: read it, don't hunt for it).
-// Hello (snapshots floating beside it) → how I got here (her story as one column, photos in the
-// margin) → facts nobody asked for (each with its photo) → side hustles → say hi.
-// Every small her on this page is a different pose (Minis.tsx).
-import { useEffect, useRef, useState } from "react";
+// ABOUT — the person, not the portfolio. A scrapbook after Andrea Da Silva's about page (adasilv2.framer.website):
+// her words in one column, her photos and drawings stuck loosely around it (different sizes, overlapping,
+// some running off the page), sliding in as you scroll and drifting at different speeds; and hand-made marks
+// in the text itself: a circled word, a scribbled-out phrase, an underline, a highlighter pass, a word
+// written in by hand. Faint engineering drawings behind every section, like the rest of the site.
+// Hello → how I got here → out and about → facts nobody asked for → side hustles → say hi.
+import { useEffect, useRef, type ReactNode } from "react";
 import { Mini, type PoseName } from "./Minis";
 import { Chamfer, SpecTable, useInView } from "./ui";
 import { go } from "./nav";
 import { PageDrawing } from "./PageDrawings";
 
-/** A real photo, taped in like a polaroid. */
+/** A real photo, taped in like a polaroid (fact cards and side hustles). */
 function Photo({ src, alt, caption, tilt = -2 }: { src: string; alt: string; caption?: string; tilt?: number }) {
   return (
     <figure className="ab-photo" style={{ ["--tilt" as string]: `${tilt}deg` }}>
@@ -18,181 +20,177 @@ function Photo({ src, alt, caption, tilt = -2 }: { src: string; alt: string; cap
   );
 }
 
-// ── 01 hello ────────────────────────────────────────────────────────────────
-// After Andrea Da Silva's about page: the words sit in the middle, her snapshots float on both sides
-// (nothing to click). On narrow screens the photos tuck in above the text.
-const FLOATS: { src: string; alt: string; cap: string; side: "l" | "r"; r: number }[] = [
-  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", cap: "hi, it's me", side: "l", r: -5 },
-  { src: "michigan.webp", alt: "The atrium of a University of Michigan building, with a giant yellow block M hanging from the glass roof.", cap: "the big M", side: "l", r: 3 },
-  { src: "graduation.webp", alt: "Muskaan in a white dress and a maize Michigan stole, tossing her graduation cap in front of a stone university building.", cap: "cap toss. Go Blue", side: "r", r: 4 },
-];
+// ── the scrapbook pieces ─────────────────────────────────────────────────────
+/** one thing stuck on the page. x: % gap from the text column (so it never covers the words; big x spills
+ *  off the page edge), y: % down its side column (desktop); w: width in px; r: tilt;
+ *  kind: tape = white border + tape, plain = white border, frame = a painting hung as it is (no border),
+ *  art = one of her line drawings; speed: how much it drifts against the scroll. */
+type Scrap = { src: string; alt: string; w: number; x: number; y: number; r: number; kind?: "tape" | "plain" | "frame" | "art"; speed?: number };
 
-function Hello() {
-  const side = (k: "l" | "r") => FLOATS.filter(f => f.side === k).map((p, i) => (
-    <figure key={p.src} className="ab-float" style={{ ["--r" as string]: `${p.r}deg`, animationDelay: `${i * -2.1 + (k === "r" ? -1 : 0)}s` }}>
-      <img src={`/about/${p.src}`} alt={p.alt} />
-      <figcaption className="hand">{p.cap}</figcaption>
-    </figure>
-  ));
+function Piece({ s, i }: { s: Scrap; i: number }) {
+  const src = s.kind === "art" ? `/art/${s.src}-white.png` : `/about/${s.src}`;
   return (
-    <section className="sheet ab-hello" aria-labelledby="ab-title" style={{ minHeight: "min(86vh, 760px)" }}>
-      <div className="rail" aria-hidden><span className="rail-label">About · 01 hello</span><span className="rail-line" /></div>
-      <div className="ab-tri">
-        <div className="ab-side ab-side-l">{side("l")}</div>
-        <div className="ab-mid">
-          <p className="label mid">About · sincere. vivid. deliberate.</p>
-          <h1 id="ab-title" className="display ab-h1">Hi, I'm <span className="ab-name">Muskaan</span>.</h1>
-          <p className="ab-lede">I'm a UX engineer: I design the interface, then build it myself, so nothing gets lost between the Figma file and the thing people use.</p>
-          <blockquote className="ab-philo">
-            <span className="label">design philosophy · rev. 1</span>
-            <p>Pixel-perfect accessibility: every interface element, a bridge between people, information, and technology.</p>
-          </blockquote>
-          <div style={{ marginTop: 24 }}>
-            <SpecTable caption="Quick facts" rows={[
-              ["Based", "USA"],
-              ["Day job", "UX / UI Engineer, Traxen"],
-              ["Studied", "MSI in HCI, U of Michigan · B.Tech CS, SRM IST"],
-              ["Off the clock", "board games, kayaking, stress-baking, drawing, plant crimes"],
-            ]} />
-          </div>
-        </div>
-        <div className="ab-side ab-side-r">
-          {side("r")}
-          <div className="ab-float-me"><img src="/art/kit-welcome-white.png" alt="Muskaan laughing and waving hello" /></div>
-        </div>
-      </div>
-    </section>
+    <figure className={`sb-scrap sb-${s.kind ?? "plain"}`} data-speed={s.speed ?? (i % 2 ? .06 : -.05)}
+      style={{ ["--x" as string]: `${s.x}%`, ["--y" as string]: `${s.y}%`, ["--w" as string]: `${s.w}px`, ["--r" as string]: `${s.r}deg`, ["--d" as string]: `${i * 110}ms` }}>
+      <span className="sb-in"><img src={src} alt={s.alt} loading="lazy" /></span>
+    </figure>
   );
 }
 
-// ── 02 how I got here: her own story as one readable column, photos in the margin ──
-// (after Andrea Da Silva's about page: no buttons to find it, just scroll and read)
-const STOPS: { tag: string; title: string; text: string; mark: string; walk?: boolean; photos?: [string, string, string][] }[] = [
-  { tag: "start", title: "The rigid logic of code", mark: "how they felt to the person using them", text: "My story began in the rigid logic of Computer Science Engineering. I learned how systems speak, but I quickly realized I wanted to know how they felt to the person using them.",
-    photos: [["face-api-neutral.webp", "A laptop running face-api.js on a webcam feed of Muskaan: face landmarks traced, labelled neutral (0.99).", "face-api.js, reading me: neutral (0.99)"],
-      ["face-api-happy.webp", "Code in an editor next to the same webcam test, now labelled happy (0.99) as Muskaan smiles.", "…then: happy (0.99)"]] },
-  { tag: "UX", title: "Learning by doing", mark: "the best way to learn is by doing", walk: true,
-    photos: [["expo-ecoroute.webp", "A selfie of Muskaan (in glasses) and two classmates at the UMSI Expo, in front of their EcoRoute poster.", "expo day, EcoRoute poster behind us"]],
-    text: "That curiosity led me to UX and the world of entrepreneurship. I co-founded a startup because I believed, and still do, that the best way to learn is by doing." },
-  { tag: "trenches", title: "In the trenches", mark: "a way to tell human stories", text: "I spent my time in the trenches: building SaaS platforms, designing for the fitness sector, and mastering branding as a way to tell human stories.",
-    photos: [["coding.webp", "Code open in a dark editor.", "building, building, building"]] },
-  { tag: "AR/VR + IoT", title: "The world went 3D", mark: "an environment you live in",
-    photos: [["iot-breadboard.webp", "A breadboard wired to a microcontroller and a glowing green LED ring, a small sensor held in a hand.", "IoT: first, make the ring light up"]],
-    text: "I was looking for something deeper than a flat screen. In AR/VR and IoT I fell in love with the idea that design could be an environment you live in, not just an interface you touch." },
-  { tag: "now", title: "Automotive", mark: "finally converge", text: "Today that obsession with immersive systems has led me to automotive design, where engineering precision, digital immersion and physical movement finally converge.",
-    photos: [["automotive-ux.webp", "A red race car numbered 21 on a rooftop parking deck.", "now: automotive UX"]] },
-];
+/** `?still` in the URL: everything already in place, no motion (for screenshots) */
+const STILL = typeof location !== "undefined" && new URLSearchParams(location.search).has("still");
 
-/** the text with one phrase marked like a highlighter pass */
-function Marked({ text, mark }: { text: string; mark: string }) {
-  const i = text.indexOf(mark);
-  if (i < 0) return <>{text}</>;
-  return <>{text.slice(0, i)}<mark className="ab-mark">{mark}</mark>{text.slice(i + mark.length)}</>;
-}
-
-function StoryStop({ s, n }: { s: (typeof STOPS)[number]; n: number }) {
+/** A spread: her words in the middle, things stuck on both sides. Below 1100px the pieces become one
+ *  overlapping collage above the words. */
+function Spread({ left, right, h, children, className = "" }: { left: Scrap[]; right: Scrap[]; h: number; children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const seen = useInView(ref, true, "0px 0px -15% 0px");
-  // spread the pictures across both sides of the text (one per side), so no row has a tall empty gap
-  const items: JSX.Element[] = [
-    ...(s.photos ?? []).map(([src, alt, cap], k) => <Photo key={src} src={src} alt={alt} caption={cap} tilt={k ? 3 : -2.4} />),
-    ...(s.walk ? [<div key="walk" className="ab-story-walk"><Mini pose="abTrek" label="A small Muskaan with a lightbulb idea" unit={1.3} /></div>] : []),
-  ];
-  const flip = [false, false, true, true, false][n - 1] ?? n % 2 === 0; // single photos zig-zag left/right
-  const left = items.filter((_, k) => (k % 2 === 0) !== flip), right = items.filter((_, k) => (k % 2 === 0) === flip);
+  const seen = useInView(ref, true, "0px 0px -12% 0px") || STILL;
   return (
-    // both photo columns come before the text in the page, so on phones they sit together above it
-    <div ref={ref} className={`ab-tri ab-story-row ${seen ? "in" : ""}`}>
-      <div className="ab-side ab-side-l ab-story-side">{left}</div>
-      <div className="ab-side ab-side-r ab-story-side">{right}</div>
-      <div className="ab-mid ab-story-text">
-        <span className="label mid">{String(n).padStart(2, "0")} · {s.tag}</span>
-        <h3 className="display ab-story-title">{s.title}</h3>
-        <p><Marked text={s.text} mark={s.mark} /></p>
-      </div>
+    <div ref={ref} className={`sb-row ${seen ? "in" : ""} ${STILL ? "sb-still" : ""} ${className}`} style={{ ["--h" as string]: `${h}px` }}>
+      <div className="sb-side sb-l">{left.map((s, i) => <Piece key={s.src} s={s} i={i} />)}</div>
+      <div className="sb-side sb-r">{right.map((s, i) => <Piece key={s.src} s={s} i={i + left.length} />)}</div>
+      <div className="sb-text">{children}</div>
     </div>
   );
 }
 
-function Journey() {
+/** pieces drift at their own speed as the page scrolls (Andrea's scroll effects); off for reduced motion */
+function useDrift() {
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const tick = () => {
+      raf = 0;
+      const vh = innerHeight;
+      document.querySelectorAll<HTMLElement>(".sb-scrap[data-speed]").forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        el.style.setProperty("--py", `${((r.top + r.height / 2 - vh / 2) * Number(el.dataset.speed)).toFixed(1)}px`);
+      });
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    tick(); addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
+    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); cancelAnimationFrame(raf); };
+  }, []);
+}
+
+// hand-made marks in the text; each draws itself in when its spread scrolls into view
+const Hl = ({ children }: { children: ReactNode }) => <mark className="sb-hl">{children}</mark>;
+const Under = ({ children }: { children: ReactNode }) => <span className="sb-under">{children}</span>;
+const Hand = ({ children }: { children: ReactNode }) => <span className="sb-hand hand" aria-hidden>{children}</span>;
+const Circle = ({ children }: { children: ReactNode }) => (
+  <span className="sb-circle">{children}<svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden><path pathLength={1} d="M54 6 C 22 2, 2 14, 4 32 C 6 52, 40 58, 70 54 C 96 50, 100 30, 92 16 C 84 4, 50 0, 30 8" /></svg></span>
+);
+const Strike = ({ children }: { children: ReactNode }) => (
+  <span className="sb-strike"><s>{children}</s><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden><path pathLength={1} d="M2 24 C 20 14, 30 30, 50 18 S 80 28, 98 14 M96 22 C 70 30, 40 12, 4 26" /></svg></span>
+);
+
+// ── 01 hello ────────────────────────────────────────────────────────────────
+const HELLO_L: Scrap[] = [
+  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", w: 240, x: 4, y: 0, r: -6, kind: "tape" },
+  { src: "michigan.webp", alt: "The atrium of a University of Michigan building, with a giant yellow block M hanging from the glass roof.", w: 230, x: 16, y: 52, r: 5 },
+];
+const HELLO_R: Scrap[] = [
+  { src: "graduation.webp", alt: "Muskaan in a white dress and a maize Michigan stole, tossing her graduation cap in front of a stone university building.", w: 270, x: 6, y: 4, r: 4, kind: "tape" },
+  { src: "kit-welcome", alt: "Muskaan laughing and waving hello", w: 210, x: 22, y: 50, r: -3, kind: "art", speed: .1 },
+];
+
+function Hello() {
   return (
-    <section className="sheet" aria-labelledby="ab-path-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">About · 02 the path</span><span className="rail-line" /></div>
-      <div className="ab-tri"><div /><div className="ab-mid ab-head">
-        <h2 id="ab-path-title" className="display ab-h2">How I got here</h2>
-        <span className="label mid">there is more than meets the eye</span>
-      </div><div /></div>
-      <div className="ab-story-col">
-        {STOPS.map((s, k) => <StoryStop key={s.tag} s={s} n={k + 1} />)}
-      </div>
+    <section id="ab-hello" className="sheet ab-hello tx-has-bg" aria-labelledby="ab-title" style={{ minHeight: 0 }}>
+      <PageDrawing view="camera" side="right" />
+      <div className="rail" aria-hidden><span className="rail-label">About · 01 hello</span><span className="rail-line" /></div>
+      <Spread left={HELLO_L} right={HELLO_R} h={640}>
+        <p className="label mid">About · sincere. vivid. deliberate.</p>
+        <h1 id="ab-title" className="display ab-h1">Hi, I'm <Circle><span className="ab-name">Muskaan</span></Circle>.</h1>
+        <p className="ab-lede">I'm a UX engineer: I design the interface, then <Under>build it myself</Under>, so nothing gets lost between the Figma file and the thing people use.</p>
+        <blockquote className="ab-philo">
+          <span className="label">design philosophy · rev. 1</span>
+          <p>Pixel-perfect accessibility: every interface element, a bridge between people, information, and technology.</p>
+        </blockquote>
+        <div style={{ marginTop: 24 }}>
+          <SpecTable caption="Quick facts" rows={[
+            ["Based", "USA"],
+            ["Day job", "UX / UI Engineer, Traxen"],
+            ["Studied", "MSI in HCI, U of Michigan · B.Tech CS, SRM IST"],
+            ["Off the clock", "board games, kayaking, stress-baking, drawing, plant crimes"],
+          ]} />
+        </div>
+      </Spread>
     </section>
   );
 }
 
-// ── 03 out and about: Andrea's layout (words in the middle, snapshots scattered on both sides)
-// with one Yash-style live tile (yashraut.com/about) that flips through her MoMA photos by itself.
-// no captions here (her call): the text beside them says where they are
-const OUT_L: [string, string, number][] = [
-  ["aurora.webp", "Northern lights over a dark building: green near the horizon, rising into pink and red, with stars.", -4],
-  ["chicago-bean.webp", "The Cloud Gate sculpture in Chicago reflecting skyscrapers and a grey sky, people with umbrellas around it.", 3],
-  ["statue-of-liberty.webp", "The Statue of Liberty under a cloudy sky, seen across the water with a small boat passing.", -2],
-];
-const MOMA: [string, string][] = [
-  ["moma-starry-night.webp", "At MoMA: Van Gogh's The Starry Night in its dark frame on a museum wall."],
-  ["moma-roulin.webp", "At MoMA: Van Gogh's Portrait of Joseph Roulin, a bearded postman in a blue cap against green swirling flowers."],
-  ["moma-soup-cans.webp", "At MoMA: Warhol's Campbell's Soup Cans, 32 small canvases hung in four rows on a white gallery wall."],
-  ["moma-abstract.webp", "At MoMA: a huge abstract painting of soft orange, pink, yellow and blue blocks on a white gallery wall."],
+// ── 02 how I got here: her own words (verbatim), with marks and the photos stuck around them ──
+const STOPS: { tag: string; title: string; text: ReactNode; h: number; left: Scrap[]; right: Scrap[] }[] = [
+  { tag: "start", title: "The rigid logic of code", h: 280,
+    text: <>My story began in the rigid logic of <Circle>Computer Science Engineering</Circle>. I learned how systems speak, but I quickly realized I wanted to know <Hl>how they felt to the person using them</Hl>.</>,
+    left: [{ src: "face-api-neutral.webp", alt: "A laptop running face-api.js on a webcam feed of Muskaan: face landmarks traced, labelled neutral (0.99).", w: 150, x: 10, y: -12, r: -7, kind: "tape" }],
+    right: [{ src: "face-api-happy.webp", alt: "Code in an editor next to the same webcam test, now labelled happy (0.99) as Muskaan smiles.", w: 230, x: 0, y: 34, r: 5 }] },
+  { tag: "UX", title: "Learning by doing", h: 290,
+    text: <>That curiosity led me to UX and the world of entrepreneurship. I <Circle>co-founded a startup</Circle> because I believed, and still do, that <Hl>the best way to learn is by doing</Hl>.</>,
+    left: [{ src: "kit-idea", alt: "Muskaan pointing up at a lightbulb idea", w: 170, x: 26, y: -8, r: 0, kind: "art", speed: .1 }],
+    right: [{ src: "expo-ecoroute.webp", alt: "A selfie of Muskaan (in glasses) and two classmates at the UMSI Expo, in front of their EcoRoute poster.", w: 260, x: 10, y: -18, r: 4, kind: "tape" }] },
+  { tag: "trenches", title: "In the trenches", h: 260,
+    text: <>I spent my time in the trenches: building SaaS platforms, designing for the fitness sector, and <Under>mastering branding</Under> as a way to tell human stories.</>,
+    left: [{ src: "coding.webp", alt: "Code open in a dark editor.", w: 250, x: 2, y: 36, r: -4 }],
+    right: [{ src: "kit-notetaker", alt: "Muskaan leaning on her desk, chin in hand, taking notes on a clipboard", w: 180, x: 22, y: -4, r: 0, kind: "art", speed: .08 }] },
+  { tag: "AR/VR + IoT", title: "The world went 3D", h: 280,
+    text: <>I was looking for something deeper than <Strike>a flat screen</Strike><Hand>3D!</Hand>. In AR/VR and IoT I fell in love with the idea that design could be <Hl>an environment you live in</Hl>, not just an interface you touch.</>,
+    left: [],
+    right: [{ src: "iot-breadboard.webp", alt: "A breadboard wired to a microcontroller and a glowing green LED ring, a small sensor held in a hand.", w: 160, x: 2, y: -14, r: 7, kind: "tape" }] },
+  { tag: "now", title: "Automotive", h: 270,
+    text: <>Today that obsession with immersive systems has led me to automotive design, where engineering precision, digital immersion and physical movement <Hl>finally converge</Hl>.<Hand>vroom.</Hand></>,
+    left: [{ src: "automotive-ux.webp", alt: "A red race car numbered 21 on a rooftop parking deck.", w: 290, x: 0, y: -4, r: -5, kind: "tape" }],
+    right: [] },
 ];
 
-/** a gallery frame that flips through her museum photos on its own (tap to skip ahead) */
-function MomaFrame() {
-  const ref = useRef<HTMLElement>(null);
-  const seen = useInView(ref);
-  const [i, setI] = useState(0);
-  const [hold, setHold] = useState(false);
-  useEffect(() => {
-    if (!seen || hold || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(() => setI(v => (v + 1) % MOMA.length), 3200);
-    return () => clearInterval(t);
-  }, [seen, hold]);
+function Journey() {
   return (
-    <figure ref={ref} className="ab-moma" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)}>
-      <button className="ab-moma-wall" onClick={() => setI(v => (v + 1) % MOMA.length)} aria-label={`Next painting (showing ${i + 1} of ${MOMA.length})`}>
-        {MOMA.map(([src, alt], k) => <img key={src} src={`/about/${src}`} alt={k === i ? alt : ""} aria-hidden={k !== i} className={k === i ? "on" : ""} loading="lazy" />)}
-      </button>
-      <span className="ab-moma-dots">{MOMA.map(([src], k) => <button key={src} className={k === i ? "on" : ""} aria-label={`Show painting ${k + 1}`} aria-pressed={k === i} onClick={() => setI(k)} />)}</span>
-    </figure>
+    <section id="ab-path" className="sheet tx-has-bg" aria-labelledby="ab-path-title" style={{ minHeight: 0 }}>
+      <PageDrawing view="route" side="left" />
+      <div className="rail" aria-hidden><span className="rail-label">About · 02 the path</span><span className="rail-line" /></div>
+      <div className="sb-head">
+        <h2 id="ab-path-title" className="display ab-h2">How I got here</h2>
+        <span className="label mid">there is more than meets the eye</span>
+      </div>
+      {STOPS.map((s, k) => (
+        <Spread key={s.tag} left={s.left} right={s.right} h={s.h} className="sb-stop">
+          <span className="label mid">{String(k + 1).padStart(2, "0")} · {s.tag}</span>
+          <h3 className="display ab-story-title">{s.title}</h3>
+          <p>{s.text}</p>
+        </Spread>
+      ))}
+    </section>
   );
 }
 
+// ── 03 out and about: travel snapshots on one side, the paintings she saw at MoMA (each hung on its own) on the other
+const OUT_L: Scrap[] = [
+  { src: "aurora.webp", alt: "Northern lights over a dark building: green near the horizon, rising into pink and red, with stars.", w: 220, x: 4, y: 0, r: -5 },
+  { src: "chicago-bean.webp", alt: "The Cloud Gate sculpture in Chicago reflecting skyscrapers and a grey sky, people with umbrellas around it.", w: 270, x: 14, y: 30, r: 4, kind: "tape" },
+  { src: "statue-of-liberty.webp", alt: "The Statue of Liberty under a cloudy sky, seen across the water with a small boat passing.", w: 170, x: 6, y: 52, r: -3 },
+  { src: "bao.webp", alt: "Three bao buns with glazed chicken and a slaw salad on a long black plate.", w: 180, x: 20, y: 72, r: 6, kind: "tape" },
+];
+const OUT_R: Scrap[] = [
+  { src: "moma-starry-night.webp", alt: "Van Gogh's The Starry Night, in its dark frame, at MoMA.", w: 260, x: 4, y: 2, r: -1.5, kind: "frame" },
+  { src: "moma-roulin.webp", alt: "Van Gogh's Portrait of Joseph Roulin, a bearded postman in a blue cap against green swirling flowers, in a gold frame, at MoMA.", w: 160, x: 34, y: 26, r: 3, kind: "frame" },
+  { src: "moma-soup-cans.webp", alt: "Warhol's Campbell's Soup Cans at MoMA: small canvases of soup cans hung in rows.", w: 240, x: 0, y: 50, r: -1, kind: "frame" },
+  { src: "moma-abstract.webp", alt: "A huge abstract painting of soft orange, pink, yellow and blue blocks, at MoMA.", w: 170, x: 30, y: 72, r: 2, kind: "frame" },
+];
+
 function OutAndAbout() {
-  const ref = useRef<HTMLDivElement>(null);
-  const seen = useInView(ref, true, "0px 0px -15% 0px");
   return (
-    <section className="sheet ab-out" aria-labelledby="ab-out-title" style={{ minHeight: 0 }}>
+    <section id="ab-out" className="sheet ab-out tx-has-bg" aria-labelledby="ab-out-title" style={{ minHeight: 0 }}>
+      <PageDrawing view="suitcase" side="right" />
       <div className="rail" aria-hidden><span className="rail-label">About · 03 out and about</span><span className="rail-line" /></div>
-      <div ref={ref} className={`ab-tri ab-story-row ${seen ? "in" : ""}`}>
-        <div className="ab-side ab-side-l ab-scatter">
-          {OUT_L.map(([src, alt, r], k) => (
-            <figure key={src} className={`ab-float ab-out-${src.split(".")[0]}`} style={{ ["--r" as string]: `${r}deg`, animationDelay: `${k * -1.7}s` }}>
-              <img src={`/about/${src}`} alt={alt} loading="lazy" />
-            </figure>
-          ))}
-        </div>
-        <div className="ab-mid ab-story-text">
-          <span className="label mid">places · paintings · plates</span>
-          <h2 id="ab-out-title" className="display ab-h2">Out and about</h2>
-          <p>When I'm not designing, I'm out <mark className="ab-mark">looking at things</mark>: a sky that turned pink, Chicago in the rain, New York from the water.</p>
-          <p>And museums. At MoMA I got to see the Van Goghs in person, and a wall of 32 soup cans.</p>
-          <p>And yes, I photograph my food before I eat it.</p>
-        </div>
-        <div className="ab-side ab-side-r ab-scatter">
-          <MomaFrame />
-          <figure className="ab-float" style={{ ["--r" as string]: "3deg", animationDelay: "-2.6s" }}>
-            <img src="/about/bao.webp" alt="Three bao buns with glazed chicken and a slaw salad on a long black plate." loading="lazy" />
-          </figure>
-        </div>
-      </div>
+      <Spread left={OUT_L} right={OUT_R} h={820}>
+        <span className="label mid">places · paintings · plates</span>
+        <h2 id="ab-out-title" className="display ab-h2">Out and about</h2>
+        <p>When I'm not designing, I'm out <Circle>looking at things</Circle>: the northern lights, Chicago in the rain, New York from the water.</p>
+        <p>And museums. At MoMA I got to see the Van Goghs <Hl>in person</Hl>, and a whole wall of soup cans.</p>
+        <p>And yes, I photograph my food before I eat it.<Hand>obviously.</Hand></p>
+      </Spread>
     </section>
   );
 }
@@ -216,7 +214,7 @@ const SKETCHED: { pose: PoseName; title: string; line: string; aside: string; al
 
 function Facts() {
   return (
-    <section className="sheet tx-has-bg" aria-labelledby="ab-facts-title" style={{ minHeight: 0 }}>
+    <section id="ab-facts" className="sheet tx-has-bg" aria-labelledby="ab-facts-title" style={{ minHeight: 0 }}>
       <PageDrawing view="desk" side="left" />
       <div className="rail" aria-hidden><span className="rail-label">About · 04 facts</span><span className="rail-line" /></div>
       <div className="ab-head">
@@ -225,7 +223,7 @@ function Facts() {
       </div>
       <div className="ab-facts">
         {FACTS.map((f, i) => (
-          <article key={f.title} className="ab-fact" style={{ ["--tilt" as string]: `${[-1.2, 0.8, -0.6, 1, -0.8][i]}deg` }}>
+          <article key={f.title} className="ab-fact" style={{ ["--tilt" as string]: `${[-2.6, 1.8, -1.4, 2.4, -1.9][i]}deg`, ["--dy" as string]: `${[0, 22, -8, 14, 28][i]}px` }}>
             <Photo src={f.photo[0]} alt={f.photo[1]} caption={f.evidence} tilt={[-2, 1.6, -1.2, 1.4, -1.6][i]} />
             {f.more && <div className="ab-fact-more">{f.more.map(([src, alt], k) => <img key={src} src={`/about/${src}`} alt={alt} loading="lazy" style={{ ["--t" as string]: `${[-4, 3, -2][k]}deg` }} />)}</div>}
             <div className="ab-fact-head">
@@ -254,7 +252,7 @@ function Facts() {
   );
 }
 
-// ── 04 side hustles: real things from the résumé, told the fun way ─────────
+// ── 05 side hustles: real things from the résumé, told the fun way ─────────
 const HUSTLES: { pose: PoseName; art?: string; tag: string; title: string; line: string; proof: string; alt: string; photos?: [string, string, string][] }[] = [
   { pose: "abPitch", tag: "Prize money", title: "Pitch-competition winner",
     line: "Took CommunityConnect, an edtech idea, to two University of Michigan challenges in the same month and won both.",
@@ -275,7 +273,8 @@ const HUSTLES: { pose: PoseName; art?: string; tag: string; title: string; line:
 
 function SideHustles() {
   return (
-    <section className="sheet" aria-labelledby="ab-hustle-title" style={{ minHeight: 0 }}>
+    <section id="ab-hustles" className="sheet tx-has-bg" aria-labelledby="ab-hustle-title" style={{ minHeight: 0 }}>
+      <PageDrawing view="trophy" side="right" />
       <div className="rail" aria-hidden><span className="rail-label">About · 05 side hustles</span><span className="rail-line" /></div>
       <div className="ab-head">
         <h2 id="ab-hustle-title" className="display ab-h2">Side hustles</h2>
@@ -283,7 +282,7 @@ function SideHustles() {
       </div>
       <div className="ab-hustles">
         {HUSTLES.map((h, i) => (
-          <article key={h.title} className="ab-hustle">
+          <article key={h.title} className="ab-hustle" style={{ ["--tilt" as string]: `${[-1.4, 1.1, 1.6, -1.2][i]}deg` }}>
             <div className="ab-hustle-head">
               <div className="ab-hustle-art">{h.art ? <img src={`/art/${h.art}-white.png`} alt="Muskaan in a VR headset, reaching out to touch a floating cube" /> : <Mini pose={h.pose} label={h.alt} unit={1.35} />}</div>
               <div>
@@ -309,6 +308,7 @@ function SideHustles() {
 }
 
 export function AboutPage() {
+  useDrift();
   return (
     <>
       <Hello />

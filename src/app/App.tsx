@@ -11,6 +11,7 @@ import "../styles/gm.css";
 import "../styles/gm-sim.css";
 import "../styles/gc.css";
 import "../styles/about-spec.css";
+import "../styles/about-scrap.css";
 import { CrayonDefs } from "./print/Character";
 import { Mini } from "./print/Minis";
 import { CharSheet } from "./print/CharSheet";

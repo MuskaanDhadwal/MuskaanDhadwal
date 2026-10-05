@@ -1,7 +1,8 @@
 // Faint engineering drawings behind the non-case-study pages (the case studies have their own truck,
 // parking, car and robot drawings). Same style: precise white lines, low opacity, decorative only.
-// One drawing per page, none repeated: Garage = workbench + pegboard, Lab = lab bench, About = desk
-// elevation, Contact = mailbox, Résumé = a stack of drawing sheets.
+// One drawing per section, none repeated: Garage = workbench + pegboard, Lab = lab bench, About = camera,
+// route plan, suitcase, desk and trophy (one per section),
+// Contact = mailbox, Résumé = a stack of drawing sheets.
 
 const Dim = ({ x1, x2, y, t }: { x1: number; x2: number; y: number; t: string }) => (
   <g className="tb-dim">
@@ -95,11 +96,77 @@ function Sheets() {
   );
 }
 
-export type PageView = "garage" | "lab" | "desk" | "mailbox" | "sheets";
+/** About · hello: an instant camera in elevation, a print sliding out of it. */
+function Camera() {
+  return (
+    <svg viewBox="0 0 1000 600">
+      <path d="M260 160 h420 a30 30 0 0 1 30 30 v250 a30 30 0 0 1 -30 30 h-420 a30 30 0 0 1 -30 -30 v-250 a30 30 0 0 1 30 -30 Z" />
+      <path d="M300 160 v-36 h120 v36 M560 190 h90 v50 h-90 z M250 400 H700" />
+      <circle cx="470" cy="300" r="110" /><circle cx="470" cy="300" r="78" /><circle cx="470" cy="300" r="40" />
+      <path d="M470 160 V440 M330 300 H610" className="tb-center" />
+      <circle cx="640" cy="320" r="14" /><circle cx="290" cy="210" r="10" />
+      <path d="M330 470 v90 h280 v-90 M350 490 h240 v50 h-240 z" />
+      <Dim x1={230} x2={710} y={110} t="BODY · 120" /><Dim x1={360} x2={580} y={590} t="PRINT · 86 × 54" />
+      <Balloon x={470} y={300} n="1" tx={820} ty={150} /><Balloon x={600} y={515} n="2" tx={820} ty={470} />
+    </svg>
+  );
+}
+
+/** About · how I got here: a route plan with waypoints, a compass rose and a scale bar. */
+function Route() {
+  return (
+    <svg viewBox="0 0 1100 600">
+      <path d="M80 480 C 220 470, 240 360, 360 350 S 520 420, 600 300 S 760 140, 880 170 S 1000 260, 1040 120" className="tb-center" />
+      {[[80, 480], [360, 350], [600, 300], [880, 170], [1040, 120]].map(([x, y], i) => <g key={i}><circle cx={x} cy={y} r="12" /><circle cx={x} cy={y} r="3" className="tb-solid" /></g>)}
+      <circle cx="170" cy="150" r="70" /><circle cx="170" cy="150" r="54" />
+      <path d="M170 70 L184 150 L170 230 L156 150 Z M90 150 L170 136 L250 150 L170 164 Z" /><path d="M170 70 L184 150 L156 150 Z" className="tb-solid" />
+      <text x="170" y="60" textAnchor="middle">N</text>
+      <path d="M700 520 h300 M700 510 v20 M775 514 v12 M850 510 v20 M925 514 v12 M1000 510 v20" />
+      <text x="850" y="560" textAnchor="middle">0 ——— 5 YEARS</text>
+      <Balloon x={600} y={300} n="1" tx={560} ty={150} /><Balloon x={1040} y={120} n="2" tx={980} ty={40} />
+    </svg>
+  );
+}
+
+/** About · out and about: a suitcase in elevation with a luggage tag and wheels. */
+function Suitcase() {
+  return (
+    <svg viewBox="0 0 1000 620">
+      <path d="M320 140 h360 a24 24 0 0 1 24 24 v330 a24 24 0 0 1 -24 24 h-360 a24 24 0 0 1 -24 -24 v-330 a24 24 0 0 1 24 -24 Z" />
+      <path d="M440 140 V80 h120 v60 M460 140 V100 h80 v40" />
+      <path d="M400 150 V508 M600 150 V508" /><path d="M296 320 H704" className="tb-center" />
+      <circle cx="350" cy="550" r="22" /><circle cx="650" cy="550" r="22" /><path d="M350 518 v10 M650 518 v10 M240 572 H760" />
+      <path d="M704 200 l70 30 M774 230 l-10 70 l70 30 l10 -70 z" /><circle cx="790" cy="250" r="6" />
+      <path d="M786 280 h40 M782 296 h36" />
+      <Dim x1={296} x2={704} y={40} t="CABIN · 550 × 400" />
+      <Balloon x={810} y={280} n="1" tx={920} ty={420} />
+    </svg>
+  );
+}
+
+/** About · side hustles: a trophy on a plinth, in elevation with its centre line. */
+function Trophy() {
+  return (
+    <svg viewBox="0 0 900 620">
+      <path d="M330 110 h240 v40 a120 140 0 0 1 -240 0 Z" />
+      <path d="M330 140 h-60 a50 50 0 0 0 60 90 M570 140 h60 a50 50 0 0 1 -60 90" />
+      <path d="M430 290 h40 v80 h-40 z M390 370 h120 v30 h-120 z" />
+      <path d="M340 400 h220 v120 h-220 z M360 430 h180 M360 490 h180" />
+      <path d="M450 80 V540" className="tb-center" /><path d="M260 540 H640" />
+      <path d="M450 160 l12 26 l28 4 l-20 20 l5 28 l-25 -13 l-25 13 l5 -28 l-20 -20 l28 -4 z" />
+      <Dim x1={330} x2={570} y={60} t="CUP · 240" /><Dim x1={340} x2={560} y={570} t="PLINTH" />
+      <Balloon x={540} y={460} n="1" tx={760} ty={420} />
+    </svg>
+  );
+}
+
+export type PageView = "garage" | "lab" | "desk" | "mailbox" | "sheets" | "camera" | "route" | "suitcase" | "trophy";
+const VIEWS: Record<PageView, () => JSX.Element> = { garage: Garage, lab: Lab, desk: Desk, mailbox: Mailbox, sheets: Sheets, camera: Camera, route: Route, suitcase: Suitcase, trophy: Trophy };
 export function PageDrawing({ view, side = "right" }: { view: PageView; side?: "left" | "right" }) {
+  const V = VIEWS[view];
   return (
     <div className={`tb tb-${side}`} aria-hidden>
-      {view === "garage" ? <Garage /> : view === "lab" ? <Lab /> : view === "desk" ? <Desk /> : view === "mailbox" ? <Mailbox /> : <Sheets />}
+      <V />
     </div>
   );
 }
