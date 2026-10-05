@@ -198,3 +198,10 @@
 .tx-chapters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .tx-chapters .ct-chip { min-height: 36px; padding: 6px 12px; font-size: 13px; }
 .tx-rev-img { background: #DCE2F2; }
+
+/* consistent spacing (2026-10-05): intro text never touches the media under it; paired boxes match heights */
+.tx-band > p, .tx-band > .tx-measure { margin: 0 0 20px; }
+.tx-band > p:last-child { margin-bottom: 0; }
+.tx-stakes { align-items: stretch; }
+.tx-stakes > :nth-child(2) { align-self: center; }
+.tx-band > :not(p):not(.tx-band-head) + p, .tx-band > :not(p):not(.tx-band-head) + .tx-measure { margin-top: 20px; }

@@ -149,3 +149,4 @@
 @media (max-width: 900px) { .ab-more-list { grid-template-columns: 1fr; } }
 .ab-fact-more { display: flex; gap: 8px; margin-top: -2px; }
 .ab-fact-more img { width: calc((100% - 16px) / 3); aspect-ratio: 1; object-fit: cover; border: 4px solid #fff; box-shadow: 3px 3px 0 var(--shadow); transform: rotate(var(--t)); box-sizing: border-box; }
+.ab-story-col { max-width: 1180px; }

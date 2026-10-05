@@ -168,12 +168,12 @@ export function CabinSim() {
   return (
     <div className="sim">
       <div className="sim-dash">
+        <div className="sim-col">
         <div className="sim-dd-wrap">
           <span className="sim-label label">driver display · 4" × 10" · {MODES.find(m => m[0] === mode)![1].toLowerCase()} mode</span>
           <img key={src} className="sim-dd-img" src={G(src)} alt={alt} />
           {mode === "voice" && heard && <span className="sim-heard">“{heard.slice(0, 40)}”</span>}
         </div>
-        <div className="sim-cc-wrap"><span className="sim-label label">central console · 7" × 14" · live: change the sky</span><Console sky={sky} setSky={setSky} page={page} setPage={setPage} temp={tempLabel} /></div>
         <div className="sim-ctrl">
           <span className="sim-label label">the steering wheel · your controls</span>
           <div className="sim-wheel-row">
@@ -196,9 +196,13 @@ export function CabinSim() {
           </form>
           <p className="sim-reply" aria-live="polite">{reply}</p>
         </div>
+        </div>
+        <div className="sim-col">
+        <div className="sim-cc-wrap"><span className="sim-label label">central console · 7" × 14" · live: change the sky</span><Console sky={sky} setSky={setSky} page={page} setPage={setPage} temp={tempLabel} /></div>
         <div className="sim-fc-wrap">
           <span className="sim-label label">front console · 7" × 5"</span>
           <img className="sim-fc-img" src={G("fc-climate-hi.webp")} alt="Front console climate panel: A/C, Auto, On, Off along the top; front and rear temperature sliders at 21°C; sync; two seats with auto buttons; fan and seat-heat controls." />
+        </div>
         </div>
       </div>
     </div>

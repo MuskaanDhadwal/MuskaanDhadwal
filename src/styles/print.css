@@ -628,3 +628,13 @@ button.ship-art > img { position: absolute; inset: 12px; width: calc(100% - 24px
   .name-side { position: static; }
 }
 .name-letters, .name-letters.display { font-size: min(calc(100cqw / 3.62), 170px); }
+
+/* ── Wide screens: cap the content at one width and centre it (she found the right side empty at 1920) ── */
+:root { --wrap: 1360px; --side: max(0px, calc((100vw - var(--wrap)) / 2)); }
+.nav { padding-left: max(clamp(16px, 4vw, 48px), var(--side)); padding-right: max(clamp(16px, 4vw, 48px), var(--side)); }
+.sheet { padding-left: max(clamp(56px, 7vw, 104px), calc(var(--side) + 64px)); padding-right: max(clamp(16px, 5vw, 72px), var(--side)); }
+.rail { left: max(clamp(12px, 2.2vw, 30px), calc(var(--side) + 8px)); }
+.sheet-no { right: max(clamp(16px, 4vw, 48px), var(--side)); }
+.home-v4 { padding-left: max(76px, calc(var(--side) + 64px)); padding-right: max(clamp(16px, 4vw, 56px), var(--side)); }
+.side-rail { left: max(14px, calc(var(--side) + 4px)); }
+.walker { left: max(clamp(4px, 1.4vw, 20px), calc(var(--side) + 4px)); }

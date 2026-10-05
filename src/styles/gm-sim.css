@@ -1,8 +1,9 @@
 /* The GM cabin simulator (GmSim.tsx) + the key-decision panels. The car's own UI keeps its own dark colours
    (#111111 / #1463FD / #59C1FA / #FF4242 / #9AE77E, Karla) inside a blueprint frame. */
 .sim { border: 1.5px solid var(--white); background: var(--blueprint-dk); padding: 18px; }
-.sim-dash { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-areas: "dd cc" "ctrl fc"; gap: 22px 26px; align-items: start; }
-.sim-dd-wrap { grid-area: dd; } .sim-cc-wrap { grid-area: cc; } .sim-fc-wrap { grid-area: fc; } .sim-ctrl { grid-area: ctrl; }
+.sim-dash { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 26px; align-items: start; }
+.sim-col { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
 .sim-label { display: block; margin-bottom: 6px; opacity: .8; }
 .sim-dd { display: block; width: 100%; height: auto; }
 .dd-t { font-family: "Karla", var(--body); }
@@ -111,5 +112,5 @@
 .sim-fc-wrap .sim-label { align-self: flex-start; }
 .sim-fc-img { display: block; height: auto; width: auto; max-width: 100%; max-height: 330px; border-radius: 14px; border: 2px solid #2A2F3A; }
 @keyframes simSwap { from { opacity: .3; transform: scale(.985); } to { opacity: 1; transform: none; } }
-@media (max-width: 900px) { .sim-dash { grid-template-columns: 1fr; grid-template-areas: "dd" "ctrl" "cc" "fc"; } }
+@media (max-width: 900px) { .sim-dash { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .sim-dd-img { animation: none; } }

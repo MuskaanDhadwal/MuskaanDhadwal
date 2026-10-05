@@ -92,3 +92,4 @@
 @media (max-width: 900px) { .gc-ava-stage, .gc-persona, .gc-sys, .gc-three, .gc-methods { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .gc-cons, .gc-found { grid-template-columns: 1fr; } .gc-make { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .gc-band.alarm { animation: none; } .gc-drawer, .gc-bar-track span, .gc-was::after { transition: none; } }
+.gc-story { align-items: center; }

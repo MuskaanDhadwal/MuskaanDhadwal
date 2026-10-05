@@ -237,3 +237,5 @@
 @media (max-width: 900px) { .bm-ladder { grid-template-columns: 1fr; } }
 /* the demo's hotspot is quiet while it plays itself, and pulses when it's your turn */
 .bm-hot.quiet { animation: none; border-color: transparent; background: transparent; }
+@media (min-width: 961px) { .bm-states { grid-template-columns: 260px minmax(0, 560px); justify-content: center; gap: 48px; } }
+@media (min-width: 961px) { .bm-phones { justify-content: center; } }
