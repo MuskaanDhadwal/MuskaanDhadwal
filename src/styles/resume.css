@@ -67,3 +67,6 @@
 .rs-pick-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .rs-pick-row > .label { min-width: 52px; }
 .rs-pick-row .tx-toggle { margin: 0; }
+/* her running drawing beside the title, at its natural size so the line stays crisp */
+.rs-art { display: block; width: min(100%, 204px); height: auto; }
+@media (max-width: 900px) { .rs-art { width: 150px; } }

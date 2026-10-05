@@ -3,7 +3,6 @@
 // The old file names (…_UX_Engineer_Resume.pdf, …_Product_Designer_Resume.pdf, …_Resume_Full.pdf) are kept in
 // public/resume/ with the new content, so links she already sent still work.
 import { useState } from "react";
-import { Mini } from "./Minis";
 import { Chamfer } from "./ui";
 import { go } from "./nav";
 import { PageDrawing } from "./PageDrawings";
@@ -35,8 +34,9 @@ function Resumes() {
           <p className="ab-lede">Pick the role and the length. Read it here, or take a PDF with you.</p>
         </div>
         <div className="rs-me">
-          <span className="ab-bubble hand">still warm from the printer.</span>
-          <Mini pose="rsHand" label="A small Muskaan holding out a sheet of paper" unit="var(--ab-u)" />
+          <span className="ab-bubble hand">fresh off the press. on my way!</span>
+          {/* her own drawing (loader pose sheet), not the soft atlas crop that was here */}
+          <img className="rs-art" src="/art/ld-move-white.png" alt="Muskaan running with her laptop under her arm, speed lines behind her" />
         </div>
       </div>
 
