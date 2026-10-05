@@ -103,7 +103,7 @@ export function GaragePage() {
         </div>
         <div className="rs-me">
           <span className="ab-bubble hand">mind the paint.</span>
-          <img className="kit-hero" src="/art/kit-artist-white.png" alt="Muskaan sitting cross-legged, sketching in a notebook, headphones round her neck" />
+          <img className="kit-hero" src="/art/ld-focused-white.png" alt="Muskaan sitting cross-legged with her laptop, working" />
         </div>
       </div>
 

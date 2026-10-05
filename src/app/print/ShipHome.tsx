@@ -11,25 +11,25 @@ import { go } from "./nav";
 const BUILD = "2026.10";
 const art = (name: string) => `/art/${name}-white.png`;
 
-// ── Name, with her character drawings sitting on the letters (after Aesha Koshti's PORTFOLIO lettering) ──
-type Mini = { img: string; alt: string; quip: string; cls: string };
-// After Aesha Koshti's PORTFOLIO lettering: her drawings live in, on, beside and under the letters, in the
-// same white line as the letters, so the name and the drawings read as one piece.
+// After Aesha Koshti's PORTFOLIO lettering: her drawings are part of the letters. Each one is a solid
+// silhouette (filled with the page blue), so where she overlaps a letter she covers it, and the ones marked
+// `back` sit behind the letter and rise out of it. Same white line as the letters: one drawing.
+type Mini = { img: string; alt: string; quip: string; cls: string; back?: boolean };
 const MINIS: Record<string, Mini> = {
-  focused: { img: "ld-focused", alt: "Muskaan sitting cross-legged on top of the M with her laptop", quip: "just one more tweak…", cls: "mini-on-m" },
-  peek: { img: "ld-peek", alt: "Muskaan peeking over the top of the S", quip: "that's 1px off. I can feel it.", cls: "mini-over-s" },
-  daydream: { img: "ld-daydream", alt: "Muskaan leaning on the K, chin in her hand, daydreaming", quip: "v1 of 47…", cls: "mini-on-k" },
-  tired: { img: "ld-tired", alt: "Muskaan lying across the top of the A, waiting", quip: "is it deployed yet?", cls: "mini-on-a" },
-  stretch: { img: "ld-stretch", alt: "Muskaan under the N, arms up, holding the letter up", quip: "it's load-bearing. don't touch.", cls: "mini-under-n" },
+  artist: { img: "kit-artist", alt: "Muskaan sitting cross-legged on top of the M, sketching in her notebook", quip: "v1 of 47", cls: "mini-on-m" },
+  wave: { img: "at-wave", alt: "Muskaan waving from inside the U", quip: "the U is my office now", cls: "mini-in-u", back: true },
+  peek: { img: "ld-peek", alt: "Muskaan peeking over the top of the S, fingers on the edge", quip: "that's 1px off. I can feel it.", cls: "mini-over-s" },
+  notes: { img: "kit-notetaker", alt: "Muskaan leaning on the top of the A, chin in her hand, taking notes", quip: "noted. and noted again.", cls: "mini-lean-a" },
+  idea: { img: "kit-idea", alt: "Muskaan rising from behind the N with a lightbulb idea", quip: "wait. what if…", cls: "mini-behind-n", back: true },
 };
 
 function MiniOnLetter({ m }: { m: Mini }) {
   const [said, setSaid] = useState(false);
   const [k, setK] = useState(0);
   return (
-    <span className={`mini ${m.cls}`}>
+    <span className={`mini ${m.cls} ${m.back ? "mini-back" : ""}`}>
       <button onClick={() => { setSaid(true); setK(x => x + 1); }} aria-label={`${m.alt}. Tap to hear her.`}>
-        <span key={k} className={`mini-fig ${k ? "pop" : ""}`}><img src={`/art/${m.img}-white.png`} alt="" /></span>
+        <span key={k} className={`mini-fig ${k ? "pop" : ""}`}><img src={`/art/${m.img}-solid.png`} alt="" /></span>
       </button>
       {said && <span className="mini-say" role="status">{m.quip}</span>}
     </span>
@@ -49,7 +49,7 @@ function NameLetters() {
   return (
     <h1 className="name-letters display">
       <span className="sr-only">Muskaan Dhadwal</span>
-      {line("MUSKAAN", { 0: { mini: MINIS.focused }, 2: { mini: MINIS.peek }, 3: { mini: MINIS.daydream }, 5: { mini: MINIS.tired }, 6: { mini: MINIS.stretch, lift: true } })}
+      {line("MUSKAAN", { 0: { mini: MINIS.artist }, 1: { mini: MINIS.wave }, 2: { mini: MINIS.peek }, 4: { mini: MINIS.notes }, 6: { mini: MINIS.idea } })}
     </h1>
   );
 }

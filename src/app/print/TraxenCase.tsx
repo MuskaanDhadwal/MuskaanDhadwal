@@ -212,7 +212,7 @@ export function TxResearchWide() {
           <SwitchDiagram />
           <div>
             <p>The tablet is shared real estate. Navigation and the hours-of-service clock win every time, because the driver needs them to do the job. Traxen gets pushed to the back, and its alerts go with it.</p>
-            <Say art="kit-notetaker" alt="Muskaan at a desk, chin on her hand, taking notes on a clipboard">Every time a driver switched apps, Traxen disappeared. Noted.</Say>
+            <Say art="ld-reading" alt="Muskaan sitting cross-legged, reading, a stack of books beside her">Every time a driver switched apps, Traxen disappeared. Noted.</Say>
           </div>
         </div>
       </Band>

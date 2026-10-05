@@ -150,7 +150,8 @@ export function TapCursor() {
   return <div className="tap-cursor" style={{ left: s.x, top: s.y }} aria-hidden>{s.label}</div>;
 }
 
-// ── Case-study walker: the same walking her as the homepage rail, with the sheet you're on ──
+// ── Page walker (every page, every screen size): her walking drawing, in a circle, moves down the left
+// rail as you scroll, with the section you're on (label on wide screens only) ──
 export function CaseWalker({ figure }: { figure: (step: 0 | 1) => ReactNode }) {
   const reduced = useReducedMotion();
   const [p, setP] = useState(0);
@@ -164,8 +165,8 @@ export function CaseWalker({ figure }: { figure: (step: 0 | 1) => ReactNode }) {
       setP(max > 0 ? Math.min(1, scrollY / max) : 0);
       setStep((Math.floor(scrollY / 40) % 2) as 0 | 1);
       let cur = "";
-      document.querySelectorAll<HTMLElement>("main section.sheet").forEach(el => {
-        if (el.getBoundingClientRect().top < innerHeight * 0.35) cur = el.querySelector(".rail-label")?.textContent ?? cur;
+      document.querySelectorAll<HTMLElement>("main section.sheet, main [data-section]").forEach(el => {
+        if (el.getBoundingClientRect().top < innerHeight * 0.35) cur = el.querySelector(".rail-label")?.textContent ?? el.dataset.label ?? cur;
       });
       setLabel(cur);
       setMoving(true); clearTimeout(stop); stop = window.setTimeout(() => setMoving(false), 160);
@@ -175,7 +176,7 @@ export function CaseWalker({ figure }: { figure: (step: 0 | 1) => ReactNode }) {
   }, []);
   return (
     <>
-      <div className="side-rail case-rail" aria-hidden>
+      <div className={`side-rail case-rail ${moving && !reduced ? "moving" : ""}`} aria-hidden>
         <span className="side-rail-line" />
         <div className="side-rail-me" style={{ top: `calc(${p.toFixed(4)} * (100% - 210px))` }}>
           {figure(reduced || !moving ? 0 : step)}

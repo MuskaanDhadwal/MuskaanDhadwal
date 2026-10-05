@@ -89,20 +89,22 @@ function Marked({ text, mark }: { text: string; mark: string }) {
 function StoryStop({ s, n }: { s: (typeof STOPS)[number]; n: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, true, "0px 0px -15% 0px");
-  const left = n % 2 === 1;
-  const media = <>
-    {s.photos && s.photos.map(([src, alt, cap], k) => <Photo key={src} src={src} alt={alt} caption={cap} tilt={k ? 3 : -2.4} />)}
-    {s.walk && <div className="ab-story-walk"><Mini pose="abTrek" label="A small Muskaan walking with a backpack" unit={1.3} /></div>}
-  </>;
+  // spread the pictures across both sides of the text (one per side), so no row has a tall empty gap
+  const items: JSX.Element[] = [
+    ...(s.photos ?? []).map(([src, alt, cap], k) => <Photo key={src} src={src} alt={alt} caption={cap} tilt={k ? 3 : -2.4} />),
+    ...(s.walk ? [<div key="walk" className="ab-story-walk"><Mini pose="abTrek" label="A small Muskaan with a lightbulb idea" unit={1.3} /></div>] : []),
+  ];
+  const flip = [false, true, true, false, false][n - 1] ?? n % 2 === 0; // single photos zig-zag left/right
+  const left = items.filter((_, k) => (k % 2 === 0) !== flip), right = items.filter((_, k) => (k % 2 === 0) === flip);
   return (
     <div ref={ref} className={`ab-tri ab-story-row ${seen ? "in" : ""}`}>
-      <div className="ab-side ab-side-l ab-story-side">{left && media}</div>
+      <div className="ab-side ab-side-l ab-story-side">{left}</div>
       <div className="ab-mid ab-story-text">
         <span className="label mid">{String(n).padStart(2, "0")} · {s.tag}</span>
         <h3 className="display ab-story-title">{s.title}</h3>
         <p><Marked text={s.text} mark={s.mark} /></p>
       </div>
-      <div className="ab-side ab-side-r ab-story-side">{!left && media}</div>
+      <div className="ab-side ab-side-r ab-story-side">{right}</div>
     </div>
   );
 }

@@ -104,3 +104,15 @@
 .gc-awards { max-width: 720px; margin: 0 auto; }
 .gc-take .tx-loop-art { background: #10171C; }
 .gc-take .tx-loop-art img { object-fit: contain; }
+
+.gc-take .tx-loop-art { background: #000; }
+.gc-loop { display: block; width: 100%; height: 100%; object-fit: cover; }
+.gc-maps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.gc-map { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 1.5px solid var(--white); }
+.gc-map .display { font-size: 26px; }
+.gc-map:hover, .gc-map.on { background: var(--white); color: var(--blueprint-dk); }
+.gc-map:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gc-map-frame { margin: 16px 0 0; border: 1.5px solid var(--white); background: #1e1e1e; }
+.gc-map-frame iframe { display: block; width: 100%; height: min(70vh, 620px); border: 0; }
+.gc-map-frame figcaption { padding: 8px 12px; }
+@media (max-width: 700px) { .gc-maps { grid-template-columns: 1fr; } }

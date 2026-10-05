@@ -73,7 +73,7 @@ export default function App() {
           ))}
         </nav>
       </header>
-      {route.page === "case" && <CaseWalker figure={st => <Mini pose={st ? "walkB" : "walkA"} unit={0.62} />} />}
+      {booted && <CaseWalker figure={() => <img className="walk-fig" src="/art/at-walk-white.png" alt="" />} />}
       {/* debug: ?only=<sheet id> shows just that sheet (for screenshots of long pages) */}
       {new URLSearchParams(location.search).get("only") && <style>{`main section.sheet:not(#${new URLSearchParams(location.search).get("only")}) { display: none; }`}</style>}
       <main key={sheetKey} className="sheet-in">

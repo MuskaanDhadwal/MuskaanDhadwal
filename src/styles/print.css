@@ -708,3 +708,57 @@ img.mn-art { display: block; width: auto; object-fit: contain; object-position: 
 .mini-fig img { filter: none; }
 .mini-over-s { left: 50%; bottom: 74%; transform: translateX(-50%); } .mini-over-s .mini-fig { height: .4em; }
 .mini-under-n { transform: translateX(-62%); }
+
+/* name v5: drawings built into the letters (solid silhouettes; `back` ones rise from behind a letter) */
+.name-letters, .name-letters.display { margin-top: 1em; }
+.name-line .nl { isolation: isolate; }
+.name-line .nl-lift { transform: none; }
+.mini-back { z-index: -1 !important; }
+.mini .mini-fig img { display: block; height: 100%; width: auto; }
+.mini-on-m { left: 46%; bottom: 93%; top: auto; transform: translateX(-50%); } .mini-on-m .mini-fig { height: .86em; }
+.mini-in-u { left: 50%; bottom: .2em; top: auto; transform: translateX(-50%); } .mini-in-u .mini-fig { height: .62em; }
+.mini-over-s { left: 50%; bottom: 90%; top: auto; transform: translateX(-50%); } .mini-over-s .mini-fig { height: .5em; }
+.mini-lean-a { left: 30%; bottom: 95%; top: auto; transform: translateX(-50%); } .mini-lean-a .mini-fig { height: .74em; }
+.mini-behind-n { left: 52%; bottom: 30%; top: auto; transform: translateX(-50%); } .mini-behind-n .mini-fig { height: 1.02em; }
+
+/* page walker on every page: desktop rail (home keeps its own timed rail), phone/tablet strip under the nav */
+.walk-fig { display: block; height: 58px; width: auto; transform-origin: 50% 100%; }
+.moving .walk-fig { animation: walkStep .32s steps(2) infinite; }
+@keyframes walkStep { 0% { transform: rotate(-4deg) translateY(0); } 100% { transform: rotate(4deg) translateY(-2px); } }
+.case-rail .side-rail-me { width: 48px; }
+body:has(.home-v4) .case-rail { display: none; }
+.walk-strip { display: none; }
+@media (max-width: 1000px) {
+  .case-rail { display: none; }
+  .walk-strip { display: block; position: fixed; left: 0; right: 0; top: var(--nav-h, 62px); height: 44px; z-index: 45; pointer-events: none; }
+  .walk-strip-line { position: absolute; left: 0; right: 0; bottom: 4px; height: 1px; background: var(--line-mid); }
+  .walk-strip-done { position: absolute; left: 0; bottom: 3px; height: 3px; background: var(--accent); }
+  .walk-strip-me { position: absolute; bottom: 4px; width: 34px; display: flex; justify-content: center; transition: left 120ms linear; }
+  .walk-strip .walk-fig { height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) { .moving .walk-fig { animation: none; } }
+@media (max-width: 1000px) {
+  .walk-strip { top: 60px; height: 46px; background: var(--bg); border-bottom: 1px solid var(--line-mid); }
+  .walk-strip-line { bottom: 6px; }
+  .walk-strip-done { bottom: 5px; }
+  .walk-strip-me { bottom: 6px; }
+  main.sheet-in { padding-top: 46px; }
+}
+
+/* walker v2 (her call): always on the side rail, never a top strip, no yellow bar; the drawing sits in a circle */
+.walk-strip { display: none !important; }
+main.sheet-in { padding-top: 0 !important; }
+.side-rail-me > .mn, .side-rail-me > .walk-fig, .side-rail-me > img { box-sizing: border-box; width: 46px; height: 46px; padding: 5px; border: 1.5px solid var(--white); border-radius: 50%;
+  background: var(--bg); object-fit: contain; object-position: 50% 60%; }
+.side-rail-me { width: 46px; }
+.case-rail .side-rail-line { opacity: .45; left: 22px; }
+@media (max-width: 1000px) {
+  .case-rail { display: block; left: 6px; top: 70px; bottom: 16px; }
+  body:has(.home-v4) .case-rail { display: block; }
+  .case-rail .side-rail-me .label { display: none; }
+  .side-rail-me > .walk-fig { width: 36px; height: 36px; padding: 3px; }
+  .case-rail .side-rail-line { left: 17px; }
+  .home-v4 { padding-left: 52px; }
+  .sheet { padding-left: max(52px, clamp(16px, 5vw, 72px)); }
+  .sheet .rail { display: none; }
+}

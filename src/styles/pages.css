@@ -189,3 +189,10 @@
   .ab-hello .ab-side-r { margin-bottom: 20px; }
   .ab-hello .ab-float-me { width: 120px; }
 }
+
+/* How I got here: rows sized by the text, photos centred beside it, one per side */
+.ab-story-col { gap: 28px; }
+.ab-story-row { align-items: center; }
+.ab-story-row .ab-photo { max-width: 210px; }
+.ab-story-row .ab-story-side { gap: 0; }
+@media (max-width: 1100px) { .ab-story-row .ab-story-side { flex-direction: row; } }

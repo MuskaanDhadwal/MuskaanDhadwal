@@ -257,9 +257,36 @@ const CONSTRAINTS: { t: string; was?: string; d: string }[] = [
   { t: "Embedded devices", d: "Beacons, a wristband and a mobile app, for support even away from home and a familiar way to give input." },
 ];
 
+const MAPS: { k: string; t: string; d: string; url: string }[] = [
+  { k: "empathy", t: "Empathy map", d: "What Brandon and Abbey say, think, do and feel.", url: "https://www.figma.com/proto/a8AprVh7tgfkEVL8Aw0uXC/Empathy-and-journey-maps?page-id=109%3A1841&type=design&node-id=109-2679&viewport=533%2C375%2C0.09&t=IhiHZmCxZMnCDLQ9-1&scaling=scale-down" },
+  { k: "journey", t: "Journey map", d: "Their day, step by step: the emotions and pain points along the way.", url: "https://www.figma.com/proto/a8AprVh7tgfkEVL8Aw0uXC/Empathy-and-journey-maps?page-id=109%3A2678&type=design&node-id=109-2843&viewport=592%2C402%2C0.28&t=DrnbNCd7ixz9jXVU-1&scaling=scale-down" },
+];
+function Maps() {
+  const [k, setK] = useState<string | null>(null);
+  const m = MAPS.find(x => x.k === k);
+  return (
+    <div>
+      <div className="gc-maps">
+        {MAPS.map(x => (
+          <button key={x.k} className={`gc-map ${k === x.k ? "on" : ""}`} onClick={() => setK(v => (v === x.k ? null : x.k))} aria-pressed={k === x.k}>
+            <span className="display">{x.t}</span><span>{x.d}</span><span className="label">{k === x.k ? "close ✕" : "open the Figma prototype ↓"}</span>
+          </button>
+        ))}
+      </div>
+      {m && (
+        <figure className="gc-map-frame">
+          <iframe title={`${m.t} (Figma prototype)`} src={`https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(m.url)}`} allowFullScreen />
+          <figcaption className="label"><a className="dimlink" href={m.url} target="_blank" rel="noreferrer">open in Figma ↗</a></figcaption>
+        </figure>
+      )}
+    </div>
+  );
+}
+
 export function GcDefineWide() {
   const [cut, setCut] = useState(false);
   return (
+    <>
     <Band no="03.1" kicker="design constraints" title="Four rules we built to">
       <div className="gc-cons">
         {CONSTRAINTS.map((c, k) => (
@@ -274,6 +301,11 @@ export function GcDefineWide() {
       </div>
       <Say pose="csCheck" alt="A small Muskaan ticking off a checklist">Rule one: nobody likes being watched.</Say>
     </Band>
+    <Band no="03.2" kicker="empathy + journey maps · figma prototypes" title="Their day, mapped">
+      <p className="tx-measure">Once the constraints were set, we mapped what our users need, feel and struggle with across a day.</p>
+      <Maps />
+    </Band>
+    </>
   );
 }
 
@@ -402,6 +434,20 @@ export function GcImpact() {
   );
 }
 
+// her demo clips from the Notion case study, one under each of these three points there
+const TAKE_VIDEO: [string, string][] = [
+  ["video-limits.mp4", "Ava's screen in the cardboard body, a sad face."],
+  ["video-next.mp4", "Ava's screen in the cardboard body, winking with a big smile."],
+  ["video-lessons.mp4", "Ava's screen saying 'Time to take your medicines!' with a glowing voice shape."],
+];
+/** a short muted loop that plays only while on screen */
+function Loop({ src, label }: { src: string; label: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const on = useInView(ref);
+  useEffect(() => { const v = ref.current; if (!v) return; v.muted = true; v.setAttribute("muted", ""); if (on) v.play().catch(() => {}); else v.pause(); }, [on]);
+  return <video ref={ref} className="gc-loop" src={src} poster={src.replace(".mp4", ".jpg")} muted loop playsInline preload="metadata" aria-label={label} />;
+}
+
 const TAKE: [string, string][] = [
   ["Limitations", "Adapting to seniors with very different needs, and spatial access, especially in multi-storey homes."],
   ["Next steps", "Talk to buyers and healthcare organisations, partner with senior-living communities, test with more users, and explore a hoverboard or drone for mobility."],
@@ -417,7 +463,7 @@ export function GcImpactWide({ next }: { next: { slug: string; label: string } }
         </div>
       </Band>
       <Band no="06.2" kicker="reflection" title="What we'd do next">
-        <div className="tx-loops gc-take">{TAKE.map(([t, d], i) => <LoopCard key={t} no={`0${i + 1}`} title={t} art={<img src={A(`make-${[7, 9, 4][i]}.webp`)} alt="" />}>{d}</LoopCard>)}</div>
+        <div className="tx-loops gc-take">{TAKE.map(([t, d], i) => <LoopCard key={t} no={`0${i + 1}`} title={t} art={<Loop src={A(TAKE_VIDEO[i][0])} label={TAKE_VIDEO[i][1]} />}>{d}</LoopCard>)}</div>
       </Band>
       <div className="tx-end">
         <Say pose="csTrophy" alt="A small Muskaan holding up a trophy">Two certificates. One very proud robot.</Say>

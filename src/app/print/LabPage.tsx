@@ -28,7 +28,7 @@ export function LabPage() {
         </div>
         <div className="rs-me">
           <span className="ab-bubble hand">wait. what if…</span>
-          <img className="kit-hero" src="/art/kit-idea-white.png" alt="Muskaan with a lightbulb idea, one finger up, holding a notebook" />
+          <img className="kit-hero" src="/art/ld-idea-white.png" alt="Muskaan with a lightbulb idea, one finger up" />
         </div>
       </div>
 
