@@ -230,7 +230,7 @@ export function GmDesign() {
   return (
     <>
       <p className="tx-lede">Three key decisions. Take them for a drive first.</p>
-      <p>04.1 is the whole cabin rebuilt in code: steer the cluster from the wheel, talk to it, change the sky, set the climate, and see how an alert behaves. Then each decision, with the real screens.</p>
+      <p>04.1 wires the original screens together: switch the cluster from the wheel, talk to it, and change the sky. Then each decision, with its screens.</p>
     </>
   );
 }
@@ -280,16 +280,16 @@ function Decision({ id, no, kicker, title, points, children, foot }: { id: strin
 }
 const Labelled = ({ label, children }: { label: string; children: ReactNode }) => <div><p className="gm-shot-label">{label}</p>{children}</div>;
 
-const TRY: string[] = ["Press ▶ on the wheel, or say “navigation”", "Say or type “sunset sky”, or tap Themes on the console", "Drag a climate slider; toggle SYNC", "Press Drive, then “Car ahead brakes”"];
+const TRY: string[] = ["Press ▶ on the wheel to flip the driver display between her default, navigation and voice screens", "Say or type “sunset sky” (or “cloudy”), or tap Themes on the console", "Say “voice”, or press OK on Voice, and talk to it"];
 
 export function GmDesignWide() {
   return (
     <>
       <div id="gm-sim" style={{ scrollMarginTop: 80 }}>
-        <Band no="04.1" kicker="the cabin, rebuilt in code · drive it" title="Take the cabin for a spin">
+        <Band no="04.1" kicker="her screens, wired together · try it" title="Take the cabin for a spin">
           <ol className="gm-try" aria-label="Things to try">{TRY.map((t, i) => <li key={t}><span className="tx-band-no label">0{i + 1}</span>{t}</li>)}</ol>
           <CabinSim />
-          <p className="label mid" style={{ marginTop: 10 }}>a working sketch of the proposal · voice uses your browser's speech recognition (Chrome, Edge, Safari); typing works everywhere</p>
+          <p className="label mid" style={{ marginTop: 10 }}>driver display and front console are the original screens · the console's sky is rebuilt in code so it can change · voice uses your browser's speech recognition (Chrome, Edge, Safari); typing works everywhere</p>
         </Band>
       </div>
 

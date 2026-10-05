@@ -30,7 +30,7 @@ export function Dock({ page }: { page: string }) {
 
 /** The MD logo (after Andrea Da Silva's site): hover or focus it and three small snapshots pop out from
  * behind it with a "learn about me" tag; click opens About. On About it leads back home instead. */
-const LOGO_SNAPS = ["me-bench.webp", "graduation.webp", "face-api-happy.webp"];
+const LOGO_SNAPS = ["kayaking.webp", "ink-tiger.webp", "face-api-happy.webp"]; // teasers from further down About (not its top photos)
 export function LogoMD({ page }: { page: string }) {
   const onAbout = page === "about";
   return (

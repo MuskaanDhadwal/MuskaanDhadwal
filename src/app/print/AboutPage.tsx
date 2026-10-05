@@ -1,8 +1,8 @@
 // ABOUT — the person, not the portfolio (after Andrea Da Silva's about page: read it, don't hunt for it).
-// Hello (a photo stack that spreads on hover) → how I got here (her story as one column, photos in the
+// Hello (snapshots floating beside it) → how I got here (her story as one column, photos in the
 // margin) → facts nobody asked for (each with its photo) → side hustles → say hi.
 // Every small her on this page is a different pose (Minis.tsx).
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Mini, type PoseName } from "./Minis";
 import { Chamfer, SpecTable, useInView } from "./ui";
 import { go } from "./nav";
@@ -18,16 +18,15 @@ function Photo({ src, alt, caption, tilt = -2 }: { src: string; alt: string; cap
 }
 
 // ── 01 hello ────────────────────────────────────────────────────────────────
-// A small stack of snapshots next to the hello (after Andrea Da Silva's about page): hover, focus or tap
-// the stack and it spreads out with captions. Spread positions are % of each photo's own size.
-const DECK: { src: string; alt: string; cap: string; x: number; y: number; r: number }[] = [
-  { src: "michigan.webp", alt: "The atrium of a University of Michigan building, with a giant yellow block M hanging from the glass roof.", cap: "the big M", x: 58, y: 30, r: 7 },
-  { src: "graduation.webp", alt: "Muskaan in a white dress and a maize Michigan stole, tossing her graduation cap in front of a stone university building.", cap: "cap toss. Go Blue", x: -58, y: 26, r: -6 },
-  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", cap: "hi, it's me", x: 0, y: -22, r: -2 },
+// A few snapshots simply floating beside the hello (after Andrea Da Silva's about page): nothing to click.
+// Different photos from the ones that pop out of the MD logo. Positions are % of the photo area.
+const FLOATS: { src: string; alt: string; cap: string; x: number; y: number; r: number; w: number }[] = [
+  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", cap: "hi, it's me", x: 4, y: 0, r: -5, w: 52 },
+  { src: "graduation.webp", alt: "Muskaan in a white dress and a maize Michigan stole, tossing her graduation cap in front of a stone university building.", cap: "cap toss. Go Blue", x: 44, y: 18, r: 4, w: 52 },
+  { src: "michigan.webp", alt: "The atrium of a University of Michigan building, with a giant yellow block M hanging from the glass roof.", cap: "the big M", x: 2, y: 58, r: -3, w: 44 },
 ];
 
 function Hello() {
-  const [spread, setSpread] = useState(false);
   return (
     <section className="sheet ab-hello" aria-labelledby="ab-title" style={{ minHeight: "min(86vh, 760px)" }}>
       <div className="rail" aria-hidden><span className="rail-label">About · 01 hello</span><span className="rail-line" /></div>
@@ -50,19 +49,14 @@ function Hello() {
           </div>
         </div>
         <div className="ab-hello-me">
-          <button className={`ab-deck ${spread ? "spread" : ""}`} onClick={() => setSpread(v => !v)} onMouseEnter={() => setSpread(true)} onMouseLeave={() => setSpread(false)}
-            aria-expanded={spread} aria-label={spread ? "Stack the photos" : "Spread out the photos"}>
-            {DECK.map((p, i) => (
-              <span key={p.src} className="ab-dsnap" style={{ ["--x" as string]: `${p.x}%`, ["--y" as string]: `${p.y}%`, ["--r" as string]: `${p.r}deg`, ["--s" as string]: `${(i - 1) * 4}deg` }}>
+          <div className="ab-floats">
+            {FLOATS.map((p, i) => (
+              <figure key={p.src} className="ab-float" style={{ ["--x" as string]: `${p.x}%`, ["--y" as string]: `${p.y}%`, ["--r" as string]: `${p.r}deg`, ["--w" as string]: `${p.w}%`, animationDelay: `${i * -2.1}s` }}>
                 <img src={`/about/${p.src}`} alt={p.alt} />
-                <span className="hand">{p.cap}</span>
-              </span>
+                <figcaption className="hand">{p.cap}</figcaption>
+              </figure>
             ))}
-            <span className="ab-deck-hint label" aria-hidden>{spread ? "" : "hover or tap"}</span>
-          </button>
-          <div className="ab-hello-wave">
-            <span className="ab-bubble hand">hello! you found the fun page.</span>
-            <Mini pose="abWave" label="A small Muskaan holding a tablet and waving hello" unit="var(--ab-u)" />
+            <div className="ab-float-me"><Mini pose="abWave" label="A small Muskaan holding a tablet and waving hello" unit="var(--ab-u)" /></div>
           </div>
         </div>
       </div>
@@ -125,9 +119,12 @@ function Journey() {
 }
 
 // ── 03 facts nobody asked for: each one comes with its photo, no clicking needed ──
-const FACTS: { pose: PoseName; title: string; line: string; evidence: string; alt: string; photo: [string, string] }[] = [
+const FACTS: { pose: PoseName; title: string; line: string; evidence: string; alt: string; photo: [string, string]; more?: [string, string][] }[] = [
   { pose: "abPlant", title: "Serial plant killer", line: "I research every plant before I buy it. Light, water, soil, the works. They die anyway.", evidence: "Turns out user research doesn't work on succulents.", alt: "A small Muskaan watering a very droopy plant", photo: ["plants.webp", "A shelf of plant pots, most of them suspiciously empty."] },
   { pose: "abDice", title: "Board-game person", line: "Game night is my love language. I will absolutely read the rulebook out loud.", evidence: "I also have notes on the rulebook's information hierarchy.", alt: "A small Muskaan crouched, rolling two dice", photo: ["board-games.webp", "A cupboard stacked with board games."] },
+  { pose: "abArt", title: "Illustrator", line: "The big drawings of me on this site are mine. Pen, paper, too many versions of the same bun.", evidence: "Half tiger, half mandala. Ink, no undo.", alt: "A small Muskaan painting at a tiny easel",
+    photo: ["ink-tiger.webp", "An ink drawing of a tiger's head: one half fur and stripes, the other half intricate mandala patterns."],
+    more: [["ink-wolf.webp", "An ink drawing of a wolf's face splitting into a skull, wrapped in flowers, bones and an arrow."], ["sketching.webp", "A pocket sketchbook with an ink drawing of a whale carrying a tiny astronaut."], ["sketch-2.webp", "An ink drawing of an astronaut in a sketchbook, next to a pair of glasses."]] },
   { pose: "abPaddle", title: "Weekend kayaker", line: "Give me a river and a paddle. It's the one place I don't check my phone.", evidence: "Photographic proof, from the back seat of my own kayak.", alt: "A small Muskaan sitting in a kayak with a paddle, grinning", photo: ["kayaking.webp", "Muskaan from behind, in a life vest and cap, paddling a green kayak on a river."] },
 ];
 
@@ -148,8 +145,9 @@ function Facts() {
       </div>
       <div className="ab-facts">
         {FACTS.map((f, i) => (
-          <article key={f.title} className="ab-fact" style={{ ["--tilt" as string]: `${[-1.2, 0.8, -0.6][i]}deg` }}>
-            <Photo src={f.photo[0]} alt={f.photo[1]} caption={f.evidence} tilt={[-2, 1.6, -1.2][i]} />
+          <article key={f.title} className="ab-fact" style={{ ["--tilt" as string]: `${[-1.2, 0.8, -0.6, 1][i]}deg` }}>
+            <Photo src={f.photo[0]} alt={f.photo[1]} caption={f.evidence} tilt={[-2, 1.6, -1.2, 1.4][i]} />
+            {f.more && <div className="ab-fact-more">{f.more.map(([src, alt], k) => <img key={src} src={`/about/${src}`} alt={alt} loading="lazy" style={{ ["--t" as string]: `${[-4, 3, -2][k]}deg` }} />)}</div>}
             <div className="ab-fact-head">
               <span className="ab-fact-art"><Mini pose={f.pose} label={f.alt} unit={1} /></span>
               <h3 className="display ab-fact-title">{f.title}</h3>
@@ -194,11 +192,6 @@ const HUSTLES: { pose: PoseName; tag: string; title: string; line: string; proof
   { pose: "abCrop", tag: "Published", title: "Accidental agri-tech researcher",
     line: "I published a paper on predicting Indian crop production with machine learning, deployed in Streamlit. I can forecast a harvest. I cannot keep a houseplant alive.",
     proof: "Turkish Journal of Physiotherapy and Rehabilitation · May 2021", alt: "A small Muskaan reading a paper, holding a stalk of wheat" },
-  { pose: "abArt", tag: "Sketchbook", title: "Illustrator",
-    line: "The big drawings of me on this site are mine. Pen, paper, too many versions of the same bun.",
-    proof: "see: every box on the homepage", alt: "A small Muskaan painting at a tiny easel",
-    photos: [["ink-tiger.webp", "An ink drawing of a tiger's head: one half fur and stripes, the other half intricate mandala patterns.", "half tiger, half mandala"], ["ink-wolf.webp", "An ink drawing of a wolf's face splitting into a skull, wrapped in flowers, bones and an arrow.", "wolf, skull, flowers"],
-      ["sketching.webp", "A pocket sketchbook with an ink drawing of a whale carrying a tiny astronaut.", "pocket sketchbook"], ["sketch-2.webp", "An ink drawing of an astronaut in a sketchbook, next to a pair of glasses.", "ink, glasses for scale"]] },
 ];
 
 function SideHustles() {
