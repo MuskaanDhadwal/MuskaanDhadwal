@@ -1,7 +1,6 @@
 // GARAGE — "jack of all trades" (her phrase, from her Framer page): the side projects that show her range.
 // A tool wall of disciplines (each tool is a filter) over one grid: picture projects open in the lightbox,
-// notebook projects (no pictures yet) are text cards under Research. The automotive project graduated to a
-// full case study (#/case/gm), so it isn't parked here any more.
+// notebook projects (no pictures yet) are text cards under Research.
 import { useState } from "react";
 import { Mini } from "./Minis";
 import { Chamfer } from "./ui";
@@ -100,7 +99,6 @@ export function GaragePage() {
           <p className="label mid">Garage · jack of all trades</p>
           <h1 id="gr-title" className="display ab-h1">The garage</h1>
           <p className="ab-lede">Branding, posters, merch, a little VR and a lot of research: the side projects that show the range behind the case studies. Pick a tool off the wall to filter.</p>
-          <p className="gr-grad">The car project moved out: it's a full case study now. <button className="rs-inline" onClick={() => go("#/case/gm")}>Luxury Vehicle × GM →</button></p>
         </div>
         <div className="rs-me">
           <span className="ab-bubble hand">mind the paint.</span>

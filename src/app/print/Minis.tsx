@@ -641,14 +641,6 @@ export const POSES = {
     return <><Body r={r} /><g transform={`translate(${f(j.hR[0] + 2)} ${f(j.hR[1] - 2)})`}>{[-50, -25, 0, 25].map((a, k) => <g key={a} transform={`rotate(${a})`}><rect x="-3.4" y="-26" width="6.8" height="24" rx="1.4" className={k === 2 ? "mn-accent mn-line" : "mn-fill mn-line"} /><path d="M-2 -22 h4" className="mn-thin" /></g>)}<circle cx="0" cy="0" r="1.6" className="mn-solid" /></g></>;
   }),
 
-  // ABOUT — the exploded spec sheet of her
-  /** standing straight for a technical drawing, arms a little out, the "UX" mug in one hand */
-  abSpec: mk("-30 -90 60 94", () => {
-    const r: Rig = { hip: [0, -25], armL: [-28, -14], armR: [28, 10], legL: [-6, -2], legR: [6, 2], eyes: "dot", mouth: "smile" };
-    const j = joints(r);
-    return <><Body r={r} /><Mug x={j.hR[0] + 3} y={j.hR[1] + 1} s={0.75} /></>;
-  }),
-
   // LUXURY VEHICLE × GM — the case study (each used once)
   /** holding a steering wheel out in front with both hands: the hero cameo, inside the exploded drawing */
   gmWheel: mk("-30 -90 60 94", () => {

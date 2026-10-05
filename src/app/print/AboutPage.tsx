@@ -1,10 +1,9 @@
-// ABOUT — the person, not the portfolio. Hello (tap the name for snaps) → an exploded spec sheet of her →
-// how I got here (her own story, a little her walks it) → facts nobody asked for → side hustles → the kit → say hi.
+// ABOUT — the person, not the portfolio. Hello (tap the name for snaps) → how I got here (her own story,
+// a little her walks it) → facts nobody asked for → side hustles → say hi.
 // Every small her on this page is a different pose (Minis.tsx).
 import { useEffect, useRef, useState } from "react";
 import { Mini, type PoseName } from "./Minis";
-import { PARTS } from "./story";
-import { Chamfer, Draw, SpecTable, TitleBlock, useInView, useReducedMotion } from "./ui";
+import { Chamfer, SpecTable, useInView, useReducedMotion } from "./ui";
 import { go } from "./nav";
 
 /** A real photo, taped in like a polaroid. */
@@ -76,54 +75,7 @@ function Hello() {
   );
 }
 
-// ── 02 the spec sheet: an exploded technical drawing of her, numbered callouts you can open ──
-const SPEC_PARTS: { n: number; part: string; spec: string; d: string; at: [number, number]; side: "l" | "r" }[] = [
-  { n: 1, part: "Bun", spec: "storage · v1 of 47", d: "Holds every version of every idea. Yes, even the bad ones. Especially the bad ones.", at: [59, 14], side: "r" },
-  { n: 2, part: "Glasses", spec: "resolution · 1px", d: "Factory-calibrated to notice when something is one pixel off. Cannot be turned off.", at: [44, 33], side: "l" },
-  { n: 3, part: "Brain", spec: "firmware · CS engineering", d: "Learned how systems speak in computer science, then got curious about how they feel to the people using them.", at: [48, 20], side: "l" },
-  { n: 4, part: "Hands", spec: "I/O · Figma + Kotlin", d: "Left hand designs, right hand ships. Both type faster than they should.", at: [34, 66], side: "l" },
-  { n: 5, part: "Mug", spec: "fuel · “UX” is my passion", d: "Runs on coffee. Refillable. Do not remove during deadline week.", at: [69, 67], side: "r" },
-  { n: 6, part: "Feet", spec: "mode · walks the user journey", d: "Would rather walk the journey with real people than guess it from a desk.", at: [50, 93], side: "l" },
-];
-function SpecSheet() {
-  const [on, setOn] = useState(1);
-  const p = SPEC_PARTS.find(x => x.n === on)!;
-  return (
-    <section className="sheet" aria-labelledby="ab-spec-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">About · 02 spec sheet</span><span className="rail-line" /></div>
-      <div className="ab-head">
-        <h2 id="ab-spec-title" className="display ab-h2">Exploded view: me</h2>
-        <span className="label mid">tap a part · not to scale · some assembly required</span>
-      </div>
-      <div className="ab-spec">
-        <div className="ab-spec-draw" data-tap="">
-          <svg viewBox="0 0 100 100" className="ab-spec-grid" aria-hidden preserveAspectRatio="none">
-            <path d="M50 0 V100" className="bp" strokeDasharray="1 2" /><path d="M0 50 H100" className="bp" strokeDasharray="1 2" />
-          </svg>
-          <div className="ab-spec-fig"><Mini pose="abSpec" label="A small Muskaan standing straight like a technical drawing, holding her UX mug" /></div>
-          {SPEC_PARTS.map(x => (
-            <button key={x.n} className={`ab-spec-pin ${x.side} ${on === x.n ? "on" : ""}`} style={{ left: `${x.at[0]}%`, top: `${x.at[1]}%` }} onClick={() => setOn(x.n)} aria-pressed={on === x.n} aria-label={`${x.n}: ${x.part}`}>
-              <span className="tx-pin static">{x.n}</span><span className="ab-spec-lead" aria-hidden /><span className="label ab-spec-tag">{x.part}</span>
-            </button>
-          ))}
-        </div>
-        <div className="ab-spec-card" aria-live="polite">
-          <span className="label">part {String(p.n).padStart(2, "0")} / 06</span>
-          <h3 className="display ab-h3">{p.part}</h3>
-          <p className="label ab-spec-val">{p.spec}</p>
-          <p>{p.d}</p>
-          <div style={{ display: "flex", gap: 8 }}>
-            <Chamfer onClick={() => setOn(v => (v + 4) % 6 + 1)} ariaLabel="Previous part">←</Chamfer>
-            <Chamfer onClick={() => setOn(v => v % 6 + 1)} ariaLabel="Next part">→</Chamfer>
-          </div>
-          <TitleBlock rows={[["Part", "Muskaan"], ["Rev", "2026.10"], ["Drawn by", "herself"]]} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ── 03 how I got here: her own story, one stop at a time, a small her walks the path ──
+// ── 02 how I got here: her own story, one stop at a time, a small her walks the path ──
 const STOPS: { tag: string; title: string; text: string }[] = [
   { tag: "start", title: "The rigid logic of code", text: "My story began in the rigid logic of Computer Science Engineering. I learned how systems speak, but I quickly realized I wanted to know how they felt to the person using them." },
   { tag: "UX", title: "Learning by doing", text: "That curiosity led me to UX and the world of entrepreneurship. I co-founded a startup because I believed, and still do, that the best way to learn is by doing." },
@@ -145,7 +97,7 @@ function Journey() {
   const s = STOPS[i];
   return (
     <section className="sheet" aria-labelledby="ab-path-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">About · 03 the path</span><span className="rail-line" /></div>
+      <div className="rail" aria-hidden><span className="rail-label">About · 02 the path</span><span className="rail-line" /></div>
       <div className="ab-head">
         <h2 id="ab-path-title" className="display ab-h2">How I got here</h2>
         <span className="label mid">there is more than meets the eye · five stops</span>
@@ -176,7 +128,7 @@ function Journey() {
   );
 }
 
-// ── 04 facts nobody asked for ──────────────────────────────────────────────
+// ── 03 facts nobody asked for ──────────────────────────────────────────────
 const FACTS: { pose: PoseName; title: string; line: string; evidence: string; alt: string; photo?: [string, string] }[] = [
   { pose: "abPlant", title: "Serial plant killer", line: "I research every plant before I buy it. Light, water, soil, the works. They die anyway.", evidence: "Turns out user research doesn't work on succulents.", alt: "A small Muskaan holding a very droopy plant, looking guilty", photo: ["plants.webp", "A shelf of plant pots, most of them suspiciously empty."] },
   { pose: "abDice", title: "Board-game person", line: "Game night is my love language. I will absolutely read the rulebook out loud.", evidence: "I also have notes on the rulebook's information hierarchy.", alt: "A small Muskaan rolling two dice", photo: ["board-games.webp", "A cupboard stacked with board games."] },
@@ -191,7 +143,7 @@ function Facts() {
   const n = open.filter(Boolean).length;
   return (
     <section className="sheet" aria-labelledby="ab-facts-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">About · 04 facts</span><span className="rail-line" /></div>
+      <div className="rail" aria-hidden><span className="rail-label">About · 03 facts</span><span className="rail-line" /></div>
       <div className="ab-head">
         <h2 id="ab-facts-title" className="display ab-h2">Facts nobody asked for</h2>
         <span className="label" aria-live="polite">{n}/{FACTS.length} pieces of evidence found{n === FACTS.length ? " · case closed ✓" : " · tap a card"}</span>
@@ -212,7 +164,7 @@ function Facts() {
   );
 }
 
-// ── 05 side hustles: real things from the résumé, told the fun way ─────────
+// ── 04 side hustles: real things from the résumé, told the fun way ─────────
 const HUSTLES: { pose: PoseName; tag: string; title: string; line: string; proof: string; alt: string; photos?: [string, string, string][] }[] = [
   { pose: "abPitch", tag: "Prize money", title: "Pitch-competition winner",
     line: "Took CommunityConnect, an edtech idea, to two University of Michigan challenges in the same month and won both.",
@@ -238,7 +190,7 @@ const HUSTLES: { pose: PoseName; tag: string; title: string; line: string; proof
 function SideHustles() {
   return (
     <section className="sheet" aria-labelledby="ab-hustle-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">About · 05 side hustles</span><span className="rail-line" /></div>
+      <div className="rail" aria-hidden><span className="rail-label">About · 04 side hustles</span><span className="rail-line" /></div>
       <div className="ab-head">
         <h2 id="ab-hustle-title" className="display ab-h2">Side hustles</h2>
         <span className="label mid">what I do when the day job is done</span>
@@ -259,22 +211,6 @@ function SideHustles() {
           </article>
         ))}
       </div>
-    </section>
-  );
-}
-
-// ── 06 the kit ─────────────────────────────────────────────────────────────
-function Kit() {
-  return (
-    <section className="sheet" aria-labelledby="ab-kit-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">About · 06 the kit</span><span className="rail-line" /></div>
-      <div className="ab-head">
-        <h2 id="ab-kit-title" className="display ab-h2">What's on the desk</h2>
-        <span className="label mid">the tools, laid out flat</span>
-      </div>
-      <Draw viewBox="0 0 520 250" className="bp ab-kit" role="img" aria-label={`My kit: ${PARTS.map(p => p.name).join(", ")}`}>
-        <Lay />
-      </Draw>
       <div className="ab-end">
         <h2 className="display ab-h2">Now you know too much.</h2>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -286,37 +222,13 @@ function Kit() {
   );
 }
 
-/** Flat-lay of the kit: precise line objects, each labelled. */
-function Lay() {
-  const L = (x: number, y: number, t: string) => <text x={x} y={y} fontSize="9" textAnchor="middle" className="bp-text" style={{ textTransform: "uppercase" }}>{t}</text>;
-  const [figma, , , ai, miro] = PARTS.map(p => p.name);
-  return (
-    <>
-      <rect x="18" y="18" width="88" height="120" rx="3" className="fill" /><rect x="36" y="32" width="52" height="18" /><text x="62" y="45" fontSize="10" textAnchor="middle" className="bp-text">SKETCH</text>
-      <path d="M18 28 h-6 M18 52 h-6 M18 76 h-6 M18 100 h-6 M18 124 h-6" />{L(62, 156, "sketchbook")}
-      <rect x="130" y="22" width="150" height="96" rx="6" className="fill" /><text x="205" y="80" fontSize="30" fontWeight="700" textAnchor="middle" className="bp-text" style={{ fontFamily: "var(--body)" }}>M</text><path d="M118 128 h174 l-8 8 h-158 z" className="fill" />{L(205, 156, figma)}
-      <rect x="310" y="20" width="50" height="94" rx="9" className="fill" /><rect x="316" y="32" width="38" height="68" /><text x="335" y="70" fontSize="11" textAnchor="middle" className="bp-text">.kt</text>{L(335, 130, "Android · Kotlin")}
-      <path d="M410 22 v18 M410 64 v18 M380 52 h18 M422 52 h18 M392 34 l10 10 M418 60 l10 10" />{L(410, 104, ai)}
-      <rect x="462" y="22" width="44" height="40" className="fill" /><path d="M496 62 l10 -10" /><text x="484" y="46" fontSize="10" textAnchor="middle" className="bp-text" style={{ fontFamily: "var(--hand)" }}>HMW?</text>{L(484, 80, miro)}
-      <circle cx="62" cy="200" r="18" /><path d="M75 213 l16 16" strokeWidth="3" />{L(62, 244, "Maze · Dovetail")}
-      <rect x="140" y="178" width="96" height="50" className="fill" /><text x="188" y="210" fontSize="16" textAnchor="middle" className="bp-text">&lt;/&gt;</text>{L(188, 244, "HTML/CSS/JS")}
-      <rect x="262" y="174" width="70" height="56" className="fill" /><path d="M272 188 h50 M272 200 h40 M272 212 h46" />{L(300, 244, "Notion")}
-      <path d="M368 200 h40 l-4 40 h-32 z" className="fill" /><path d="M408 208 q12 0 12 10 t-14 10" />{L(390, 188, "mug, refillable")}
-      <rect x="436" y="196" width="22" height="22" rx="3" className="fill" /><circle cx="442" cy="202" r="1.6" className="bp-text" /><circle cx="452" cy="212" r="1.6" className="bp-text" /><circle cx="447" cy="207" r="1.6" className="bp-text" />
-      <rect x="466" y="204" width="22" height="22" rx="3" className="fill" transform="rotate(14 477 215)" /><circle cx="477" cy="215" r="1.6" className="bp-text" />{L(470, 246, "dice · game night")}
-    </>
-  );
-}
-
 export function AboutPage() {
   return (
     <>
       <Hello />
-      <SpecSheet />
       <Journey />
       <Facts />
       <SideHustles />
-      <Kit />
     </>
   );
 }
