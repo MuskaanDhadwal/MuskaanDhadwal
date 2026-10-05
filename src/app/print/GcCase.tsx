@@ -47,23 +47,27 @@ export function GcOverview() {
 // Ava, working: pick a moment of the day and watch the robot, the wristband and the caregiver's phone respond.
 type Moment = "idle" | "meds" | "lonely" | "fall";
 type Face = "happy" | "wink" | "joy" | "sad" | "alert";
-const MOMENTS: Record<Moment, { label: string; steps: { face: Face; say: string; ring: string; phone?: string; band?: string; act?: string }[] }> = {
-  idle: { label: "All good", steps: [{ face: "happy", say: "Good morning! How did you sleep?", ring: "#5B8CFF" }] },
+// watch = which of her wristband screens shows (1 hello · 2 fall detected · 3 contacting emergency);
+// app = which of her Ava app screens (1 sign in · 2 medication reminder + emergency contacts · 3 contacts)
+const MOMENTS: Record<Moment, { label: string; steps: { face: Face; say: string; ring: string; watch: 1 | 2 | 3; app: 1 | 2 | 3; act?: string }[] }> = {
+  idle: { label: "All good", steps: [{ face: "happy", say: "Good morning! How did you sleep?", ring: "#5B8CFF", watch: 1, app: 1 }] },
   meds: { label: "9:00 · medicine time", steps: [
-    { face: "happy", say: "Time to take your medicine! Your blood-pressure tablet is in the drawer.", ring: "#FF4242", act: "Take it" },
-    { face: "joy", say: "Great job! I'll let Abbey know.", ring: "#9AE77E", phone: "Brandon took his 9:00 AM medication ✓" },
+    { face: "happy", say: "Time to take your medicine! Your blood-pressure tablet is in the drawer.", ring: "#FF4242", watch: 1, app: 2, act: "Take it" },
+    { face: "joy", say: "Great job! I'll let Abbey know.", ring: "#9AE77E", watch: 1, app: 2 },
   ] },
   lonely: { label: "Feeling low", steps: [
-    { face: "sad", say: "You seem a little down. Would you like to call someone?", ring: "#5B8CFF", act: "Call Rita" },
-    { face: "wink", say: "Calling Rita…", ring: "#5B8CFF", act: "Hang up" },
-    { face: "joy", say: "That was lovely. You two should talk more often!", ring: "#9AE77E", phone: "Brandon had a video call with Rita" },
+    { face: "sad", say: "You seem a little down. Would you like to call someone?", ring: "#5B8CFF", watch: 1, app: 3, act: "Call Rita" },
+    { face: "wink", say: "Calling Rita…", ring: "#5B8CFF", watch: 1, app: 3, act: "Hang up" },
+    { face: "joy", say: "That was lovely. You two should talk more often!", ring: "#9AE77E", watch: 1, app: 3 },
   ] },
   fall: { label: "A fall in the bathroom", steps: [
-    { face: "alert", say: "I felt a fall from your wristband. Are you okay?", ring: "#FF4242", band: "Fall detected", act: "No response" },
-    { face: "alert", say: "Help is on the way. I've called emergency services and your daughter.", ring: "#FF4242", band: "Contacting emergency", phone: "Fall detected · emergency services contacted · Brandon is in the bathroom" },
-    { face: "happy", say: "Stay still. I'm right here with you until help arrives.", ring: "#5B8CFF" },
+    { face: "alert", say: "I felt a fall from your wristband. Are you okay?", ring: "#FF4242", watch: 2, app: 2, act: "No response" },
+    { face: "alert", say: "Help is on the way. I've called emergency services and your daughter.", ring: "#FF4242", watch: 3, app: 2 },
+    { face: "happy", say: "Stay still. I'm right here with you until help arrives.", ring: "#5B8CFF", watch: 3, app: 2 },
   ] },
 };
+const WATCH_ALT = ["", "Wristband screen: Ava's robot face saying hello.", "Wristband screen: a yellow warning, severe fall detected.", "Wristband screen: a red light, contacting emergency."];
+const APP_ALT = ["", "Ava app: sign-in screen with the robot at the top.", "Ava app: emergency contacts and a medication reminder counting down for Azithromycin.", "Ava app: the contacts list."];
 function AvaFace({ face }: { face: Face }) {
   const eye = (x: number) => face === "wink" && x > 0 ? <path d={`M${x - 14} 0 q14 -12 28 0`} /> : face === "sad" ? <path d={`M${x - 14} -4 q14 10 28 0`} /> : <circle cx={x} cy="0" r="15" />;
   return (
@@ -80,9 +84,7 @@ function AvaFace({ face }: { face: Face }) {
 function AvaLive() {
   const [m, setM] = useState<Moment>("idle");
   const [i, setI] = useState(0);
-  const [feed, setFeed] = useState<string[]>([]);
   const st = MOMENTS[m].steps[Math.min(i, MOMENTS[m].steps.length - 1)];
-  useEffect(() => { if (st.phone) setFeed(f => (f[0] === st.phone ? f : [st.phone!, ...f].slice(0, 4))); }, [st.phone]);
   useEffect(() => { if (m !== "fall" || i !== 1) return; const id = setTimeout(() => setI(2), 3500); return () => clearTimeout(id); }, [m, i]);
   const pick = (k: Moment) => { setM(k); setI(0); };
   return (
@@ -99,14 +101,10 @@ function AvaLive() {
           <p className="gc-say hand">{st.say}</p>
           {st.act && <Chamfer solid onClick={() => setI(v => v + 1)}>{st.act}</Chamfer>}
         </div>
-        <div className="gc-side">
-          <div className={`gc-band ${st.band ? "alarm" : ""}`}><span className="label">wristband</span><b>{st.band ?? "all quiet"}</b></div>
-          <div className="gc-phone">
-            <span className="label">Abbey's phone · Ava app</span>
-            {feed.length === 0 ? <p className="gc-empty">No alerts. Abbey only hears about what matters.</p>
-              : <ul>{feed.map((f, k) => <li key={f + k} className={f.startsWith("Fall") ? "urgent" : ""}>{f}</li>)}</ul>}
-          </div>
-          <p className="label mid">a working sketch of the scenarios we storyboarded and enacted · names from our personas</p>
+        <div className="gc-devices">
+          <figure className="gc-device"><img key={`w${st.watch}`} className="pop" src={A(`watch-${st.watch}.webp`)} alt={WATCH_ALT[st.watch]} /><figcaption className="label">wristband</figcaption></figure>
+          <figure className="gc-device"><img key={`a${st.app}`} className="pop" src={A(`app-${st.app}.webp`)} alt={APP_ALT[st.app]} /><figcaption className="label">Ava app</figcaption></figure>
+          <p className="label mid gc-devices-note">our wristband and app screens, following the scenarios we storyboarded and enacted</p>
         </div>
       </div>
     </div>
@@ -151,9 +149,10 @@ function Funnel() {
       <div>
         <svg viewBox="0 0 420 250" className="tx-diagram" role="img" aria-label="A funnel: 20 IoT opportunities, narrowed to 3 concepts, narrowed to 1">
           <path d="M10 20 H410 L290 120 H130 Z" className="bp" /><path d="M130 130 H290 L240 200 H180 Z" className="bp" /><path d="M180 210 H240 V240 H180 Z" className="bp" style={{ fill: "var(--white)" }} />
-          <text x="210" y="64" textAnchor="middle" className="bp-text" fontSize="15">20 IOT OPPORTUNITIES</text>
-          <text x="210" y="84" textAnchor="middle" className="bp-text" fontSize="10">AUTOMATE · AUGMENT · INTEGRATE · INTERRUPT</text>
-          <text x="210" y="170" textAnchor="middle" className="bp-text" fontSize="13">3 CONCEPTS</text>
+          <text x="210" y="54" textAnchor="middle" className="bp-text" fontSize="14">20 IOT OPPORTUNITIES</text>
+          <text x="210" y="74" textAnchor="middle" className="bp-text" fontSize="9">AUTOMATE · AUGMENT</text>
+          <text x="210" y="88" textAnchor="middle" className="bp-text" fontSize="9">INTEGRATE · INTERRUPT</text>
+          <text x="210" y="170" textAnchor="middle" className="bp-text" fontSize="12">3 CONCEPTS</text>
           <text x="210" y="230" textAnchor="middle" fontSize="13" fill="var(--blueprint-dk)" style={{ fontFamily: "var(--mono)" }}>1</text>
         </svg>
         <p>Each idea came from mapping an audience, their environment and the steps of a task, then asking where IoT could automate, augment, integrate or interrupt it.</p>
@@ -413,20 +412,18 @@ export function GcImpactWide({ next }: { next: { slug: string; label: string } }
   return (
     <>
       <Band no="06.1" kicker="the showcase" title="Most convincing demo">
-        <div className="tx-split" style={{ alignItems: "start" }}>
+        <div className="gc-awards">
           <Shot src={A("awards.webp")} alt="The team of four smiling and holding two award certificates." caption="SPEC. G3-06 · both certificates" />
-          <Tube id="ph5zFSgHft4" title="SI 612 GuardianCare: Ava" poster={A("make-5.webp")} caption="Ava in action · compassion in every interaction" />
         </div>
       </Band>
       <Band no="06.2" kicker="reflection" title="What we'd do next">
-        <div className="tx-loops">{TAKE.map(([t, d], i) => <LoopCard key={t} no={`0${i + 1}`} title={t} art={<img src={A(`make-${[7, 9, 4][i]}.webp`)} alt="" />}>{d}</LoopCard>)}</div>
+        <div className="tx-loops gc-take">{TAKE.map(([t, d], i) => <LoopCard key={t} no={`0${i + 1}`} title={t} art={<img src={A(`make-${[7, 9, 4][i]}.webp`)} alt="" />}>{d}</LoopCard>)}</div>
       </Band>
       <div className="tx-end">
         <Say pose="csTrophy" alt="A small Muskaan holding up a trophy">Two certificates. One very proud robot.</Say>
         <p className="tx-measure">Most of us were designing for our own families far away, and that kept it honest. If you work on health, IoT or anything that has to earn people's trust, I'd love to talk.</p>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
-          <Chamfer onClick={() => go(`#/case/${next.slug}`)}>Next print → {next.label}</Chamfer>
         </div>
       </div>
       <Dim>end of G3</Dim>

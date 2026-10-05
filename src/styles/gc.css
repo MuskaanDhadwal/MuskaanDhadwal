@@ -93,3 +93,14 @@
 @media (max-width: 560px) { .gc-cons, .gc-found { grid-template-columns: 1fr; } .gc-make { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .gc-band.alarm { animation: none; } .gc-drawer, .gc-bar-track span, .gc-was::after { transition: none; } }
 .gc-story { align-items: center; }
+
+/* Ava, working: her real wristband + app screens beside the robot */
+.gc-devices { display: grid; grid-template-columns: auto auto; gap: 18px; align-items: end; justify-content: center; }
+.gc-device { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.gc-device img { display: block; height: auto; max-width: 100%; border-radius: 10px; }
+.gc-device:first-child img { width: 140px; }
+.gc-device:last-child img { width: 220px; }
+.gc-devices-note { grid-column: 1 / -1; text-align: center; margin: 0; }
+.gc-awards { max-width: 720px; margin: 0 auto; }
+.gc-take .tx-loop-art { background: #10171C; }
+.gc-take .tx-loop-art img { object-fit: contain; }

@@ -2,10 +2,10 @@
 // A tool wall of disciplines (each tool is a filter) over one grid: picture projects open in the lightbox,
 // notebook projects (no pictures yet) are text cards under Research.
 import { useState } from "react";
-import { Mini } from "./Minis";
 import { Chamfer } from "./ui";
 import { Lightbox } from "./Lightbox";
 import { go } from "./nav";
+import { PageDrawing } from "./PageDrawings";
 
 type Cat = "Branding" | "Social" | "Posters" | "Infographics" | "Merch" | "AR/VR" | "Research";
 type Img = { f: string; alt: string; anim?: boolean };
@@ -92,7 +92,8 @@ export function GaragePage() {
   const list = PROJECTS.filter(p => cat === "All" || p.cat === cat);
   const notes = cat === "All" || cat === "Research" ? NOTES : [];
   return (
-    <section className="sheet" aria-labelledby="gr-title" style={{ minHeight: 0 }}>
+    <section className="sheet tx-has-bg" aria-labelledby="gr-title" style={{ minHeight: 0 }}>
+      <PageDrawing view="garage" side="right" />
       <div className="rail" aria-hidden><span className="rail-label">Garage · jack of all trades</span><span className="rail-line" /></div>
       <div className="rs-head">
         <div>
@@ -102,24 +103,26 @@ export function GaragePage() {
         </div>
         <div className="rs-me">
           <span className="ab-bubble hand">mind the paint.</span>
-          <Mini pose="rsFrame" label="A small Muskaan hanging a picture frame on a nail" unit="var(--ab-u)" />
+          <img className="kit-hero" src="/art/kit-artist-white.png" alt="Muskaan sitting cross-legged, sketching in a notebook, headphones round her neck" />
         </div>
       </div>
 
       <ToolWall cat={cat} setCat={setCat} />
 
       <p className="label mid gr-showing" aria-live="polite">{cat === "All" ? "showing everything" : `showing ${cat.toLowerCase()} · ${count(cat)}`}</p>
-      <div className="rs-projects">
+      <div className="rs-projects gr-prints">
         {list.map(p => {
           const cover = p.imgs[0];
+          const n = PROJECTS.indexOf(p) + 1;
           return (
-            <article key={p.t} className="rs-proj">
+            <article key={p.t} className="rs-proj gr-proj" style={{ ["--tilt" as string]: `${[-1.4, 1.1, -0.8, 1.5, -1.2, 0.9, -1.6][n % 7]}deg` }}>
+              <span className="gr-tape" aria-hidden />
               <button className="rs-proj-cover" onClick={() => setOpen({ p, i: 0 })} aria-label={`Open ${p.t}: ${p.imgs.length} ${p.imgs.length === 1 ? "image" : "images"}`}>
                 <img src={cover.anim ? T(cover.f.replace(".webp", "-still.webp")) : T(cover.f)} alt="" loading="lazy" />
                 <span className="rs-proj-count label">{p.imgs.length} {p.imgs.length === 1 ? "image" : "images"}{cover.anim ? " · animated" : ""}</span>
               </button>
               <div className="rs-proj-body">
-                <span className="label mid">{p.cat}{p.ctx && ` · ${p.ctx}`}</span>
+                <span className="label gr-spec">SPEC. GR-{String(n).padStart(2, "0")} · {p.cat}{p.ctx && ` · ${p.ctx}`}</span>
                 <h3 className="display rs-proj-title">{p.t}</h3>
                 <p>{p.d}</p>
                 <ul className="gr-skills" aria-label="Skills">{p.skills.map(s => <li key={s}>{s}</li>)}</ul>

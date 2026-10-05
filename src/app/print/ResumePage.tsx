@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Mini } from "./Minis";
 import { Chamfer } from "./ui";
 import { go } from "./nav";
+import { PageDrawing } from "./PageDrawings";
 
 const RESUMES = [
   { k: "ux", label: "UX Engineer · 1 page", file: "/resume/Muskaan_Dhadwal_UX_Engineer_Resume.pdf", for: "For UX engineer, design technologist and front-end-leaning design roles." },
@@ -15,7 +16,8 @@ function Resumes() {
   const [k, setK] = useState(RESUMES[0].k);
   const r = RESUMES.find(x => x.k === k)!;
   return (
-    <section className="sheet rs-top" aria-labelledby="rs-title" style={{ minHeight: 0 }}>
+    <section className="sheet rs-top tx-has-bg" aria-labelledby="rs-title" style={{ minHeight: 0 }}>
+      <PageDrawing view="sheets" side="right" />
       <div className="rail" aria-hidden><span className="rail-label">Résumé · 01 the paperwork</span><span className="rail-line" /></div>
       <div className="rs-head">
         <div>

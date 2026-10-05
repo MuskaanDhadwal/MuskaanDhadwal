@@ -230,7 +230,7 @@ export function GmDesign() {
   return (
     <>
       <p className="tx-lede">Three key decisions. Take them for a drive first.</p>
-      <p>04.1 wires the original screens together: switch the cluster from the wheel, talk to it, and change the sky. Then each decision, with its screens.</p>
+      <p>04.1 wires the original screens together: switch the cluster from the wheel and change the sky. Then each decision, with its screens.</p>
     </>
   );
 }
@@ -280,7 +280,7 @@ function Decision({ id, no, kicker, title, points, children, foot }: { id: strin
 }
 const Labelled = ({ label, children }: { label: string; children: ReactNode }) => <div><p className="gm-shot-label">{label}</p>{children}</div>;
 
-const TRY: string[] = ["Press ▶ on the wheel to flip the driver display between her default, navigation and voice screens", "Say or type “sunset sky” (or “cloudy”), or tap Themes on the console", "Say “voice”, or press OK on Voice, and talk to it"];
+const TRY: string[] = ["Press ▶ on the wheel to flip the driver display between her default, navigation and voice-assistant screens", "Open “Sky themes” on the console and pick a sky: sunrise, cloudy, sunset or constellation", "Scroll on to see the climate screen, full size"];
 
 export function GmDesignWide() {
   return (
@@ -289,7 +289,7 @@ export function GmDesignWide() {
         <Band no="04.1" kicker="her screens, wired together · try it" title="Take the cabin for a spin">
           <ol className="gm-try" aria-label="Things to try">{TRY.map((t, i) => <li key={t}><span className="tx-band-no label">0{i + 1}</span>{t}</li>)}</ol>
           <CabinSim />
-          <p className="label mid" style={{ marginTop: 10 }}>driver display and front console are the original screens · the console's sky is rebuilt in code so it can change · voice uses your browser's speech recognition (Chrome, Edge, Safari); typing works everywhere</p>
+          <p className="label mid" style={{ marginTop: 10 }}>every screen here is the original design · only the sky-theme page is rebuilt in code, so the sky can really change</p>
         </Band>
       </div>
 
@@ -444,7 +444,6 @@ export function GmOutcomeWide({ next }: { next: { slug: string; label: string } 
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
           <Chamfer href={FIGMA} external>Every screen in Figma ↗</Chamfer>
-          <Chamfer onClick={() => go(`#/case/${next.slug}`)}>Next print → {next.label}</Chamfer>
         </div>
       </div>
       <Dim>end of V4</Dim>

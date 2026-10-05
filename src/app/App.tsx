@@ -22,10 +22,10 @@ import { CaseStudy } from "./print/CaseStudy";
 import { Loader } from "./print/Loader";
 import { GaragePage } from "./print/GaragePage";
 import { LabPage } from "./print/LabPage";
-import { RailWalker, TapCursor } from "./print/ui";
+import { CaseWalker, TapCursor } from "./print/ui";
 import { missionBySlug } from "./print/story";
 import { go } from "./print/nav";
-import { Dock, LogoMD } from "./print/Dock";
+import { LogoMD } from "./print/Dock";
 
 type Route = { page: string; slug?: string; anchor?: string };
 function parse(hash: string): Route {
@@ -68,15 +68,15 @@ export default function App() {
         <LogoMD page={route.page} />
         <button className="nav-menu-btn label" aria-expanded={menu} aria-controls="main-nav" onClick={() => setMenu(v => !v)}>{menu ? "Close ✕" : "Menu ☰"}</button>
         <nav id="main-nav" className={`nav-links ${menu ? "open" : ""}`} aria-label="Main">
-          {([["Work", "#/work", isWork], ["Lab", "#/lab", route.page === "lab"], ["Garage", "#/garage", route.page === "garage"], ["About", "#/about", route.page === "about"], ["Contact", "#/contact", route.page === "contact"], ["Resume", "#/resume", route.page === "resume"]] as [string, string, boolean][]).map(([l, h, on]) => (
+          {([["Home", "#/", route.page === "home" && !route.anchor], ["Work", "#/work", isWork], ["Lab", "#/lab", route.page === "lab"], ["Garage", "#/garage", route.page === "garage"], ["About", "#/about", route.page === "about"], ["Contact", "#/contact", route.page === "contact"], ["Resume", "#/resume", route.page === "resume"]] as [string, string, boolean][]).map(([l, h, on]) => (
             <button key={l} className="nav-link dimlink" aria-current={on ? "page" : undefined} onClick={() => { setMenu(false); go(h); }}>{l}</button>
           ))}
         </nav>
       </header>
-      {route.page === "case" && <RailWalker><Mini pose="csWalk" unit={0.5} /></RailWalker>}
+      {route.page === "case" && <CaseWalker figure={st => <Mini pose={st ? "walkB" : "walkA"} unit={0.62} />} />}
       {/* debug: ?only=<sheet id> shows just that sheet (for screenshots of long pages) */}
       {new URLSearchParams(location.search).get("only") && <style>{`main section.sheet:not(#${new URLSearchParams(location.search).get("only")}) { display: none; }`}</style>}
-      <main key={sheetKey} className={`sheet-in ${route.page !== "home" ? "has-dock" : ""}`}>
+      <main key={sheetKey} className="sheet-in">
         {route.page === "home" && <Home />}
         {route.page === "case" && (mission ? <CaseStudy mission={mission} /> : <Home />)}
         {route.page === "garage" && <GaragePage />}
@@ -87,7 +87,6 @@ export default function App() {
         {route.page === "char" && <CharSheet />}
         {!["home", "case", "lab", "garage", "char", "about", "contact", "resume"].includes(route.page) && <Home />}
       </main>
-      {booted && route.page !== "home" && !menu && <Dock page={route.page} />}
     </>
   );
 }

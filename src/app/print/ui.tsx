@@ -150,6 +150,43 @@ export function TapCursor() {
   return <div className="tap-cursor" style={{ left: s.x, top: s.y }} aria-hidden>{s.label}</div>;
 }
 
+// ── Case-study walker: the same walking her as the homepage rail, with the sheet you're on ──
+export function CaseWalker({ figure }: { figure: (step: 0 | 1) => ReactNode }) {
+  const reduced = useReducedMotion();
+  const [p, setP] = useState(0);
+  const [step, setStep] = useState<0 | 1>(0);
+  const [moving, setMoving] = useState(false);
+  const [label, setLabel] = useState("");
+  useEffect(() => {
+    let stop = 0;
+    const on = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      setP(max > 0 ? Math.min(1, scrollY / max) : 0);
+      setStep((Math.floor(scrollY / 40) % 2) as 0 | 1);
+      let cur = "";
+      document.querySelectorAll<HTMLElement>("main section.sheet").forEach(el => {
+        if (el.getBoundingClientRect().top < innerHeight * 0.35) cur = el.querySelector(".rail-label")?.textContent ?? cur;
+      });
+      setLabel(cur);
+      setMoving(true); clearTimeout(stop); stop = window.setTimeout(() => setMoving(false), 160);
+    };
+    on(); addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
+    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); clearTimeout(stop); };
+  }, []);
+  return (
+    <>
+      <div className="side-rail case-rail" aria-hidden>
+        <span className="side-rail-line" />
+        <div className="side-rail-me" style={{ top: `calc(${p.toFixed(4)} * (100% - 210px))` }}>
+          {figure(reduced || !moving ? 0 : step)}
+          {label && <span className="label">{label}</span>}
+        </div>
+      </div>
+      <div className="progress-bar" aria-hidden style={{ width: "100%", transform: `scaleX(${p})` }} />
+    </>
+  );
+}
+
 // ── Rail walker (reading progress) ─────────────────────────────────────────
 export function RailWalker({ children }: { children?: ReactNode }) {
   const [p, setP] = useState(0);

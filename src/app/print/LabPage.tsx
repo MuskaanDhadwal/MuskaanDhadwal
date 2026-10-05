@@ -2,12 +2,12 @@
 // (things to poke, from play.ts; ASCII Hands was built entirely with AI), then how she works with AI:
 // certified, learning now, and the day job.
 // Facts: the OpenAI Academy credential page, the two Claude Academy course pages, the app itself.
-import { Mini } from "./Minis";
 import { ToySection } from "./PlayPage";
 import { TOYS } from "./play";
 import { Chamfer, SpecTable } from "./ui";
 import { Band } from "./TraxenCase";
 import { go } from "./nav";
+import { PageDrawing } from "./PageDrawings";
 
 const SKILLS = ["Agent task scoping", "Context gathering for agents", "Draft generation and review", "Agent output verification", "Workflow improvement"];
 const COURSES: { t: string; d: string; url: string }[] = [
@@ -17,7 +17,8 @@ const COURSES: { t: string; d: string; url: string }[] = [
 
 export function LabPage() {
   return (
-    <section className="sheet" aria-labelledby="ai-page-title" style={{ minHeight: 0 }}>
+    <section className="sheet tx-has-bg" aria-labelledby="ai-page-title" style={{ minHeight: 0 }}>
+      <PageDrawing view="lab" side="right" />
       <div className="rail" aria-hidden><span className="rail-label">Lab · experiments + AI</span><span className="rail-line" /></div>
       <div className="rs-head">
         <div>
@@ -27,7 +28,7 @@ export function LabPage() {
         </div>
         <div className="rs-me">
           <span className="ab-bubble hand">high five, robot.</span>
-          <Mini pose="hmAI" label="A small Muskaan high-fiving a little robot" unit="var(--ab-u)" />
+          <img className="kit-hero" src="/art/kit-idea-white.png" alt="Muskaan with a lightbulb idea, one finger up, holding a notebook" />
         </div>
       </div>
 

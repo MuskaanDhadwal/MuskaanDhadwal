@@ -114,3 +114,14 @@
 @keyframes simSwap { from { opacity: .3; transform: scale(.985); } to { opacity: 1; transform: none; } }
 @media (max-width: 900px) { .sim-dash { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .sim-dd-img { animation: none; } }
+
+/* her original console home screen; the sky-theme page stays live */
+.sim-cc.is-original { aspect-ratio: auto; background: #0D0F14; }
+.sim-cc.is-original .sim-cc-ui { display: block; }
+.sim-cc.is-original .sim-nav { display: none; }
+.sim-cc-original { display: block; width: 100%; height: auto; }
+.sim-cc-tabs { margin: 0 0 8px; }
+/* the climate screen gets its own full row, at a readable size */
+.sim-fc-full { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line-mid); display: flex; flex-direction: column; align-items: center; }
+.sim-fc-full .sim-label { align-self: flex-start; }
+.sim-fc-full .sim-fc-img { max-height: none; width: min(100%, 520px); }

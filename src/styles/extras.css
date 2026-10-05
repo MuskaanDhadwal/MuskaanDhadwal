@@ -79,7 +79,7 @@
 .logo-md-snaps { position: absolute; left: 4px; top: 4px; width: 54px; height: 54px; z-index: 1; pointer-events: none; }
 .logo-md-snap { position: absolute; left: 0; top: 0; width: 54px; height: 54px; max-width: none; object-fit: cover; background: #fff; border: 3px solid #fff; border-bottom-width: 9px;
   box-shadow: 3px 3px 0 var(--shadow); opacity: 0; transform: translate(0, 0) rotate(0deg) scale(.4); transition: opacity .2s var(--ease-out), transform .45s var(--ease-spring); }
-.logo-md-tag { position: absolute; left: 58px; top: 9px; z-index: 3; white-space: nowrap; font-size: 19px; line-height: 1; padding: 6px 10px 5px; background: var(--accent); color: var(--blueprint-dk); box-shadow: 3px 3px 0 var(--shadow); opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .3s var(--ease-out); pointer-events: none; }
+.logo-md-tag { position: absolute; left: 58px; top: 12px; z-index: 3; white-space: nowrap; font-size: 20px; line-height: 1; color: var(--accent); text-shadow: 0 1px 0 var(--bg), 0 0 6px var(--bg); opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .3s var(--ease-out); pointer-events: none; }
 .logo-md:hover .logo-md-snap, .logo-md:focus-visible .logo-md-snap, .logo-md.peek .logo-md-snap { opacity: 1; }
 .logo-md:hover .s0, .logo-md:focus-visible .s0, .logo-md.peek .s0 { transform: translate(28px, 48px) rotate(-9deg); transition-delay: 0s; }
 .logo-md:hover .s1, .logo-md:focus-visible .s1, .logo-md.peek .s1 { transform: translate(84px, 42px) rotate(6deg); transition-delay: .05s; }
@@ -98,3 +98,18 @@
 .dock-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 main.has-dock { padding-bottom: 76px; }
 @media (max-width: 520px) { .dock-btn { padding: 0 10px; } .dock-label { display: none; } .dock-btn[aria-current="page"] .dock-label, .dock-btn:hover .dock-label { display: none; } }
+
+/* Garage (2026-10-05): each project is a print pinned up in the garage: paper, tape, spec number, a tilt */
+.gr-prints { gap: 34px 28px; margin-top: 18px; }
+.gr-proj { position: relative; background: var(--paper, #F6F3EA); color: var(--blueprint-dk); border: 0; padding: 10px; box-shadow: 6px 6px 0 var(--shadow);
+  transform: rotate(var(--tilt, 0deg)); transition: transform var(--dur-ui) var(--ease-out); }
+.gr-proj:hover, .gr-proj:focus-within { transform: rotate(0deg) translateY(-4px); }
+.gr-tape { position: absolute; top: -11px; left: 50%; width: 86px; height: 22px; margin-left: -43px; background: rgba(255,255,255,.82); border: 1px solid rgba(30,70,176,.15); transform: rotate(-3deg); z-index: 2; }
+.gr-proj .rs-proj-cover { border: 1.5px solid var(--blueprint-dk); }
+.gr-proj .rs-proj-body { padding: 12px 4px 6px; }
+.gr-proj .rs-proj-body p { color: var(--blueprint-dk); }
+.gr-proj .gr-spec { color: var(--blueprint-dk); opacity: .75; font-size: 11px; }
+.gr-proj .gr-skills li { border-color: var(--blueprint-dk); color: var(--blueprint-dk); }
+.gr-proj .rs-strip button { border-color: rgba(30,70,176,.35); }
+.gr-proj .rs-proj-count { background: var(--blueprint-dk); }
+.kit-hero { display: block; width: min(100%, 240px); height: auto; }

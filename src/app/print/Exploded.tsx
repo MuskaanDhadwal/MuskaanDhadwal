@@ -1,4 +1,5 @@
-// Exploded engineering drawing — the case study's table of contents.
+// Exploded engineering drawing — the case study's table of contents. Every part (and the whole-object
+// bracket) is clickable and scrolls to its section, like the numbered markers and the cards.
 // Machines are precise isometric boxes (flat fills: blueprint / blueprint-dk / shadow).
 // People + Muskaan's cameo are crayon line (the BLEND RULE). Real layer SVGs can replace the boxes:
 // drop /exploded/<slug>-layer-0N.svg and it is used instead of the placeholder box.
@@ -123,12 +124,15 @@ export function Exploded({ slug, brief, active, setActive, onPick, cameo, focusL
       {/* 01 = the whole object: a bracket spanning every layer, so the marker points at something */}
       {focusLayer === undefined && (() => {
         const top = layers[0].cur[1] - 70, bottom = layers[4].cur[1] + 50;
-        return <path d={`M${WHOLE_X + 12} ${top} H${WHOLE_X} V${bottom} H${WHOLE_X + 12}`} className="bp" style={{ opacity: .8 }} />;
+        return <g style={{ cursor: onPick ? "pointer" : undefined }} onClick={() => onPick?.(0)} onMouseEnter={() => setActive?.(99)} onMouseLeave={() => setActive?.(-1)}>
+          <path d={`M${WHOLE_X + 12} ${top} H${WHOLE_X} V${bottom} H${WHOLE_X + 12}`} className="bp" style={{ opacity: .8 }} />
+          <rect x={WHOLE_X - 10} y={top} width="24" height={bottom - top} fill="transparent" />
+        </g>;
       })()}
 
       {[...layers].reverse().map(({ i, o, t }) => show(i) && (
-        <g key={i} style={{ transition: `transform var(--dur-scene) var(--ease-out) ${i * 80}ms`, transform: `translate(${t[0]}px, ${t[1] + (active === i ? -6 : 0)}px)` }}
-          onMouseEnter={() => setActive?.(i)} onMouseLeave={() => setActive?.(-1)}>
+        <g key={i} style={{ transition: `transform var(--dur-scene) var(--ease-out) ${i * 80}ms`, transform: `translate(${t[0]}px, ${t[1] + (active === i ? -6 : 0)}px)`, cursor: onPick ? "pointer" : undefined }}
+          onMouseEnter={() => setActive?.(i)} onMouseLeave={() => setActive?.(-1)} onClick={() => onPick?.(i + 1)}>
           {active === i && <g transform="translate(2 2)" opacity=".9"><Box i={i} ox={o[0]} oy={o[1]} slug={slug} /></g>}
           <Box i={i} ox={o[0]} oy={o[1]} shot={i === 2 ? shot : undefined} highlight={active === i} slug={slug} />
           <image href={`/exploded/${slug}-layer-0${i + 1}.svg`} x={o[0] - 120} y={o[1] - 120} width="240" height="160" onError={e => (e.currentTarget.style.display = "none")} />

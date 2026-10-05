@@ -73,10 +73,10 @@ export function Clip({ src, caption, label, controls, poster, chapters }: {
 }
 
 /** The comic layer: a small her (or Roger) with a speech bubble. */
-export function Say({ pose, img, children, side = "left", alt }: { pose?: PoseName; img?: string; children: ReactNode; side?: "left" | "right"; alt: string }) {
+export function Say({ pose, img, art, children, side = "left", alt }: { pose?: PoseName; img?: string; art?: string; children: ReactNode; side?: "left" | "right"; alt: string }) {
   return (
     <div className={`tx-say tx-say-${side}`}>
-      <div className="tx-say-who">{pose ? <Mini pose={pose} label={alt} unit={1.15} /> : <img src={img} alt={alt} />}</div>
+      <div className={`tx-say-who ${art ? "tx-say-art" : ""}`}>{pose ? <Mini pose={pose} label={alt} unit={1.15} /> : art ? <img src={`/art/${art}-white.png`} alt={alt} /> : <img src={img} alt={alt} />}</div>
       <p className="tx-say-bubble hand">{children}</p>
     </div>
   );
@@ -111,9 +111,6 @@ export function TxOverview() {
       <p className="tx-lede">Traxen is redefining trucking tech with advanced driver-assist systems that make fleets safer and more efficient.</p>
       <p>Since summer 2024 I've led the design of Traxen's Android tablet app: the interface drivers use on the road, built to comply with federal safety guidelines and to be intuitive at a glance.</p>
       <p>This project was a non-intrusive, context-aware overlay that gives drivers at-a-glance information, end to end: core user flows, interface design, and the code, from concept to production.</p>
-      <div style={{ maxWidth: 560, margin: "20px 0" }}>
-        <SpecTable caption="TL;DR" rows={[["Role", "UX Engineer · Project Owner"], ["Team", "Just me: design + build"], ["Timeline", "1 month · 2024"], ["Tools", "Figma, Penpot, Atlassian, Android Studio, Kotlin, Claude Code, Cursor"]]} />
-      </div>
     </>
   );
 }
@@ -210,7 +207,7 @@ export function TxResearchWide() {
           <SwitchDiagram />
           <div>
             <p>The tablet is shared real estate. Navigation and the hours-of-service clock win every time, because the driver needs them to do the job. Traxen gets pushed to the back, and its alerts go with it.</p>
-            <Say pose="csNotes" alt="A small Muskaan taking notes on a clipboard">Every time a driver switched apps, Traxen disappeared. Noted.</Say>
+            <Say art="kit-notetaker" alt="Muskaan at a desk, chin on her hand, taking notes on a clipboard">Every time a driver switched apps, Traxen disappeared. Noted.</Say>
           </div>
         </div>
       </Band>
@@ -458,25 +455,25 @@ function StateDiagram() {
 }
 function LoopDiagram() {
   const steps: [number, number, string, string][] = [
-    [20, 20, "1 · THE APP ASKS", "out loud: “give feedback?”"],
-    [190, 20, "2 · DRIVER ANSWERS", "by voice, after the beep"],
-    [190, 130, "3 · REPORT LOGGED", "no menus, no typing"],
-    [20, 130, "4 · EVERY TEAM AT TRAXEN", "root-causes what drivers flag"],
+    [10, 20, "1 · THE APP ASKS", "out loud: “give feedback?”"],
+    [220, 20, "2 · DRIVER ANSWERS", "by voice, after the beep"],
+    [220, 130, "3 · REPORT LOGGED", "no menus, no typing"],
+    [10, 130, "4 · TEAMS ACT ON IT", "root-cause what drivers flag"],
   ];
   return (
-    <svg viewBox="0 0 350 200" className="scene tx-diagram" role="img" aria-label="Feedback loop: 1, the app asks out loud whether the driver wants to give feedback. 2, the driver answers by voice after the beep. 3, the report is logged with no menus or typing. 4, every team at Traxen, including controls and embedded, uses it to root-cause what drivers flag, and the loop starts again.">
+    <svg viewBox="0 0 400 200" className="scene tx-diagram" role="img" aria-label="Feedback loop: 1, the app asks out loud whether the driver wants to give feedback. 2, the driver answers by voice after the beep. 3, the report is logged with no menus or typing. 4, every team at Traxen, including controls and embedded, uses it to root-cause what drivers flag, and the loop starts again.">
       {steps.map(([x, y, t, d]) => (
         <g key={t}>
-          <rect x={x} y={y} width="140" height="50" rx="8" className="bp fill" />
+          <rect x={x} y={y} width="170" height="50" rx="8" className="bp fill" />
           <text x={x + 10} y={y + 21} fontSize="9.5" className="bp-text">{t}</text>
-          <text x={x + 10} y={y + 37} fontSize="9" className="bp-text" style={{ fontFamily: "var(--hand)", fontSize: 12, letterSpacing: 0 }}>{d}</text>
+          <text x={x + 10} y={y + 38} className="bp-text" style={{ fontFamily: "var(--hand)", fontSize: 12, letterSpacing: 0 }}>{d}</text>
         </g>
       ))}
-      <path d="M160 45 H190 m-7 -5 l7 5 l-7 5" className="bp" />
-      <path d="M260 70 V130 m-5 -7 l5 7 l5 -7" className="bp" />
-      <path d="M190 155 H160 m7 -5 l-7 5 l7 5" className="bp" />
-      <path d="M90 130 V70 m-5 7 l5 -7 l5 7" className="bp" />
-      <text x="175" y="104" fontSize="9" textAnchor="middle" className="bp-text">REPEATS</text>
+      <path d="M180 45 H220 m-7 -5 l7 5 l-7 5" className="bp" />
+      <path d="M305 70 V130 m-5 -7 l5 7 l5 -7" className="bp" />
+      <path d="M220 155 H180 m7 -5 l-7 5 l7 5" className="bp" />
+      <path d="M95 130 V70 m-5 7 l5 -7 l5 7" className="bp" />
+      <text x="200" y="104" fontSize="9" textAnchor="middle" className="bp-text">REPEATS</text>
     </svg>
   );
 }
@@ -651,7 +648,7 @@ const TAKEAWAYS: [string, string][] = [
 
 // a small her for each takeaway (each pose is used only here)
 const TAKEAWAY_ART = [
-  <Mini key="evo" pose="txEvolve" label="A small Muskaan tossing another draft into the bin" tone="paper" />,
+  <img key="evo" src="/art/kit-brainstorm-ink.png" alt="Muskaan rearranging sticky notes on a wall, hand on her chin, thinking" />,
   <Mini key="user" pose="txListen" label="A small Muskaan with a hand cupped to her ear, listening" tone="paper" />,
   <Mini key="edge" pose="txUmbrella" label="A small Muskaan under an umbrella in the rain" tone="paper" />,
 ];
@@ -659,10 +656,7 @@ const TAKEAWAY_ART = [
 export function TxImpactWide({ next }: { next: { slug: string; label: string } }) {
   return (
     <>
-      <Band no="06.1" kicker="so, how did it turn out?" title="The whole thing, start to finish">
-        <Clip src={A("walkthrough.mp4")} controls poster={A("alerts-expand-still.jpg")} label="Video walkthrough of the Traxen floating window and all its features." caption="SPEC. T1-06 · full walkthrough · press play" />
-      </Band>
-      <Band no="06.2" kicker="key takeaways" title="What I'm keeping">
+      <Band no="06.1" kicker="key takeaways" title="What I'm keeping">
         <div className="tx-loops">
           {TAKEAWAYS.map(([t, b], i) => <LoopCard key={t} no={`0${i + 1}`} title={t} art={TAKEAWAY_ART[i]}>{b}</LoopCard>)}
         </div>
@@ -672,10 +666,23 @@ export function TxImpactWide({ next }: { next: { slug: string; label: string } }
         <p className="tx-measure">This is a snapshot of my work on the driver experience at Traxen. If you want to talk automotive UX, design systems, or the messy middle of building something new, I'd love to hear from you.</p>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
-          <Chamfer onClick={() => go(`#/case/${next.slug}`)}>Next print → {next.label}</Chamfer>
         </div>
       </div>
       <Dim>end of T1</Dim>
     </>
+  );
+}
+
+/** The walkthrough, at the top of the case study (like GuardianCare): plays muted on its own, sound on demand. */
+export function TxHeroVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
+  const reduced = useReducedMotion();
+  useEffect(() => { const v = ref.current; if (!v) return; v.muted = true; v.setAttribute("muted", ""); if (!reduced) v.play().catch(() => {}); }, [reduced]);
+  return (
+    <figure className="specimen tx-shot gc-hero-video">
+      <video ref={ref} src={A("walkthrough.mp4")} muted autoPlay={!reduced} loop playsInline controls preload="auto" poster={A("alerts-expand-still.jpg")}
+        aria-label="Video walkthrough of the Traxen floating window and all its features." />
+      <figcaption>SPEC. T1-00 · the whole thing, start to finish · playing muted, unmute in the controls</figcaption>
+    </figure>
   );
 }

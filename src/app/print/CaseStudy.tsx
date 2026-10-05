@@ -7,7 +7,7 @@ import type { Mission } from "../blueprint/data";
 import { Callout, Chamfer, Dim, Specimen, SpecTable, Stamp, TitleBlock, useInView, useReducedMotion } from "./ui";
 import { go } from "./nav";
 import { TruckDrawing, type TruckView } from "./TruckDrawings";
-import { TxBuild, TxBuildWide, TxDefine, TxDefineWide, TxDesign, TxDesignWide, TxImpactWide, TxOverview, TxOverviewWide, TxResearch, TxResearchWide } from "./TraxenCase";
+import { TxHeroVideo, TxBuild, TxBuildWide, TxDefine, TxDefineWide, TxDesign, TxDesignWide, TxImpactWide, TxOverview, TxOverviewWide, TxResearch, TxResearchWide } from "./TraxenCase";
 import { BmDefine, BmDefineWide, BmDesign, BmDesignWide, BmHandoff, BmHandoffWide, BmImpact, BmImpactWide, BmOverview, BmOverviewWide, BmResearch, BmResearchWide } from "./BuyMySpotCase";
 import { ParkingDrawing, type ParkingView } from "./ParkingDrawings";
 import { CarDrawing, type CarView } from "./CarDrawings";
@@ -193,6 +193,31 @@ function Gauge({ label, from, to }: { label: string; from?: string; to: string }
 }
 
 
+/** End of every case study: pick the next one (all four, the current one marked "you're here"). */
+function NextPrints({ current }: { current: string }) {
+  return (
+    <section className="sheet next-prints" aria-labelledby="np-title" style={{ minHeight: 0 }}>
+      <div className="rail" aria-hidden><span className="rail-label">Pick the next print</span><span className="rail-line" /></div>
+      <h2 id="np-title" className="display ab-h2">Pick the next print</h2>
+      <p className="label mid" style={{ margin: "6px 0 24px" }}>four case studies · open any of them</p>
+      <div className="np-grid">
+        {MISSIONS.map(n => {
+          const here = n.slug === current, pr = PRINT[n.slug];
+          return (
+            <a key={n.slug} href={`#/case/${n.slug}`} className={`np-card ${here ? "here" : ""}`} aria-current={here ? "page" : undefined}
+              onClick={e => { e.preventDefault(); if (here) scrollTo({ top: 0, behavior: "smooth" }); else go(`#/case/${n.slug}`); }}>
+              <span className="np-shot"><img src={pr.shot} alt="" loading="lazy" /></span>
+              <span className="np-meta"><span className="display np-code">{pr.code}</span><span className="label">{here ? "you're here · back to top ↑" : pr.result}</span></span>
+              <span className="display np-name">{n.label}</span>
+              <span className="label mid">{n.role} · {n.year}</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 // ── page ────────────────────────────────────────────────────────────────────
 export function CaseStudy({ mission: m }: { mission: Mission }) {
   const brief = BRIEFS[m.slug];
@@ -214,11 +239,12 @@ export function CaseStudy({ mission: m }: { mission: Mission }) {
             <p style={{ maxWidth: 460, marginTop: 14 }}>{m.slug === "traxen" ? "Multi-app driving, made safer: the Traxen floating window experience." : m.slug === "buymyspot" ? "Parking, booked like a stay: the buyer web app for a peer-to-peer parking marketplace." : m.slug === "gm" ? "Luxury, made personal: an in-vehicle experience for GM's luxury segment, across four connected screens." : m.slug === "guardiancare" ? "Redefining senior living: Ava, a companion robot that keeps seniors safe without watching them." : `${m.brief.split(". ")[0]}.`}</p>
           </div>
           <div style={{ minWidth: 280, maxWidth: 380, flex: "0 1 380px" }}>
-            <SpecTable caption="Project specs" rows={[["Role", m.role], ["Team", p.team], ["Timeline", m.slug === "traxen" ? "1 month · 2024" : m.slug === "buymyspot" ? "Jun – Aug 2023 · 3 months" : m.slug === "gm" ? "Mar – Apr 2024 · SI 594, University of Michigan" : m.slug === "guardiancare" ? "Aug – Dec 2023 · SI 612, University of Michigan" : m.year], ["Tools", m.slug === "traxen" ? "Figma · Android Studio · Kotlin · Claude Code · Cursor" : m.slug === "buymyspot" ? "Figma · FigJam · Miro" : m.slug === "gm" ? "Figma" : m.slug === "guardiancare" ? "Figma · FigJam · Miro · Qualtrics" : "Figma · Miro"], ["Status", <Stamp key="s">{p.result}</Stamp>]]} />
+            <SpecTable caption="Project specs" rows={[["Role", m.role], ["Team", p.team], ["Timeline", m.slug === "traxen" ? "1 month · 2024" : m.slug === "buymyspot" ? "Jun – Aug 2023 · 3 months" : m.slug === "gm" ? "Mar – Apr 2024 · SI 594, University of Michigan" : m.slug === "guardiancare" ? "Aug – Dec 2023 · SI 612, University of Michigan" : m.year], ["Tools", m.slug === "traxen" ? "Figma · Penpot · Atlassian · Android Studio · Kotlin · Claude Code · Cursor" : m.slug === "buymyspot" ? "Figma · FigJam · Miro" : m.slug === "gm" ? "Figma" : m.slug === "guardiancare" ? "Figma · FigJam · Miro · Qualtrics" : "Figma · Miro"], ["Status", <Stamp key="s">{p.result}</Stamp>]]} />
           </div>
         </div>
 
         {m.slug === "guardiancare" && <div className="gc-hero-video">{GC_VIDEO}</div>}
+        {m.slug === "traxen" && <TxHeroVideo />}
         <div className="hero-cs">
           <div className="drawing" data-tap="">
             <Exploded slug={m.slug} brief={brief} active={active} setActive={setActive} onPick={k => scrollToSection(m.slug, k)} cameo={(CAMEOS[m.slug] ?? CAMEOS.traxen).hero} />
@@ -232,8 +258,8 @@ export function CaseStudy({ mission: m }: { mission: Mission }) {
                 <li key={s} style={{ top: `${cardPct(k)}%` }}>
                   <a href={`#${anchor(m.slug, k)}`} className={`cs-card ${on ? "on" : ""}`} onClick={e => { e.preventDefault(); scrollToSection(m.slug, k); }}
                     onMouseEnter={() => setActive(k === 0 ? 99 : k - 1)} onMouseLeave={() => setActive(-1)} onFocus={() => setActive(k === 0 ? 99 : k - 1)} onBlur={() => setActive(-1)}>
-                    <span className="display" style={{ fontSize: 40 }}>0{k + 1}</span>
-                    <span><span className="display" style={{ fontSize: 22, display: "block" }}>{sectionName(m.slug, k)}</span><span style={{ fontSize: 14, lineHeight: 1.35, display: "block" }}>{hook}</span></span>
+                    <span className="display cs-card-no">0{k + 1}</span>
+                    <span><span className="display cs-card-name">{sectionName(m.slug, k)}</span><span className="cs-card-hook">{hook}</span></span>
                   </a>
                 </li>
               );
@@ -244,7 +270,6 @@ export function CaseStudy({ mission: m }: { mission: Mission }) {
         <div className="label mid" style={{ display: "flex", gap: 20, marginTop: 24 }} aria-label="Platform">
           {brief.icons.map(i => <span key={i}>◻ {i}</span>)}
         </div>
-        <TitleBlock rows={[["Project", m.label], ["Code", brief.code], ["Date", m.year], ["Rev", "2026.10"]]} />
       </section>
 
       {m.slug === "traxen" ? (
@@ -346,6 +371,7 @@ export function CaseStudy({ mission: m }: { mission: Mission }) {
       </SheetSection>
         </>
       )}
+      <NextPrints current={m.slug} />
     </article>
   );
 }

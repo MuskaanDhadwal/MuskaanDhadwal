@@ -9,16 +9,18 @@ import { Mini as MiniFig, type PoseName } from "./Minis";
 import { go } from "./nav";
 
 const BUILD = "2026.10";
-const art = (name: string) => `/art/ship-${name}-white.png`;
+const art = (name: string) => `/art/${name}-white.png`;
 
-// ── Name, with small versions of her on the letters (after Aesha Koshti's PORTFOLIO lettering) ──
-type Mini = { pose: PoseName; alt: string; quip: string; cls: string; unit: string };
+// ── Name, with her character drawings sitting on the letters (after Aesha Koshti's PORTFOLIO lettering) ──
+type Mini = { img: string; alt: string; quip: string; cls: string };
+// all drawn in the same white line as the letters, so name + drawings read as one piece
 const MINIS: Record<string, Mini> = {
-  typing: { pose: "nmTyping", alt: "Muskaan sitting cross-legged on top of the M, laptop on her lap", quip: "just one more tweak…", cls: "mini-typing", unit: ".0155em" },
-  peek: { pose: "nmPeek", alt: "Muskaan peeking over the top of the A", quip: "that's 1px off. I can feel it.", cls: "mini-peek", unit: ".014em" },
-  frame: { pose: "nmFrame", alt: "Muskaan grinning out of the U, like she's in a bathtub", quip: "the U is my office now", cls: "mini-frame", unit: ".0086em" },
-  sketch: { pose: "nmSketch", alt: "Muskaan sitting on top of the S, sketching", quip: "v1 of 47", cls: "mini-sketch", unit: ".0118em" },
-  hold: { pose: "nmHold", alt: "Muskaan standing on a stack of books, holding up the N", quip: "it's load-bearing. don't touch.", cls: "mini-hold", unit: ".0088em" },
+  focused: { img: "ld-focused", alt: "Muskaan sitting cross-legged on top of the M with her laptop", quip: "just one more tweak…", cls: "mini-focused" },
+  peek: { img: "ld-peek", alt: "Muskaan peeking over the top of the U", quip: "that's 1px off. I can feel it.", cls: "mini-peek2" },
+  reading: { img: "ld-reading", alt: "Muskaan sitting on the S, reading, a stack of books beside her", quip: "chapter 3: affordances", cls: "mini-reading" },
+  move: { img: "ld-move", alt: "Muskaan running across the top of the K with her laptop", quip: "standup in 2 minutes!", cls: "mini-move" },
+  tired: { img: "ld-tired", alt: "Muskaan lying across the top of the A, chin on her arms, waiting", quip: "is it deployed yet?", cls: "mini-tired" },
+  stretch: { img: "ld-stretch", alt: "Muskaan stretching, arms up, on top of the N", quip: "*yawns in Figma*", cls: "mini-stretch" },
 };
 
 function MiniOnLetter({ m }: { m: Mini }) {
@@ -27,7 +29,7 @@ function MiniOnLetter({ m }: { m: Mini }) {
   return (
     <span className={`mini ${m.cls}`}>
       <button onClick={() => { setSaid(true); setK(x => x + 1); }} aria-label={`${m.alt}. Tap to hear her.`}>
-        <span key={k} className={`mini-fig ${k ? "pop" : ""}`}><MiniFig pose={m.pose} unit={m.unit} /></span>
+        <span key={k} className={`mini-fig ${k ? "pop" : ""}`}><img src={`/art/${m.img}-white.png`} alt="" /></span>
       </button>
       {said && <span className="mini-say" role="status">{m.quip}</span>}
     </span>
@@ -47,7 +49,7 @@ function NameLetters() {
   return (
     <h1 className="name-letters display">
       <span className="sr-only">Muskaan Dhadwal</span>
-      {line("MUSKAAN", { 0: { mini: MINIS.typing }, 1: { mini: MINIS.frame }, 2: { mini: MINIS.sketch }, 4: { mini: MINIS.peek }, 6: { mini: MINIS.hold, lift: true } })}
+      {line("MUSKAAN", { 0: { mini: MINIS.focused }, 1: { mini: MINIS.peek }, 2: { mini: MINIS.reading }, 3: { mini: MINIS.move }, 5: { mini: MINIS.tired }, 6: { mini: MINIS.stretch } })}
     </h1>
   );
 }
@@ -89,17 +91,16 @@ function SideName() {
   );
 }
 
-// ── A day of shipping: four boxes, all Muskaan's own drawings. Each works on its own;
-// one box's "after" is the next box's "before" (the day flows box to box).
+// ── A day of shipping: four boxes, eight of her drawings, none repeated. Each box is a before → after.
 const BOXES = [
-  { no: "01", time: "09:00", title: "one pixel off", before: "hunched", after: "straight", act: "Sit up straight ↑", done: "posture fixed. pixel: still off.",
-    altB: "Muskaan hunched over her laptop, nose almost on the screen.", altA: "Muskaan sitting up straight again, tired, a scribble over her head." },
-  { no: "02", time: "11:00", title: "refuel", before: "straight", after: "coffee", act: "Let her have her coffee", done: "caffeine restored ✓",
-    altB: "Muskaan sitting up, tired, at her laptop.", altA: "Muskaan beaming with her “UX is my passion” mug, fist pumped." },
-  { no: "03", time: "16:00", title: "ship it", before: "coffee", after: "deploy", act: `● Deploy v${BUILD}`, done: "it's live. nobody panic ✓",
-    altB: "Muskaan with her coffee, ready.", altA: "Muskaan with both arms up, celebrating: it deployed." },
-  { no: "04", time: "23:00", title: "lights out", before: "deploy", after: "nap", act: "Call it a day", done: "shipped. asleep. thumbs still up.",
-    altB: "Muskaan celebrating at her laptop.", altA: "Muskaan asleep face-down by her laptop, still giving a thumbs-up." },
+  { no: "01", time: "09:00", title: "one pixel off", before: "ship-hunched", after: "kit-designer", act: "Sit up straight ↑", done: "posture fixed. back to the wireframes.",
+    altB: "Muskaan hunched over her laptop, nose almost on the screen.", altA: "Muskaan sitting up straight at her laptop, smiling, sketching a wireframe beside it." },
+  { no: "02", time: "11:00", title: "refuel", before: "ship-straight", after: "ship-coffee", act: "Let her have her coffee", done: "caffeine restored ✓",
+    altB: "Muskaan grumpy and tired at her laptop, a scribble over her head, her mug just out of reach.", altA: "Muskaan beaming with her “UX is my passion” mug, fist pumped." },
+  { no: "03", time: "16:00", title: "ship it", before: "kit-checklist", after: "kit-bugs", act: `● Deploy v${BUILD}`, done: "3 bugs. of course. on it.",
+    altB: "Muskaan at her monitor, ticking off a checklist before the release.", altA: "Muskaan frowning at her laptop, pencil to her head, bugs and warnings floating around her." },
+  { no: "04", time: "23:00", title: "lights out", before: "ship-deploy", after: "ship-nap", act: "Call it a day", done: "shipped. asleep. thumbs still up.",
+    altB: "Muskaan with both arms up, celebrating at her laptop: it deployed.", altA: "Muskaan asleep face-down by her laptop, still giving a thumbs-up." },
 ];
 
 function HowIShip() {
@@ -194,13 +195,7 @@ function MyStory() {
   );
 }
 
-// ── Parts list: the spec table + the tool manifest (only things that are true) ──
-const SPEC: [string, string][] = [
-  ["Building", "In-cab software for truck drivers, Traxen"],
-  ["Studied", "MSI in Human-Computer Interaction, University of Michigan"],
-  ["Based", "USA"],
-  ["Open to", "Full-time UX engineer roles · relocation within the USA"],
-];
+// ── Tools I use: one table (the old "Parts list" spec table repeated what the side column already says) ──
 const TOOLS: [string, string][] = [
   ["Figma", "daily · primary design surface"],
   ["Android Studio · Kotlin", "building the real thing"],
@@ -213,17 +208,8 @@ const TOOLS: [string, string][] = [
 function PartsList() {
   return (
     <section id="parts" data-section="parts" className="parts-sec" aria-labelledby="parts-title">
-      <SecHead id="parts-title" title="Parts list" />
-      <div className="parts-grid">
-        <div>
-          <p className="label mid parts-cap">Spec table · rev {BUILD}</p>
-          <dl className="parts-spec">{SPEC.map(([k, v]) => <div key={k}><dt className="label">{k}</dt><dd>{v}</dd></div>)}</dl>
-        </div>
-        <div>
-          <p className="label mid parts-cap">Tool manifest</p>
-          <dl className="parts-tools">{TOOLS.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
-        </div>
-      </div>
+      <SecHead id="parts-title" title="Tools I use" sub="What's on the desk, and what each one is for." />
+      <dl className="parts-tools">{TOOLS.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
     </section>
   );
 }
@@ -301,7 +287,7 @@ function WakeHerUp() {
 }
 
 // ── Rail: a small Muskaan walks down the left rail as you scroll (two-frame walk cycle). ──
-const RAIL: Record<string, string> = { top: "09:00 · logging on", ship: "11:00 · shipping", work: "16:00 · showing work", story: "18:00 · backstory", parts: "20:00 · inventory", ai: "21:00 · learning", contact: "23:00 · say hi" };
+const RAIL: Record<string, string> = { top: "09:00 · logging on", ship: "11:00 · shipping", work: "16:00 · showing work", story: "18:00 · backstory", parts: "20:00 · tools", ai: "21:00 · learning", contact: "23:00 · say hi" };
 
 function SideRail() {
   const reduced = useReducedMotion();

@@ -150,3 +150,34 @@
 .ab-fact-more { display: flex; gap: 8px; margin-top: -2px; }
 .ab-fact-more img { width: calc((100% - 16px) / 3); aspect-ratio: 1; object-fit: cover; border: 4px solid #fff; box-shadow: 3px 3px 0 var(--shadow); transform: rotate(var(--t)); box-sizing: border-box; }
 .ab-story-col { max-width: 1180px; }
+
+/* About (2026-10-05, after Andrea Da Silva): words in the middle column, photos floating on both sides */
+.ab-tri { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 620px) minmax(0, 1fr); gap: 0 clamp(24px, 4vw, 64px); align-items: start; }
+.ab-mid { min-width: 0; }
+.ab-side { display: flex; flex-direction: column; gap: 36px; padding-top: 24px; min-width: 0; }
+.ab-side-l { align-items: flex-end; }
+.ab-side-r { align-items: flex-start; }
+.ab-hello .ab-float { position: relative; left: auto; top: auto; width: min(100%, 250px); }
+.ab-hello .ab-side-r { padding-top: 90px; }
+.ab-float-me { position: static; height: auto; width: min(100%, 230px); }
+.ab-float-me img { display: block; width: 100%; height: auto; }
+.ab-story-col { max-width: none; }
+.ab-story-row { gap: 0 clamp(24px, 4vw, 64px); }
+.ab-story-row .ab-story-side { padding-top: 0; }
+.ab-story-row .ab-photo { max-width: 240px; }
+.ab-story-row .ab-story-side > * { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease-out) .15s, transform .7s var(--ease-out) .15s; }
+.ab-story-row.in .ab-story-side > * { opacity: 1; transform: none; }
+@media (max-width: 1100px) {
+  .ab-tri { grid-template-columns: minmax(0, 1fr); }
+  .ab-tri > div:empty { display: none; }
+  .ab-side { flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 18px; padding-top: 0; order: -1; }
+  .ab-hello .ab-side-r { padding-top: 0; order: 0; margin-top: 24px; }
+  .ab-story-row .ab-story-side { order: 0; justify-content: flex-start; margin-top: 16px; }
+  .ab-story-row .ab-story-side:empty { display: none; }
+  .ab-hello .ab-float { width: min(46%, 220px); }
+  .ab-float-me { width: 160px; }
+  .ab-mid { max-width: 680px; }
+}
+@media (prefers-reduced-motion: reduce) { .ab-story-row .ab-story-side > * { opacity: 1; transform: none; transition: none; } }
+.ab-hustle-art img { height: 100%; width: auto; display: block; }
+.ct-art { display: block; width: min(100%, 340px); height: auto; }

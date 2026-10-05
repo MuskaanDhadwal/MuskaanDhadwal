@@ -1,9 +1,9 @@
 // CONTACT — "Say hi". Pick why you're here, she reacts, you write a postcard, it opens your email app.
 // Never pretends to send: there is no backend, so "send" is a mailto with the subject and body filled in.
 import { useState } from "react";
-import { Mini } from "./Minis";
 import { LINKS } from "./story";
 import { Chamfer } from "./ui";
+import { PageDrawing } from "./PageDrawings";
 
 const REASONS = [
   { id: "hire", label: "Hiring a UX engineer", subject: "Let's talk about a role", quip: "Oh! Tell me about the team." },
@@ -27,7 +27,8 @@ export function ContactPage() {
   const href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   return (
-    <section className="sheet ct" aria-labelledby="ct-title">
+    <section className="sheet ct tx-has-bg" aria-labelledby="ct-title">
+      <PageDrawing view="mailbox" side="right" />
       <div className="rail" aria-hidden><span className="rail-label">Contact · say hi</span><span className="rail-line" /></div>
       <div className="ct-head">
         <div>
@@ -37,8 +38,7 @@ export function ContactPage() {
         </div>
         <div className="ct-me" aria-live="polite">
           <span className="ab-bubble hand">{sent ? "Got it, it's in your outbox. Talk soon!" : r ? r.quip : "Hi! What brings you here?"}</span>
-          <Mini key={sent ? "plane" : "phone"} pose={sent ? "ctPlane" : "ctPhone"} unit="var(--ab-u)" className="pop"
-            label={sent ? "A small Muskaan throwing a paper plane" : "A small Muskaan on the phone, ready to listen"} />
+          <img key={sent ? "sent" : "wait"} className={`ct-art ${sent ? "pop" : ""}`} src="/art/kit-plane-white.png" alt="Muskaan laughing, pointing a paper plane off into the sky and waving" />
         </div>
       </div>
 

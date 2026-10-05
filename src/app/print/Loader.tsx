@@ -1,25 +1,24 @@
-// LOADER — "idea → shipped", after the 시간 이동 (time travel) dialog: a little Muskaan climbs out of the
-// IDEA folder, flies, lands, gets up, walks over and stuffs the work into the SHIPPED folder.
+// LOADER — "idea → shipped", after the 시간 이동 (time travel) dialog: six of her own loader-screen poses
+// (her "Loader screen poses" sheet), from thinking it over to arms-up finished.
 // It really loads: the progress bar follows the home page's drawings + fonts (with a short minimum so the
 // little story can play), then the window drops away and the homepage is underneath.
 import { useEffect, useRef, useState } from "react";
-import { Mini, type PoseName } from "./Minis";
 import { useReducedMotion } from "./ui";
 
-const FRAMES: { pose: PoseName; alt: string; status: string }[] = [
-  { pose: "ldOut", alt: "climbing out of the IDEA folder", status: "opening the idea" },
-  { pose: "ldFly", alt: "flying, flat out", status: "leaping before looking" },
-  { pose: "ldLand", alt: "landing in a squat, seeing stars", status: "landing on edge cases" },
-  { pose: "ldStand", alt: "standing up, a little dazed", status: "reading the user feedback" },
-  { pose: "ldWalk", alt: "walking on", status: "fixing the padding (again)" },
-  { pose: "ldPush", alt: "stuffing the work into the SHIPPED folder", status: "shipping it" },
+const FRAMES: { pose: string; alt: string; status: string }[] = [
+  { pose: "ld-thinking", alt: "lying on her front by the laptop, chin in her hands, thinking", status: "opening the idea" },
+  { pose: "ld-waiting", alt: "seen from behind at her laptop, a clock ticking", status: "waiting on the build" },
+  { pose: "ld-coffee", alt: "sipping from her “UX is my passion” mug, eyes closed", status: "refuelling" },
+  { pose: "ld-confused", alt: "frowning at a question mark", status: "reading the user feedback" },
+  { pose: "ld-phone", alt: "sitting cross-legged, checking her phone, a little heart", status: "fixing the padding (again)" },
+  { pose: "ld-finished", alt: "arms up, beaming: finished loading", status: "shipping it" },
 ];
 const CELLS = 22;
 const MIN_MS = 2600;   // the story needs a moment even on a fast connection
 const MAX_MS = 9000;   // never hold anyone hostage on a slow one
 
 // What the homepage needs before it looks right.
-const ASSETS = ["hunched", "straight", "coffee", "deploy", "nap"].map(n => `/art/ship-${n}-white.png`);
+const ASSETS = ["ship-hunched", "ship-straight", "kit-checklist", "ship-deploy", "ld-focused", "ld-peek"].map(n => `/art/${n}-white.png`);
 
 function preload(onEach: () => void) {
   const jobs: Promise<unknown>[] = ASSETS.map(src => new Promise<void>(res => {
@@ -67,7 +66,7 @@ export function Loader({ onDone }: { onDone: () => void }) {
           <div className="ld-strip">
             {FRAMES.map((f, i) => (
               <div key={f.pose} className={`ld-frame ${i <= frame ? "on" : ""} ${i === frame ? "now" : ""}`}>
-                <Mini pose={f.pose} tone="paper" unit="var(--ld-u)" label={`Muskaan ${f.alt}`} />
+                <img src={`/art/${f.pose}-ink.png`} alt={`Muskaan ${f.alt}`} />
               </div>
             ))}
           </div>

@@ -201,7 +201,7 @@ function OldLoop() {
       <path d="M200 155 H170 m7 -5 l-7 5 l7 5" className="bp" />
       <path d="M95 130 V70 m-5 7 l5 -7 l5 7" className="bp" />
       <text x="185" y="104" fontSize="9" textAnchor="middle" className="bp-text">REPEAT</text>
-      <path d="M150 96 h70" className="bp" stroke="var(--accent)" strokeWidth="3" />
+      <path d="M160 110 h50" className="bp" stroke="var(--accent)" strokeWidth="2.5" />
     </svg>
   );
 }
@@ -904,7 +904,6 @@ export function BmImpactWide({ next }: { next: { slug: string; label: string } }
         <p className="tx-measure">This was one of the biggest challenges of my summer: a whole buyer experience, from the first interview to the developer's last question. If you want to talk marketplaces, search, or design systems that developers actually use, I'd love to hear from you.</p>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
-          <Chamfer onClick={() => go(`#/case/${next.slug}`)}>Next print → {next.label}</Chamfer>
         </div>
       </div>
       <Dim>end of B2</Dim>
