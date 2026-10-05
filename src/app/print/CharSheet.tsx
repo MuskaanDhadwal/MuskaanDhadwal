@@ -10,7 +10,7 @@ export function CharSheet() {
     <>
       <section className="sheet" aria-labelledby="cs-title" style={{ ["--cs-h" as string]: `${H}px` }}>
         <h1 id="cs-title" className="display" style={{ fontSize: 64 }}>Character sheet</h1>
-        <p className="label mid" style={{ margin: "8px 0 32px" }}>Muskaan, small · hatched bangs + bun · round glasses · stud earring · plain tee</p>
+        <p className="label mid" style={{ margin: "8px 0 32px" }}>Muskaan, small · after her character kit · fringe + high bun · round glasses · tee, rolled jeans, sneakers</p>
         <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${H}px, 1fr))`, gap: 24 }}>
           {ALL.map(p => (
             <figure key={p} style={{ margin: 0, textAlign: "center" }}>

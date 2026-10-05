@@ -8,7 +8,7 @@
 export type Toy = {
   id: string; title: string; tag: string; blurb: string; how?: string[]; credit?: string;
   kind: "embed" | "game" | "link";
-  url?: string; poster?: string; allow?: string; game?: "pixel"; more?: [string, string];
+  url?: string; poster?: string; allow?: string; game?: string; more?: [string, string];
   video?: { src: string; poster: string; label: string; length: string };
 };
 
@@ -20,10 +20,5 @@ export const TOYS: Toy[] = [
     credit: "I built it entirely with AI, on Replit.",
     url: "https://gesture-map-viewer--mdhadwal.replit.app", poster: "/play/ascii-hands.webp", allow: "camera; fullscreen",
     video: { src: "/ai/ascii-hands-promo.mp4", poster: "/ai/ascii-hands-poster.webp", length: "32s · with sound", label: "Promo video for ASCII Hands: your hands become the interface. Summon a globe, steer it, detonate it." },
-  },
-  {
-    id: "pixel", kind: "game", game: "pixel", title: "One pixel off", tag: "a tiny game for detail people",
-    blurb: "Six cards. One of them is off. It starts at 8 pixels and ends at 1. My eye twitches at all of them.",
-    how: ["Tap the card that's different", "Four rounds: 8px, 4px, 2px, 1px", "Fewer misses, better title"],
   },
 ];

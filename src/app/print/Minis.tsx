@@ -1,5 +1,6 @@
-// Small versions of Muskaan, drawn to match her own illustrations: blunt hatched bangs, a top bun,
-// big round glasses, dot eyes, a stud earring, a plain tee. One line colour (currentColor) —
+// Small versions of Muskaan, drawn to match her character kit ("Character Study / 01"): solid blunt
+// fringe, a high bun, big round glasses, a tucked-in tee, long jeans with rolled cuffs, sneakers.
+// Slim, long-legged proportions (head about a quarter of her height). One line colour (currentColor) —
 // white on blueprint, ink on paper. Every pose is a little rig (hip + torso tilt + limb angles),
 // so new poses are a few numbers, not a new drawing. Each pose is used in one place only.
 import type { CSSProperties, ReactNode } from "react";
@@ -23,16 +24,14 @@ export type Mouth = "smile" | "open" | "flat" | "o" | "grin" | "frown" | "tongue
 
 const HATCH = (() => {
   const r = rng(7); const s: string[] = [];
-  for (let i = 0; i < 26; i++) { // bangs: dense near-vertical strokes ending at the blunt cut
-    const x = -11.4 + i * .92 + (r() - .5) * .4;
-    s.push(`M${f(x * .7 + 1.2)} ${f(-26.5 - r() * 3)} Q${f(x * .92)} ${f(-21)} ${f(x)} ${f(-17.2 - r() * .6)}`);
+  for (let i = 0; i < 7; i++) { // a few strands in the fringe, ending short of the blunt cut
+    const x = -9.4 + i * 3 + (r() - .5) * .8;
+    s.push(`M${f(x * .7 + 1.2)} ${f(-27 - r() * 2)} Q${f(x * .94)} ${f(-22.5)} ${f(x)} ${f(-19.4 - r() * .8)}`);
   }
-  for (let i = 0; i < 12; i++) { // crown sweeping back toward the bun
-    const x = -10 + i * 1.7;
-    s.push(`M${f(x)} ${f(-27.6 + Math.abs(x) * .1)} Q${f(x + 6)} ${f(-31.6 - r())} ${f(6.5 + r() * 2.5)} ${f(-31.2)}`);
+  for (let i = 0; i < 4; i++) { // crown sweeping back toward the bun
+    const x = -8 + i * 4;
+    s.push(`M${f(x)} ${f(-28.4 + Math.abs(x) * .1)} Q${f(x + 6)} ${f(-31.4 - r())} ${f(6.5 + r() * 2.5)} ${f(-31)}`);
   }
-  for (let i = 0; i < 3; i++) s.push(`M${f(-12.6 + i * .5)} ${f(-17)} Q${f(-13 + i * .4)} ${f(-12)} ${f(-12.9 + i * .5)} ${f(-7.8)}`); // left strand
-  for (let i = 0; i < 4; i++) s.push(`M${f(10 + i * .9)} ${f(-29)} Q${f(14 + i * .3)} ${f(-24)} ${f(12.6 + i * .3)} ${f(-17.4)}`); // right side
   return s.join(" ");
 })();
 
@@ -96,25 +95,36 @@ export interface Rig {
   back?: "L" | "R" | "both" | "none";
   /** hide the legs (e.g. sitting inside a folder) */
   noLegs?: boolean; noHead?: boolean;
+  /** false = don't lift the hip to keep the feet on the ground (e.g. sitting on a chair) */
+  ground?: boolean;
 }
-export interface Joints { hip: P; neck: P; sL: P; sR: P; eL: P; eR: P; hL: P; hR: P; kL: P; kR: P; fL: P; fR: P; head: P }
+export interface Joints { lift: number; hip: P; neck: P; sL: P; sR: P; eL: P; eR: P; hL: P; hR: P; kL: P; kR: P; fL: P; fR: P; head: P }
+
+// kit proportions: long legs, longer arms, a smaller head (HEAD_S). Poses were authored for the old
+// short legs, so the hip is lifted automatically to keep the lowest foot where it was (on the ground).
+const ARM: P = [12.5, 11.5], LEG: P = [17.5, 17], OLD_LEG: P = [13, 12.5];
+export const HEAD_S = .74;
 
 export function joints(r: Rig): Joints {
   const t = r.tilt ?? 0;
-  const neck = add(r.hip, rot([0, -24], t));
-  const sL = add(r.hip, rot([-8.6, -21.4], t)), sR = add(r.hip, rot([8.6, -21.4], t));
-  const eL = step(sL, r.armL[0], 11), hL = step(eL, r.armL[1], 10.5);
-  const eR = step(sR, r.armR[0], 11), hR = step(eR, r.armR[1], 10.5);
-  const pL = add(r.hip, rot([-4.6, 0], t)), pR = add(r.hip, rot([4.6, 0], t));
   const legL = r.legL ?? [-3, -1], legR = r.legR ?? [3, 1];
-  const kL = step(pL, legL[0], 13), fL = step(kL, legL[1], 12.5);
-  const kR = step(pR, legR[0], 13), fR = step(kR, legR[1], 12.5);
-  return { hip: r.hip, neck, sL, sR, eL, eR, hL, hR, kL, kR, fL, fR, head: add(neck, rot([0, -15], t + (r.headTilt ?? 0))) };
+  const offL = rot([-4.4, 0], t), offR = rot([4.4, 0], t);
+  const low = (L: P) => Math.max(offL[1] + Math.cos(rad(legL[0])) * L[0] + Math.cos(rad(legL[1])) * L[1], offR[1] + Math.cos(rad(legR[0])) * L[0] + Math.cos(rad(legR[1])) * L[1]);
+  const lift = r.noLegs || r.ground === false ? 0 : low(OLD_LEG) - low(LEG);
+  const hip: P = [r.hip[0], r.hip[1] + lift];
+  const neck = add(hip, rot([0, -24], t));
+  const sL = add(hip, rot([-8.2, -21.4], t)), sR = add(hip, rot([8.2, -21.4], t));
+  const eL = step(sL, r.armL[0], ARM[0]), hL = step(eL, r.armL[1], ARM[1]);
+  const eR = step(sR, r.armR[0], ARM[0]), hR = step(eR, r.armR[1], ARM[1]);
+  const pL = add(hip, offL), pR = add(hip, offR);
+  const kL = step(pL, legL[0], LEG[0]), fL = step(kL, legL[1], LEG[1]);
+  const kR = step(pR, legR[0], LEG[0]), fR = step(kR, legR[1], LEG[1]);
+  return { lift, hip, neck, sL, sR, eL, eR, hL, hR, kL, kR, fL, fR, head: add(neck, rot([0, -11.6], t + (r.headTilt ?? 0))) };
 }
 
 /** a limb drawn as an outlined tube: thick line, then a thinner fill-coloured line inside */
 const Tube = ({ d, w = 5.6 }: { d: string; w?: number }) => (
-  <g><path d={d} className="mn-tube" style={{ strokeWidth: w }} /><path d={d} className="mn-tube-in" style={{ strokeWidth: w - 3 }} /></g>
+  <g><path d={d} className="mn-tube" style={{ strokeWidth: w }} /><path d={d} className="mn-tube-in" style={{ strokeWidth: w - 2.5 }} /></g>
 );
 
 function Arm({ s, e, h }: { s: P; e: P; h: P }) {
@@ -122,23 +132,36 @@ function Arm({ s, e, h }: { s: P; e: P; h: P }) {
   const a = Math.atan2(e[0] - s[0], e[1] - s[1]);
   const d: P = [Math.sin(a), Math.cos(a)], n: P = [d[1], -d[0]];
   const pt = (along: number, side: number): P => [s[0] + d[0] * along + n[0] * side, s[1] + d[1] * along + n[1] * side];
-  const sleeve = `${line(pt(-1.5, 3.4), pt(5.6, 4.6), pt(5.6, -4.6), pt(-1.5, -3.4))}`;
+  const sleeve = `${line(pt(-1.5, 3.2), pt(5.8, 4), pt(5.8, -4), pt(-1.5, -3.2))}`;
+  const fa = Math.atan2(h[0] - e[0], h[1] - e[1]) * 180 / Math.PI; // forearm direction, for the hand
   return (
     <g>
-      <Tube d={line(s, e, h)} w={5.2} />
+      <Tube d={line(s, e, h)} w={4.4} />
       <path d={sleeve} className="mn-fill mn-line" />
-      <path d={line(pt(-1.5, 3.4), pt(-1.5, -3.4))} className="mn-fill" style={{ stroke: "var(--mn-fill)", strokeWidth: 2 }} />
-      <circle cx={h[0]} cy={h[1]} r="2.4" className="mn-fill mn-line" />
+      <path d={line(pt(-1.5, 3.2), pt(-1.5, -3.2))} className="mn-fill" style={{ stroke: "var(--mn-fill)", strokeWidth: 2 }} />
+      <path d={line(pt(5.1, 3.6), pt(5.1, -3.6))} className="mn-thin" />
+      <g transform={`translate(${f(h[0])} ${f(h[1])}) rotate(${f(-fa)})`}>
+        <path d="M-1.9 -1 C-2.3 1.6 -1.4 3.4 0 3.4 C1.5 3.4 2.3 1.6 1.9 -1 Z" className="mn-fill mn-line" />
+        <path d="M1.8 .2 q1.3 .6 .7 1.9" className="mn-thin" />
+      </g>
     </g>
   );
 }
 
+/** a jeans leg (straight, with a rolled cuff) and a low-top sneaker */
 function Leg({ p, k, ft, facing }: { p: P; k: P; ft: P; facing: number }) {
-  const a = Math.atan2(ft[0] - k[0], ft[1] - k[1]) * 180 / Math.PI;
+  const la = Math.atan2(ft[0] - k[0], ft[1] - k[1]);
+  const d: P = [Math.sin(la), Math.cos(la)], n: P = [d[1], -d[0]];
+  const at = (back: number, side: number): P => [ft[0] - d[0] * back + n[0] * side, ft[1] - d[1] * back + n[1] * side];
+  const a = la * 180 / Math.PI;
   return (
     <g>
-      <Tube d={line(p, k, ft)} w={7} />
-      <ellipse cx={ft[0] + facing * 1.6} cy={ft[1] + .6} rx="3.6" ry="2" transform={`rotate(${f(-a * .25)} ${f(ft[0])} ${f(ft[1])})`} className="mn-solid" />
+      <Tube d={line(p, k, ft)} w={6.6} />
+      <g transform={`translate(${f(ft[0])} ${f(ft[1] + .4)}) rotate(${f(-a * .25)}) scale(${facing} 1)`}>
+        <path d="M-3.4 -2.2 C-1.6 -3 .6 -2.8 1.6 -2 C3.6 -1.6 5.8 -.6 6.2 .9 C6.4 1.9 5.6 2.3 4.6 2.3 L-3.2 2.3 C-4.3 2.3 -4.6 1.4 -4.4 .2 Z" className="mn-fill mn-line" />
+        <path d="M-4.3 1 H6.1 M.2 -2.4 l1 1.3 M1.6 -2 l1 1.3" className="mn-thin" />
+      </g>
+      <path d={line(at(3.6, 3.8), at(3.6, -3.8), at(1.4, -3.9), at(1.4, 3.9)) + " Z"} className="mn-fill mn-line" />
     </g>
   );
 }
@@ -146,7 +169,7 @@ function Leg({ p, k, ft, facing }: { p: P; k: P; ft: P; facing: number }) {
 export function Body({ r, facing = 1, children, front }: { r: Rig; facing?: 1 | -1; children?: ReactNode; front?: ReactNode }) {
   const j = joints(r), t = r.tilt ?? 0;
   const back = r.back ?? "none";
-  const pL = add(r.hip, rot([-4.6, 0], t)), pR = add(r.hip, rot([4.6, 0], t));
+  const pL = add(j.hip, rot([-4.4, 0], t)), pR = add(j.hip, rot([4.4, 0], t));
   const armL = <Arm s={j.sL} e={j.eL} h={j.hL} />, armR = <Arm s={j.sR} e={j.eR} h={j.hR} />;
   return (
     <g>
@@ -154,15 +177,20 @@ export function Body({ r, facing = 1, children, front }: { r: Rig; facing?: 1 | 
       {(back === "R" || back === "both") && armR}
       {children}
       {!r.noLegs && <><Leg p={pL} k={j.kL} ft={j.fL} facing={facing} /><Leg p={pR} k={j.kR} ft={j.fR} facing={facing} /></>}
-      {/* tee */}
-      <g transform={`translate(${f(r.hip[0])} ${f(r.hip[1])}) rotate(${f(t)})`}>
-        <path d="M-3.8 -24.6 C-6.5 -24 -9.5 -23.4 -10.6 -20.6 C-11.6 -16 -10.6 -6 -9.8 1.4 L9.8 1.4 C10.6 -6 11.6 -16 10.6 -20.6 C9.5 -23.4 6.5 -24 3.8 -24.6 Z" className="mn-fill mn-line" />
-        <path d="M-3.8 -24.6 Q0 -21.2 3.8 -24.6" className="mn-thin" />
+      <g transform={`translate(${f(j.hip[0])} ${f(j.hip[1])}) rotate(${f(t)})`}>
+        {/* jeans seat: high waist, covers the tops of the legs */}
+        {!r.noLegs && <><path d="M-8.4 -3 L8.4 -3 L8 3.4 Q0 5.2 -8 3.4 Z" className="mn-fill" /><path d="M-8.4 -3 L-8 3.4 M8.4 -3 L8 3.4 M0 -1.4 V3.2" className="mn-line" /></>}
+        {/* tee, tucked in */}
+        <path d="M-3.6 -24.6 C-6.3 -24 -9.1 -23.4 -10.1 -20.6 C-11 -16 -9.8 -8 -8.8 -2.4 L8.8 -2.4 C9.8 -8 11 -16 10.1 -20.6 C9.1 -23.4 6.3 -24 3.6 -24.6 Z" className="mn-fill mn-line" />
+        <path d="M-3.6 -24.6 Q0 -21.4 3.6 -24.6" className="mn-thin" />
+        {/* waistband */}
+        <path d="M-8.9 -4.4 H8.9 V-1.6 H-8.9 Z" className="mn-fill mn-line" />
+        <path d="M-5.4 -4.4 v2.8 M5.4 -4.4 v2.8" className="mn-thin" />
       </g>
       {(back === "none" || back === "R") && armL}
       {(back === "none" || back === "L") && armR}
       {!r.noHead && (
-        <g transform={`translate(${f(j.neck[0])} ${f(j.neck[1] + 1.2)}) rotate(${f(t + (r.headTilt ?? 0))}) scale(${facing} 1)`}>
+        <g transform={`translate(${f(j.neck[0])} ${f(j.neck[1] + 1)}) rotate(${f(t + (r.headTilt ?? 0))}) scale(${f(facing * HEAD_S)} ${HEAD_S})`}>
           <Head eyes={r.eyes} mouth={r.mouth} blush={r.blush} />
         </g>
       )}
@@ -235,12 +263,12 @@ export const Dice = ({ x, y, s = 1, r = 0, n = 3 }: { x: number; y: number; s?: 
 };
 const Motion = ({ d }: { d: string }) => <path d={d} className="mn-thin" />;
 
-/** chair + desk for the wake-her-up scene: desk top at y = -20, seat at y = -12 */
-const DeskScene = () => (
+/** chair + desk for the wake-her-up scene: seat at y = seat, desk top 9 above it */
+const DeskScene = ({ seat }: { seat: number }) => (
   <g>
     <path d="M-30 0 H74" className="mn-thin" />
-    <path d="M-16 -12 H6 M-14 -12 V0 M4 -12 V0 M-16 -12 V-44" className="mn-line" />
-    <path d="M14 -20 H74 M18 -20 V0 M70 -20 V0" className="mn-line" />
+    <path d={`M-16 ${seat} H6 M-14 ${seat} V0 M4 ${seat} V0 M-16 ${seat} V${seat - 32}`} className="mn-line" />
+    <path d={`M14 ${seat - 9} H74 M18 ${seat - 9} V0 M70 ${seat - 9} V0`} className="mn-line" />
   </g>
 );
 
@@ -286,7 +314,8 @@ export const POSES = {
   /** sitting cross-legged on top of the M, laptop on her lap */
   nmTyping: mk("-30 -66 60 68", () => {
     const r: Rig = { hip: [0, -6], armL: [24, 70], armR: [-24, -70], legL: [-78, 66], legR: [78, -66], eyes: "dot", mouth: "flat" };
-    return <><Body r={r} front={<Laptop x={0} y={-2} s={.95} />} /><Motion d="M-20 -30 l-4 -3 M20 -30 l4 -3 M22 -24 h5" /></>;
+    const j = joints(r);
+    return <><Body r={r} front={<Laptop x={0} y={j.hip[1] + 4} s={.95} />} /><Motion d="M-20 -30 l-4 -3 M20 -30 l4 -3 M22 -24 h5" /></>;
   }),
   /** just head + hands, peeking over the K */
   nmPeek: mk("-18 -36 36 38", () => (
@@ -338,22 +367,29 @@ export const POSES = {
   }),
 
   // ABOUT
-  /** waving hello */
-  abWave: mk("-26 -92 54 96", () => {
-    const r: Rig = { hip: [0, -25], headTilt: 6, armL: [-6, -2], armR: [140, 172], eyes: "happy", mouth: "open", blush: true };
-    return <><Body r={r} /><path d="M24 -74 l4 -3 M25 -68 h5 M22 -80 l2 -4" className="mn-thin" /></>;
-  }),
-  /** holding a very dead plant, apologetic */
-  abPlant: mk("-28 -84 58 88", () => {
-    const r: Rig = { hip: [-4, -25], headTilt: 8, armL: [40, 120], armR: [-30, -110], eyes: "side", mouth: "frown" };
+  /** "Portfolio hello": a tablet held up in one hand, waving with the other */
+  abWave: mk("-30 -100 62 104", () => {
+    const r: Rig = { hip: [0, -25], headTilt: 6, armL: [-24, -158], armR: [140, 172], eyes: "happy", mouth: "open", blush: true };
     const j = joints(r);
-    return <><Body r={r} front={<Plant x={(j.hL[0] + j.hR[0]) / 2} y={j.hL[1] + 4} s={1.15} dead />} /><path d="M-15 -72 q-1.4 2.6 0 3.6 q1.4 -1 0 -3.6" className="mn-thin" /></>;
+    return <><Body r={r} front={<g transform={`translate(${f(j.hL[0] - 2)} ${f(j.hL[1] - 3)}) rotate(-8)`}><rect x="-6.5" y="-10" width="13" height="18" rx="2" className="mn-fill mn-line" /><rect x="-4.5" y="-7.6" width="9" height="12.4" className="mn-thin" /><path d="M-2.6 -4.4 h5.2 M-2.6 -1.6 h3.6" className="mn-thin" /></g>} />
+      <path d={`M${f(j.hR[0] + 6)} ${f(j.hR[1] - 2)} l4 -3 M${f(j.hR[0] + 7)} ${f(j.hR[1] + 4)} h5 M${f(j.hR[0] + 2)} ${f(j.hR[1] - 7)} l2 -4`} className="mn-thin" /></>;
   }),
-  /** rolling dice */
-  abDice: mk("-24 -84 66 88", () => {
-    const r: Rig = { hip: [-6, -25], tilt: 8, armL: [-14, -4], armR: [110, 140], eyes: "wide", mouth: "grin" };
+  /** "Plant person": watering a very droopy plant anyway, a little guilty */
+  abPlant: mk("-42 -92 74 96", () => {
+    const r: Rig = { hip: [8, -25], headTilt: -8, armL: [-58, -96], armR: [6, 2], eyes: "dot", mouth: "flat" };
     const j = joints(r);
-    return <><Body r={r} /><Dice x={j.hR[0] + 12} y={j.hR[1] - 6} r={18} n={6} /><Dice x={j.hR[0] + 20} y={j.hR[1] + 6} r={-12} n={4} s={.85} /><Motion d={`M${f(j.hR[0] + 4)} ${f(j.hR[1] - 12)} l5 -3 M${f(j.hR[0] + 6)} ${f(j.hR[1] + 2)} l5 2`} /></>;
+    const [hx, hy] = j.hL;
+    return <><Plant x={-28} y={0} s={1.3} dead /><Body r={r} front={<g transform={`translate(${f(hx - 4)} ${f(hy + 1)}) rotate(-18)`}>
+        <path d="M-5 -5 h10 v9 q0 2 -2 2 h-6 q-2 0 -2 -2 z" className="mn-fill mn-line" /><path d="M-5 -2 L-14 -7" className="mn-line" /><path d="M5 -3 q5 0 4 5 q-1 3 -4 2" className="mn-thin" />
+      </g>} />
+      <path d={`M${f(hx - 18)} ${f(hy + 2)} l-1.4 4 M${f(hx - 21)} ${f(hy + 6)} l-1.4 4 M${f(hx - 17)} ${f(hy + 9)} l-1.4 4`} className="mn-thin" /></>;
+  }),
+  /** "Board-game person": crouched low, rolling dice across the floor */
+  abDice: mk("-48 -74 82 78", () => {
+    const r: Rig = { hip: [4, -12], tilt: -16, headTilt: 8, armL: [-46, -24], armR: [24, -10], legL: [-64, 12], legR: [56, -14], eyes: "wide", mouth: "grin" };
+    const j = joints(r);
+    return <><Body r={r} /><Dice x={j.hL[0] - 12} y={-5} r={18} n={6} /><Dice x={j.hL[0] - 25} y={-4.4} r={-12} n={4} s={.85} />
+      <Motion d={`M${f(j.hL[0] - 4)} ${f(j.hL[1] - 4)} l-4 -3 M${f(j.hL[0] - 31)} -12 l-4 -2 M${f(j.hL[0] - 32)} -6 h-5`} /></>;
   }),
   /** whisking a bowl (stress-baking) */
   abBake: mk("-26 -84 54 88", () => {
@@ -361,10 +397,13 @@ export const POSES = {
     const j = joints(r);
     return <><Body r={r} front={<g transform={`translate(${f((j.hL[0] + j.hR[0]) / 2)} ${f(j.hL[1] + 2)})`}><path d="M-10 -3 h20 q-2 10 -10 10 q-8 0 -10 -10 z" className="mn-fill mn-line" /><path d="M2 -3 l5 -12 M4 -14 q4 -2 5 2 q-1 3 -4 1" className="mn-thin" /></g>} /><path d="M-6 -48 q-2 -3 0 -5 M6 -48 q2 -3 0 -5" className="mn-thin" /></>;
   }),
-  /** labelling a box (calls it information architecture) */
-  abLabel: mk("-28 -84 64 88", () => {
-    const r: Rig = { hip: [-8, -25], tilt: 4, armL: [-10, -4], armR: [76, 70], eyes: "dot", mouth: "smile" };
-    return <><g transform="translate(22 0)"><path d="M-12 0 v-22 h24 v22 z" className="mn-fill mn-line" /><path d="M-12 -22 l4 -6 h24 l-4 6 M12 -22 l4 -6 v22 l-4 6" className="mn-fill mn-line" /><rect x="-7" y="-15" width="14" height="7" className="mn-fill mn-line" /><path d="M-4 -11.4 h8" className="mn-thin" /></g><Body r={r} /></>;
+  /** "Reorganizer": a labelled box on one arm, one finger up (it's information architecture) */
+  abLabel: mk("-30 -100 62 104", () => {
+    const r: Rig = { hip: [0, -25], headTilt: -6, armL: [34, 92], armR: [96, 178], eyes: "happy", mouth: "smile" };
+    const j = joints(r);
+    const cx = j.hL[0] + 3, cy = j.hL[1] - 5;
+    return <><Body r={r} front={<g transform={`translate(${f(cx)} ${f(cy)})`}><path d="M-13 -8 h26 v15 h-26 z" className="mn-fill mn-line" /><path d="M-13 -8 l3 -4 h26 l-3 4 M13 -8 l3 -4 v15 l-3 4" className="mn-fill mn-line" /><rect x="-7" y="-4.6" width="14" height="7" className="mn-fill mn-line" /><path d="M-4 -1.2 h8" className="mn-thin" /></g>} />
+      <path d={`M${f(j.hR[0])} ${f(j.hR[1] - 2.4)} v-4.4`} className="mn-line" style={{ strokeWidth: 2 }} /><path d={`M${f(j.hR[0] + 5)} ${f(j.hR[1] - 8)} l3 -2 M${f(j.hR[0] + 6)} ${f(j.hR[1] - 3)} h4`} className="mn-thin" /></>;
   }),
   /** popcorn, very invested in a bad movie */
   abMovie: mk("-26 -64 52 66", () => {
@@ -379,10 +418,11 @@ export const POSES = {
     return <><Body r={r} front={<g><rect x={j.hR[0] - 1} y={j.hR[1] - 12} width="9" height="15" rx="1.6" className="mn-fill mn-line" /><rect x={j.hR[0] + 6} y={j.hR[1] - 19} width="12" height="8" rx="1" transform={`rotate(-14 ${f(j.hR[0] + 12)} ${f(j.hR[1] - 15)})`} className="mn-fill mn-line" /><path d={`M${f(j.hR[0] + 21)} ${f(j.hR[1] - 22)} q3 3 0 6 M${f(j.hR[0] + 24)} ${f(j.hR[1] - 25)} q5 6 0 12`} className="mn-thin" /></g>} /></>;
   }),
   /** painting at a tiny easel */
-  abArt: mk("-24 -84 66 88", () => {
+  abArt: mk("-24 -92 66 96", () => {
     const r: Rig = { hip: [-6, -25], tilt: 4, armL: [-30, 10], armR: [96, 120], eyes: "side", mouth: "smile" };
     const j = joints(r);
-    return <><g transform="translate(28 0)"><path d="M-8 0 l6 -34 M8 0 l-6 -34 M0 -34 v34" className="mn-line" /><rect x="-11" y="-34" width="22" height="20" className="mn-fill mn-line" /><path d="M-6 -20 q3 -8 6 -3 q3 -6 6 1" className="mn-thin" /><circle cx="-4" cy="-28" r="2" className="mn-thin" /></g><Body r={r} /><path d={`M${f(j.hR[0])} ${f(j.hR[1])} l6 -6`} className="mn-line" /><ellipse cx={j.hL[0] - 3} cy={j.hL[1] + 1} rx="6" ry="3.4" className="mn-fill mn-line" /></>;
+    const top = j.hR[1] - 12;
+    return <><g transform="translate(30 0)"><path d={`M-8 0 L-2 ${f(top)} M8 0 L2 ${f(top)} M0 ${f(top)} V0`} className="mn-line" /><rect x="-11" y={top} width="22" height="20" className="mn-fill mn-line" /><path d={`M-6 ${f(top + 14)} q3 -8 6 -3 q3 -6 6 1`} className="mn-thin" /><circle cx="-4" cy={top + 6} r="2" className="mn-thin" /></g><Body r={r} /><path d={`M${f(j.hR[0])} ${f(j.hR[1])} l6 -6`} className="mn-line" /><ellipse cx={j.hL[0] - 3} cy={j.hL[1] + 1} rx="6" ry="3.4" className="mn-fill mn-line" /></>;
   }),
 
   /** holding up a giant prize cheque */
@@ -395,13 +435,14 @@ export const POSES = {
   abVR: mk("-34 -84 68 88", () => {
     const r: Rig = { hip: [0, -25], headTilt: -4, armL: [-100, -130], armR: [96, 70], eyes: "dot", mouth: "o" };
     const j = joints(r);
-    return <><Body r={r} /><rect x="-12" y={j.head[1] - 1.6} width="24" height="9" rx="3" className="mn-fill mn-line" transform={`rotate(-4 0 ${f(j.head[1])})`} /><path d={`M${f(j.hR[0] + 4)} ${f(j.hR[1] - 6)} l4 -4 M${f(j.hR[0] + 6)} ${f(j.hR[1])} h5 M${f(j.hL[0] - 4)} ${f(j.hL[1] - 6)} l-4 -4`} className="mn-thin" /><path d="M-30 -20 l4 -6 l4 6 z M24 -30 l3 -5 l3 5 z" className="mn-thin" /></>;
+    return <><Body r={r} /><rect x="-9" y={j.head[1] - 1.2} width="18" height="7" rx="2.4" className="mn-fill mn-line" transform={`rotate(-4 0 ${f(j.head[1])})`} /><path d={`M${f(j.hR[0] + 4)} ${f(j.hR[1] - 6)} l4 -4 M${f(j.hR[0] + 6)} ${f(j.hR[1])} h5 M${f(j.hL[0] - 4)} ${f(j.hL[1] - 6)} l-4 -4`} className="mn-thin" /><path d="M-30 -20 l4 -6 l4 6 z M24 -30 l3 -5 l3 5 z" className="mn-thin" /></>;
   }),
   /** juggling five things at once (five startups, one summer) */
-  abJuggle: mk("-30 -96 60 100", () => {
+  abJuggle: mk("-30 -108 60 112", () => {
     const r: Rig = { hip: [0, -25], armL: [-130, -160], armR: [130, 160], eyes: "wide", mouth: "grin" };
-    const pts: [number, number][] = [[-22, -66], [-12, -86], [2, -92], [16, -86], [24, -68]];
-    return <><path d="M-22 -66 Q-20 -96 2 -94 Q22 -96 24 -68" className="mn-thin" strokeDasharray="2 3" /><Body r={r} />{pts.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3.4" className={i === 2 ? "mn-accent mn-line" : "mn-fill mn-line"} />)}</>;
+    const lift = joints(r).lift;
+    const pts: [number, number][] = [[-22, -66 + lift], [-12, -86 + lift], [2, -92 + lift], [16, -86 + lift], [24, -68 + lift]];
+    return <><path d={`M-22 ${f(-66 + lift)} Q-20 ${f(-96 + lift)} 2 ${f(-94 + lift)} Q22 ${f(-96 + lift)} 24 ${f(-68 + lift)}`} className="mn-thin" strokeDasharray="2 3" /><Body r={r} />{pts.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3.4" className={i === 2 ? "mn-accent mn-line" : "mn-fill mn-line"} />)}</>;
   }),
   /** reading her own research paper, a wheat stalk in her other hand */
   abCrop: mk("-28 -88 60 92", () => {
@@ -505,16 +546,18 @@ export const POSES = {
     return <><Body r={r} /><path d={`M${f(j.hR[0])} ${f(j.hR[1] + 6)} V${f(j.hR[1] - 18)}`} className="mn-line" /><path d={`M${f(j.hR[0] - 24)} ${f(j.hR[1] - 16)} Q${f(j.hR[0])} ${f(j.hR[1] - 40)} ${f(j.hR[0] + 24)} ${f(j.hR[1] - 16)} q-6 -4 -12 0 q-6 -4 -12 0 q-6 -4 -12 0 q-6 -4 -12 0 z`} className="mn-accent mn-line" />{[[-22, -8], [-18, 6], [26, -4], [22, 10], [-6, -30], [12, -28]].map(([x, y], i) => <path key={i} d={`M${x} ${y - 40} l-1.6 4`} className="mn-thin" />)}</>;
   }),
   /** asleep at her desk, head on her arms, "M" laptop + "UX" mug beside her (echoes her own desk drawings): home "wake her up" (before) */
-  wkSleep: mk("-30 -62 104 66", () => {
+  wkSleep: mk("-30 -70 104 74", () => {
     const r: Rig = { hip: [-4, -14], tilt: 30, headTilt: 46, armL: [74, 98], armR: [62, 96], legL: [80, 0], legR: [86, 4], back: "L", eyes: "closed", mouth: "flat" };
-    return <><DeskScene /><Body r={r} /><Laptop x={50} y={-20} s={0.8} /><Mug x={67} y={-26} s={0.75} />
-      <text x="20" y="-46" className="mn-text" fontSize="9" style={{ fontFamily: "var(--hand)" }}>z</text><text x="27" y="-53" className="mn-text" fontSize="7" style={{ fontFamily: "var(--hand)" }}>z</text><text x="33" y="-59" className="mn-text" fontSize="5.5" style={{ fontFamily: "var(--hand)" }}>z</text></>;
+    const seat = joints(r).hip[1] + 2.5, desk = seat - 9;
+    return <><DeskScene seat={seat} /><Body r={r} /><Laptop x={50} y={desk} s={0.8} /><Mug x={67} y={desk - 6} s={0.75} />
+      <text x="20" y={desk - 26} className="mn-text" fontSize="9" style={{ fontFamily: "var(--hand)" }}>z</text><text x="27" y={desk - 33} className="mn-text" fontSize="7" style={{ fontFamily: "var(--hand)" }}>z</text><text x="33" y={desk - 39} className="mn-text" fontSize="5.5" style={{ fontFamily: "var(--hand)" }}>z</text></>;
   }),
   /** same desk, bolt upright, arms up, wide awake: home "wake her up" (after) */
-  wkAwake: mk("-30 -100 104 104", () => {
+  wkAwake: mk("-30 -112 104 116", () => {
     const r: Rig = { hip: [-4, -14], headTilt: -4, armL: [-150, -168], armR: [150, 168], legL: [80, 0], legR: [86, 4], eyes: "wide", mouth: "open" };
-    return <><DeskScene /><Body r={r} /><Laptop x={50} y={-20} s={0.8} /><Mug x={67} y={-26} s={0.75} steam />
-      <path d="M-24 -86 l-4 -4 M16 -86 l4 -4 M-4 -96 v-5" className="mn-thin" /></>;
+    const seat = joints(r).hip[1] + 2.5, desk = seat - 9;
+    return <><DeskScene seat={seat} /><Body r={r} /><Laptop x={50} y={desk} s={0.8} /><Mug x={67} y={desk - 6} s={0.75} steam />
+      <path d="M-24 -98 l-4 -4 M16 -98 l4 -4 M-4 -108 v-5" className="mn-thin" /></>;
   }),
   /** hand on hip, pointing back along her own timeline: home "My story" */
   hmStory: mk("-30 -88 66 92", () => {
@@ -589,13 +632,13 @@ export const POSES = {
     return <><Body r={r} /><g transform={`translate(${f(j.hR[0] + 9)} ${f(j.hR[1] - 6)}) rotate(8)`}><rect x="-9" y="-16" width="18" height="30" rx="3" className="mn-fill mn-line" /><path d="M-5 -10 h10 M-5 -6 h6 M-5 6 h10" className="mn-thin" /><path d="M0 4 c-4 -4 -4 -9 0 -9 c4 0 4 5 0 9 z" className="mn-accent mn-line" /></g><path d="M30 -84 l4 -3 M32 -78 h5" className="mn-thin" /></>;
   }),
   /** pushing a giant slider knob from $ toward a short walk: the price ↔ proximity trade-off */
-  bmsSlider: mk("-46 -84 124 88", () => {
+  bmsSlider: mk("-46 -92 124 96", () => {
     const r: Rig = { hip: [-8, -25], tilt: 14, armL: [70, 82], armR: [80, 90], legL: [-22, -34], legR: [26, 10], back: "L", eyes: "dot", mouth: "tongue" };
     const j = joints(r);
     const kx = j.hR[0] + 7;
-    return <><path d="M-42 -42 H74" className="mn-line" /><path d="M-42 -48 v12 M74 -48 v12" className="mn-thin" />
+    return <><g transform={`translate(0 ${f(j.lift)})`}><path d="M-42 -42 H74" className="mn-line" /><path d="M-42 -48 v12 M74 -48 v12" className="mn-thin" />
       <text x="-42" y="-54" className="mn-text" fontSize="9" style={{ fontFamily: "var(--hand)" }}>$</text><text x="56" y="-54" className="mn-text" fontSize="8" style={{ fontFamily: "var(--hand)" }}>close</text>
-      <Body r={r} /><rect x={kx - 6} y={-56} width="12" height="28" rx="3" className="mn-fill mn-line" /><path d={`M${f(kx - 2)} -48 v12 M${f(kx + 2)} -48 v12`} className="mn-thin" /></>;
+      </g><Body r={r} /><g transform={`translate(0 ${f(j.lift)})`}><rect x={kx - 6} y={-56} width="12" height="28" rx="3" className="mn-fill mn-line" /><path d={`M${f(kx - 2)} -48 v12 M${f(kx + 2)} -48 v12`} className="mn-thin" /></g></>;
   }),
   /** shrugging at an error: the edge cases */
   bmsOops: mk("-34 -100 72 104", () => {
@@ -622,10 +665,11 @@ export const POSES = {
   }),
 
   /** pressing a giant app icon with a P on it: more people opening the app */
-  bmsTapApp: mk("-28 -88 84 92", () => {
+  bmsTapApp: mk("-28 -96 84 100", () => {
     const r: Rig = { hip: [-8, -25], tilt: 6, armL: [-10, -2], armR: [92, 76], eyes: "happy", mouth: "open" };
-    return <><g transform="translate(36 -40)"><rect x="-13" y="-13" width="26" height="26" rx="7" className="mn-fill mn-line" /><text x="0" y="5.5" textAnchor="middle" className="mn-text" fontSize="15" fontWeight="700">P</text></g>
-      <path d="M36 -60 v-6 M50 -54 l4 -4 M22 -54 l-4 -4 M54 -40 h6" className="mn-thin" /><Body r={r} /></>;
+    const lift = joints(r).lift;
+    return <><g transform={`translate(36 ${f(-40 + lift)})`}><rect x="-13" y="-13" width="26" height="26" rx="7" className="mn-fill mn-line" /><text x="0" y="5.5" textAnchor="middle" className="mn-text" fontSize="15" fontWeight="700">P</text></g>
+      <path transform={`translate(0 ${f(lift)})`} d="M36 -60 v-6 M50 -54 l4 -4 M22 -54 l-4 -4 M54 -40 h6" className="mn-thin" /><Body r={r} /></>;
   }),
   /** catching a boomerang that came back: more parkers coming back */
   bmsBoomerang: mk("-26 -100 82 104", () => {
@@ -671,7 +715,8 @@ export const POSES = {
   /** turning a big climate dial set to 21°: the dedicated HVAC panel */
   gmThermo: mk("-26 -88 78 92", () => {
     const r: Rig = { hip: [-8, -25], tilt: 6, armL: [-10, -2], armR: [96, 60], eyes: "side", mouth: "tongue" };
-    return <><g transform="translate(34 -44)"><circle r="14" className="mn-fill mn-line" /><circle r="9" className="mn-thin" /><path d="M0 -14 v5" className="mn-line" /><text x="0" y="3.4" textAnchor="middle" className="mn-text" fontSize="8" fontWeight="700">21°</text><path d="M-18 -10 a20 20 0 0 1 8 -8" className="mn-thin" /><path d="M-12 -19 l2 1.6 l-2.4 1" className="mn-thin" /></g><Body r={r} /></>;
+    const lift = joints(r).lift;
+    return <><g transform={`translate(34 ${f(-44 + lift)})`}><circle r="14" className="mn-fill mn-line" /><circle r="9" className="mn-thin" /><path d="M0 -14 v5" className="mn-line" /><text x="0" y="3.4" textAnchor="middle" className="mn-text" fontSize="8" fontWeight="700">21°</text><path d="M-18 -10 a20 20 0 0 1 8 -8" className="mn-thin" /><path d="M-12 -19 l2 1.6 l-2.4 1" className="mn-thin" /></g><Body r={r} /></>;
   }),
   /** measuring a single icon tile with arrows: 44 × 44 touch targets (the system) */
   gmIcon: mk("-26 -92 80 96", () => {
@@ -688,26 +733,21 @@ export const POSES = {
   // PLAY PAGE
   /** gripping a game controller with both hands, ready: Play hero */
   plController: mk("-30 -90 60 94", () => {
-    const r: Rig = { hip: [0, -25], armL: [44, 104], armR: [-44, -104], eyes: "wide", mouth: "grin", blush: true };
+    const r: Rig = { hip: [0, -25], armL: [44, 104], armR: [-44, -104], legL: [-30, -4], legR: [30, 4], eyes: "wide", mouth: "grin", blush: true };
     const j = joints(r);
     const cx = (j.hL[0] + j.hR[0]) / 2, cy = j.hL[1] - 1;
     return <><Body r={r} front={<g transform={`translate(${f(cx)} ${f(cy)})`}><path d="M-13 -4 q0 -5 5 -5 h16 q5 0 5 5 l2 7 q1 5 -4 5 q-3 0 -5 -3 h-12 q-2 3 -5 3 q-5 0 -4 -5 z" className="mn-fill mn-line" /><path d="M-8 -3 v4 M-10 -1 h4" className="mn-thin" /><circle cx="6" cy="-2" r="1.2" className="mn-solid" /><circle cx="9" cy="1" r="1.2" className="mn-accent mn-line" /></g>} /><path d="M-24 -70 l-4 -3 M24 -70 l4 -3 M0 -92 v-4" className="mn-thin" /></>;
   }),
-  /** squinting through a loupe at a single pixel: the "one pixel off" game */
-  plSquint: mk("-26 -88 74 92", () => {
-    const r: Rig = { hip: [-8, -25], tilt: 10, headTilt: 8, armL: [-10, -2], armR: [118, -150], eyes: "tired", mouth: "flat" };
-    const j = joints(r);
-    return <><g transform="translate(34 -36)"><rect x="-10" y="-10" width="20" height="20" className="mn-fill mn-line" /><path d="M-10 -3 h20 M-10 3 h20 M-3 -10 v20 M3 -10 v20" className="mn-thin" /><rect x="3" y="-3" width="7" height="6" className="mn-accent mn-line" /></g>
-      <Body r={r} /><circle cx={j.hR[0] - 6} cy={j.hR[1] - 7} r="5.4" className="mn-line" style={{ fill: "rgba(255,255,255,.12)" }} /><text x="20" y="-56" className="mn-text" fontSize="8" style={{ fontFamily: "var(--hand)" }}>1px?!</text></>;
-  }),
 
   // HOME — working with AI
-  /** high-fiving a small robot: home "Working with AI" */
-  hmAI: mk("-28 -92 92 96", () => {
-    const r: Rig = { hip: [-8, -25], tilt: 6, armL: [-10, -2], armR: [140, 172], eyes: "happy", mouth: "grin" };
+  /** "High five, robot": a small robot reaches up and she meets it halfway: home "Working with AI" */
+  hmAI: mk("-28 -96 92 100", () => {
+    const r: Rig = { hip: [-8, -25], tilt: 6, armL: [-10, -2], armR: [104, 140], eyes: "happy", mouth: "grin" };
     const j = joints(r);
-    return <><g transform="translate(44 0)"><rect x="-9" y="-22" width="18" height="20" rx="3" className="mn-fill mn-line" /><path d="M-5 0 v-2 M5 0 v-2" className="mn-line" /><rect x="-10" y="-40" width="20" height="16" rx="4" className="mn-fill mn-line" /><circle cx="-4" cy="-32" r="1.6" className="mn-solid" /><circle cx="4" cy="-32" r="1.6" className="mn-solid" /><path d="M0 -40 v-6" className="mn-line" /><circle cx="0" cy="-48" r="2.2" className="mn-accent mn-line" /><path d="M-9 -16 l-8 -14" className="mn-line" /><circle cx="-18" cy="-32" r="2.4" className="mn-fill mn-line" /></g>
-      <Body r={r} /><path d={`M${f(j.hR[0] + 3)} ${f(j.hR[1] - 6)} l3 -4 M${f(j.hR[0] + 7)} ${f(j.hR[1] - 1)} l5 -2 M${f(j.hR[0] - 2)} ${f(j.hR[1] - 8)} l0 -5`} className="mn-thin" /></>;
+    const [hx, hy] = j.hR;
+    return <><g transform="translate(46 0) scale(1.4)"><rect x="-9" y="-22" width="18" height="20" rx="3" className="mn-fill mn-line" /><path d="M-5 0 v-2 M5 0 v-2" className="mn-line" /><rect x="-10" y="-40" width="20" height="16" rx="4" className="mn-fill mn-line" /><circle cx="-4" cy="-32" r="1.6" className="mn-solid" /><circle cx="4" cy="-32" r="1.6" className="mn-solid" /><path d="M0 -40 v-6" className="mn-line" /><circle cx="0" cy="-48" r="2.2" className="mn-accent mn-line" /></g>
+      <path d={`M33.4 -22 L${f(hx + 6)} ${f(hy + 4)}`} className="mn-line" /><circle cx={hx + 5} cy={hy + 2.6} r="2.4" className="mn-fill mn-line" />
+      <Body r={r} /><path d={`M${f(hx + 3)} ${f(hy - 6)} l3 -4 M${f(hx + 8)} ${f(hy - 2)} l5 -2 M${f(hx - 2)} ${f(hy - 8)} l0 -5`} className="mn-thin" /></>;
   }),
 
   // RÉSUMÉ PAGE
@@ -724,17 +764,20 @@ export const POSES = {
   }),
 
   // ABOUT — weekend mode
-  /** holding a kayak paddle across her body, grinning */
-  abPaddle: mk("-38 -92 76 96", () => {
-    const r: Rig = { hip: [0, -25], armL: [36, 116], armR: [-24, -96], eyes: "happy", mouth: "grin" };
+  /** "Weekend kayaker": sitting in her kayak, paddle across her body, grinning */
+  abPaddle: mk("-54 -78 108 84", () => {
+    const r: Rig = { hip: [0, -10], armL: [36, 116], armR: [-24, -96], noLegs: true, eyes: "happy", mouth: "grin" };
     const j = joints(r);
     const dx = j.hR[0] - j.hL[0], dy = j.hR[1] - j.hL[1], len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
-    const a: P = [j.hL[0] - ux * 20, j.hL[1] - uy * 20], b: P = [j.hR[0] + ux * 20, j.hR[1] + uy * 20];
+    const a: P = [j.hL[0] - ux * 22, j.hL[1] - uy * 22], b: P = [j.hR[0] + ux * 22, j.hR[1] + uy * 22];
     const ang = Math.atan2(uy, ux) * 180 / Math.PI;
-    return <><Body r={r} front={<g><path d={line(a, b)} className="mn-line" style={{ strokeWidth: 2.2 }} />
+    return <><Body r={r} front={<g>
+      <path d="M-50 -14 C-30 -11 30 -11 50 -16 C42 -5 22 -1 0 -1 C-24 -1 -42 -5 -50 -14 Z" className="mn-fill mn-line" />
+      <ellipse cx="0" cy="-12.6" rx="12" ry="2.6" className="mn-fill mn-line" /><path d="M-36 -9 C-20 -6 20 -6 36 -10" className="mn-thin" />
+      <path d={line(a, b)} className="mn-line" style={{ strokeWidth: 2.2 }} />
       <ellipse cx={a[0]} cy={a[1]} rx="7" ry="3.4" transform={`rotate(${f(ang)} ${f(a[0])} ${f(a[1])})`} className="mn-fill mn-line" />
       <ellipse cx={b[0]} cy={b[1]} rx="7" ry="3.4" transform={`rotate(${f(ang)} ${f(b[0])} ${f(b[1])})`} className="mn-fill mn-line" /></g>} />
-      <path d="M-34 -2 q6 -4 12 0 t12 0 M14 -2 q6 -4 12 0 t12 0" className="mn-thin" /></>;
+      <path d="M-50 3 q6 -4 12 0 t12 0 M-6 4 q6 -4 12 0 t12 0 M30 2 q6 -4 12 0" className="mn-thin" /></>;
   }),
 } satisfies Record<string, PoseFn>;
 

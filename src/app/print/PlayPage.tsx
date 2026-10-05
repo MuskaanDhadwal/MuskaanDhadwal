@@ -49,64 +49,8 @@ function EmbedToy({ t }: { t: Toy }) {
   );
 }
 
-// ── game: one pixel off ──
-const ROUNDS: { px: number; what: string }[] = [
-  { px: 8, what: "the button moved" }, { px: 4, what: "the title dropped" }, { px: 2, what: "the price tag slid" }, { px: 1, what: "the padding grew" },
-];
-const rand = () => Math.floor(Math.random() * 6);
-
-function Card({ off, kind }: { off: number; kind: number }) {
-  return (
-    <span className="pl-card" style={kind === 3 ? { paddingLeft: 12 + off } : undefined}>
-      <span className="pl-card-img"><span className="pl-card-price" style={kind === 2 ? { transform: `translateX(${off}px)` } : undefined}>$100</span></span>
-      <span className="pl-card-title" style={kind === 1 ? { transform: `translateY(${off}px)` } : undefined}>1843 Pointe Crossing</span>
-      <span className="pl-card-sub">4.8 ★ · 3 min walk</span>
-      <span className="pl-card-btn" style={kind === 0 ? { transform: `translateX(${off}px)` } : undefined}>Reserve</span>
-    </span>
-  );
-}
-
-function PixelGame() {
-  const [round, setRound] = useState(0);
-  const [odd, setOdd] = useState(rand);
-  const [miss, setMiss] = useState(0);
-  const [wrong, setWrong] = useState<number | null>(null);
-  const [found, setFound] = useState(false);
-  const done = round >= ROUNDS.length;
-  const r = ROUNDS[Math.min(round, ROUNDS.length - 1)];
-  const pick = (i: number) => {
-    if (found || done) return;
-    if (i === odd) { setFound(true); setWrong(null); setTimeout(() => { setFound(false); setRound(v => v + 1); setOdd(rand()); }, 1100); }
-    else { setMiss(m => m + 1); setWrong(i); setTimeout(() => setWrong(null), 450); }
-  };
-  const restart = () => { setRound(0); setMiss(0); setOdd(rand()); setFound(false); };
-  const title = miss === 0 ? "Pixel-perfect. Please review my next PR." : miss <= 2 ? "Sharp eye. Design QA would love you." : "Honestly, 1px is rude. You did great.";
-  return (
-    <div className="pl-game">
-      <div className="pl-game-bar" aria-live="polite">
-        <span className="label">{done ? "all four rounds" : `round ${round + 1} / ${ROUNDS.length} · ${r.px}px off`}</span>
-        <span className="label">misses: {miss}</span>
-      </div>
-      {done ? (
-        <div className="pl-game-end">
-          <span className="display" style={{ fontSize: "clamp(28px, 3vw, 40px)" }}>{title}</span>
-          <Chamfer solid onClick={restart}>Play again</Chamfer>
-        </div>
-      ) : (
-        <div className="pl-cards" role="group" aria-label={`Round ${round + 1}: find the card that is ${r.px} pixels off`}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <button key={`${round}-${i}`} className={`pl-pick ${wrong === i ? "wrong" : ""} ${found && i === odd ? "right" : ""}`} onClick={() => pick(i)} aria-label={`Card ${i + 1}`}>
-              <Card off={i === odd ? r.px : 0} kind={round} />
-              {found && i === odd && <span className="pl-found label">{r.px}px · {r.what}</span>}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const GAMES: Record<string, () => ReactNode> = { pixel: () => <PixelGame /> };
+// built-in games: write a component and register it here by the `game` id used in play.ts
+const GAMES: Record<string, () => ReactNode> = {};
 
 function ToySection({ t, n }: { t: Toy; n: number }) {
   return (
@@ -118,7 +62,6 @@ function ToySection({ t, n }: { t: Toy; n: number }) {
           <p>{t.blurb}</p>
           {t.how && <ol className="pl-how">{t.how.map(h => <li key={h}>{h}</li>)}</ol>}
           {t.credit && <p className="pl-credit">{t.credit}</p>}
-          {t.id === "pixel" && <div className="pl-squint"><Mini pose="plSquint" label="A small Muskaan squinting through a loupe at a single pixel" unit={1.1} /></div>}
           {t.more && <Chamfer onClick={() => go(t.more![1])}>{t.more[0]} →</Chamfer>}
           {t.kind === "link" && t.url && <Chamfer solid href={t.url} external>Open it ↗</Chamfer>}
         </div>
@@ -139,7 +82,7 @@ export function PlayPage() {
         <div>
           <p className="label mid">Play · things to poke</p>
           <h1 id="pl-title" className="display ab-h1">Play</h1>
-          <p className="ab-lede">Toys, experiments and tiny games. Some I designed, some I built with AI. Each one is all here: what it is, how it was made, and the real thing to poke.</p>
+          <p className="ab-lede">Toys and experiments. Some I designed, some I built with AI. Each one is all here: what it is, how it was made, and the real thing to poke.</p>
         </div>
         <div className="rs-me">
           <span className="ab-bubble hand">pick a toy!</span>

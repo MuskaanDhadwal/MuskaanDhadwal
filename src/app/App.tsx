@@ -26,6 +26,7 @@ import { AIPage } from "./print/AIPage";
 import { RailWalker, TapCursor } from "./print/ui";
 import { missionBySlug } from "./print/story";
 import { go } from "./print/nav";
+import { Dock, LogoSnaps } from "./print/Dock";
 
 type Route = { page: string; slug?: string; anchor?: string };
 function parse(hash: string): Route {
@@ -64,7 +65,7 @@ export default function App() {
       <TapCursor />
       {!booted && <Loader onDone={boot} />}
       <header className="nav">
-        <button className="logo-stamp" onClick={() => go("#/")} aria-label="Muskaan Dhadwal — home">MD</button>
+        <LogoSnaps />
         <button className="nav-menu-btn label" aria-expanded={menu} aria-controls="main-nav" onClick={() => setMenu(v => !v)}>{menu ? "Close ✕" : "Menu ☰"}</button>
         <nav id="main-nav" className={`nav-links ${menu ? "open" : ""}`} aria-label="Main">
           {([["Work", "#/work", isWork], ["Play", "#/play", route.page === "play"], ["AI", "#/ai", route.page === "ai"], ["Garage", "#/garage", route.page === "garage"], ["About", "#/about", route.page === "about"], ["Contact", "#/contact", route.page === "contact"], ["Resume", "#/resume", route.page === "resume"]] as [string, string, boolean][]).map(([l, h, on]) => (
@@ -75,7 +76,7 @@ export default function App() {
       {route.page === "case" && <RailWalker><Mini pose="csWalk" unit={0.5} /></RailWalker>}
       {/* debug: ?only=<sheet id> shows just that sheet (for screenshots of long pages) */}
       {new URLSearchParams(location.search).get("only") && <style>{`main section.sheet:not(#${new URLSearchParams(location.search).get("only")}) { display: none; }`}</style>}
-      <main key={sheetKey} className="sheet-in">
+      <main key={sheetKey} className={`sheet-in ${route.page !== "home" ? "has-dock" : ""}`}>
         {route.page === "home" && <Home />}
         {route.page === "case" && (mission ? <CaseStudy mission={mission} /> : <Home />)}
         {route.page === "play" && <PlayPage />}
@@ -87,6 +88,7 @@ export default function App() {
         {route.page === "char" && <CharSheet />}
         {!["home", "case", "play", "garage", "ai", "char", "about", "contact", "resume"].includes(route.page) && <Home />}
       </main>
+      {booted && route.page !== "home" && !menu && <Dock page={route.page} />}
     </>
   );
 }
