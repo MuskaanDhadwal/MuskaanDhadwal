@@ -2,7 +2,7 @@
 // parking, car and robot drawings). Same style: precise white lines, low opacity, decorative only.
 // One drawing per section, none repeated: Garage = workbench + pegboard, Lab = lab bench, About = camera,
 // route plan, suitcase, desk and trophy (one per section),
-// Contact = mailbox, Résumé = a stack of drawing sheets.
+// Contact = mailbox, Résumé = a stack of drawing sheets, Home = drafting board, dividers, caliper, desk lamp.
 
 const Dim = ({ x1, x2, y, t }: { x1: number; x2: number; y: number; t: string }) => (
   <g className="tb-dim">
@@ -160,8 +160,74 @@ function Trophy() {
   );
 }
 
-export type PageView = "garage" | "lab" | "desk" | "mailbox" | "sheets" | "camera" | "route" | "suitcase" | "trophy";
-const VIEWS: Record<PageView, () => JSX.Element> = { garage: Garage, lab: Lab, desk: Desk, mailbox: Mailbox, sheets: Sheets, camera: Camera, route: Route, suitcase: Suitcase, trophy: Trophy };
+/** Home · selected prints: a drafting board on its stand with a T-square, a set square and a pinned print. */
+function Drafting() {
+  return (
+    <svg viewBox="0 0 1000 620">
+      <path d="M160 120 L840 60 L880 420 L200 480 Z" /><path d="M180 140 L820 84 M196 456 L860 400" className="tb-hatch" />
+      <path d="M150 300 L890 236 M150 300 l-20 -6 v28 l20 -6 M890 236 v20" /><path d="M150 286 h-30 v30 h30" />
+      <path d="M560 260 l120 -12 l-108 -80 z" /><path d="M586 246 l52 -5 l-46 -34 z" />
+      <path d="M300 170 l170 -16 l14 150 l-170 16 z M318 190 h120 M320 214 h96 M322 238 h110" /><circle cx="384" cy="166" r="6" />
+      <path d="M380 470 L330 600 M700 440 L760 600 M300 600 H800 M350 540 h400" />
+      <Dim x1={160} x2={840} y={30} t="BOARD · A0" />
+      <Balloon x={620} y={230} n="1" tx={940} ty={140} />
+    </svg>
+  );
+}
+
+/** Home · my story: a pair of dividers stepping off a ruler. */
+function Dividers() {
+  return (
+    <svg viewBox="0 0 1000 560">
+      <path d="M80 440 H920 V500 H80 Z" />
+      {Array.from({ length: 43 }).map((_, i) => <path key={i} d={`M${100 + i * 19.5} 440 v${i % 5 === 0 ? 26 : 13}`} />)}
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => <text key={i} x={100 + i * 97.5} y={490} textAnchor="middle">{i}</text>)}
+      <circle cx="420" cy="110" r="22" /><circle cx="420" cy="110" r="6" className="tb-solid" />
+      <path d="M420 70 v18 M410 132 L300 436 M430 132 L560 436 M300 436 l-4 8 M560 436 l4 8" />
+      <path d="M345 300 Q 430 260 515 300" /><path d="M420 110 V436" className="tb-center" />
+      <path d="M300 410 A 140 140 0 0 1 560 410" className="tb-center" />
+      <Dim x1={300} x2={560} y={530} t="ONE STEP" />
+      <Balloon x={420} y={110} n="1" tx={660} ty={80} />
+    </svg>
+  );
+}
+
+/** Home · tools I use: a vernier caliper with its jaws open. */
+function Caliper() {
+  return (
+    <svg viewBox="0 0 1000 460">
+      <path d="M120 180 H900 V240 H120 Z" />
+      {Array.from({ length: 40 }).map((_, i) => <path key={i} d={`M${220 + i * 17} 180 v${i % 5 === 0 ? 22 : 11}`} />)}
+      <path d="M120 180 V60 h50 V180 M120 240 V330 l40 40 V240" />
+      <path d="M470 160 h160 v100 h-160 z M470 180 h160 M470 240 h160" />
+      <path d="M470 160 V60 h-46 V160 M470 260 V330 l-40 40 V260" />
+      {Array.from({ length: 10 }).map((_, i) => <path key={i} d={`M${490 + i * 13} 240 v-${i % 5 === 0 ? 16 : 9}`} />)}
+      <circle cx="560" cy="150" r="10" /><path d="M630 210 H900" className="tb-center" />
+      <Dim x1={170} x2={424} y={30} t="JAW · 0–150 MM" />
+      <Balloon x={560} y={150} n="1" tx={760} ty={90} />
+    </svg>
+  );
+}
+
+/** Home · reviews / wake her up: a desk lamp at night, its light cone dashed. */
+function Lamp() {
+  return (
+    <svg viewBox="0 0 900 600">
+      <path d="M120 540 H780" />
+      <path d="M220 540 h160 v-20 h-160 z" /><circle cx="300" cy="500" r="12" />
+      <path d="M300 500 L420 300 M420 300 L560 180" /><circle cx="420" cy="300" r="10" /><circle cx="560" cy="180" r="10" />
+      <path d="M560 180 l60 -10 l70 90 l-110 60 z" /><path d="M640 290 q30 10 40 -20" />
+      <path d="M600 330 L520 540 M690 270 L800 470" className="tb-center" />
+      <path d="M760 80 a50 50 0 1 0 40 80 a40 40 0 1 1 -40 -80 z" />
+      <Dim x1={220} x2={380} y={580} t="BASE · 160" />
+      <Balloon x={630} y={240} n="1" tx={820} ty={300} />
+    </svg>
+  );
+}
+
+export type PageView = "garage" | "lab" | "desk" | "mailbox" | "sheets" | "camera" | "route" | "suitcase" | "trophy" | "drafting" | "dividers" | "caliper" | "lamp";
+const VIEWS: Record<PageView, () => JSX.Element> = { garage: Garage, lab: Lab, desk: Desk, mailbox: Mailbox, sheets: Sheets, camera: Camera, route: Route, suitcase: Suitcase, trophy: Trophy,
+  drafting: Drafting, dividers: Dividers, caliper: Caliper, lamp: Lamp };
 export function PageDrawing({ view, side = "right" }: { view: PageView; side?: "left" | "right" }) {
   const V = VIEWS[view];
   return (

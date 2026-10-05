@@ -7,6 +7,7 @@ import { MISSIONS, PRINT, TRANSMISSIONS } from "./story";
 import { Chamfer, useInView, useReducedMotion } from "./ui";
 import { Mini as MiniFig, type PoseName } from "./Minis";
 import { go } from "./nav";
+import { PageDrawing } from "./PageDrawings";
 
 const BUILD = "2026.10";
 const art = (name: string) => `/art/${name}-white.png`;
@@ -168,7 +169,8 @@ function HangingPrints() {
     return () => { el.removeEventListener("scroll", on); ro.disconnect(); };
   }, []);
   return (
-    <section id="work" data-section="work" className="prints-line" aria-labelledby="prints-title" style={{ scrollMarginTop: 80 }}>
+    <section id="work" data-section="work" className="prints-line tx-has-bg" aria-labelledby="prints-title" style={{ scrollMarginTop: 80 }}>
+      <PageDrawing view="drafting" side="right" />
       <SecHead id="prints-title" title="Selected prints"
         sub="Pinned work I can talk about for hours. Scroll sideways, or open one for the full teardown."
         aside={edge.fits ? undefined : <div style={{ display: "flex", gap: 8 }}>
@@ -206,7 +208,8 @@ const STORY: { when: string; title: string; text: string }[] = [
 
 function MyStory() {
   return (
-    <section id="story" data-section="story" className="story-sec" aria-labelledby="story-title">
+    <section id="story" data-section="story" className="story-sec tx-has-bg" aria-labelledby="story-title">
+      <PageDrawing view="dividers" side="right" />
       <SecHead id="story-title" title="My story" sub="From writing code, to questioning it, to shipping both halves." />
       <div className="tl" aria-hidden>
         <span className="tl-arrow tl-arrow-l" /><span className="tl-line" /><span className="tl-arrow tl-arrow-r" />
@@ -238,7 +241,8 @@ const TOOLS: [string, string][] = [
 
 function PartsList() {
   return (
-    <section id="parts" data-section="parts" className="parts-sec" aria-labelledby="parts-title">
+    <section id="parts" data-section="parts" className="parts-sec tx-has-bg" aria-labelledby="parts-title">
+      <PageDrawing view="caliper" side="right" />
       <SecHead id="parts-title" title="Tools I use" sub="What's on the desk, and what each one is for." />
       <dl className="parts-tools">{TOOLS.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
     </section>
@@ -270,7 +274,8 @@ function WorkingWithAI() {
 // ── Reviews (sort of) + say hi ─────────────────────────────────────────────
 function Recommendations() {
   return (
-    <section id="reviews" data-section="contact" className="recs" aria-labelledby="recs-title" style={{ scrollMarginTop: 80 }}>
+    <section id="reviews" data-section="contact" className="recs tx-has-bg" aria-labelledby="recs-title" style={{ scrollMarginTop: 80 }}>
+      <PageDrawing view="lamp" side="right" />
       <SecHead id="recs-title" title="Reviews (sort of)" sub="Unsolicited, unverified, mostly true." />
       <div className="recs-grid">
         {TRANSMISSIONS.map((t, i) => (
@@ -285,12 +290,12 @@ function Recommendations() {
   );
 }
 
-// ── Wake her up: it's 23:00 and she's running on empty, head on her arms, still loading (her drawing has her
-// eyes open, so she's drowsy, not asleep: no "z z z"). Tap her: first she bargains, then she's up.
+// ── Wake her up: it's 23:00 and she's asleep, head down on her arms (only her hair and bun show), a loading
+// bar under her. Tap her: first she bargains, then she's up.
 // The contact buttons are always there; the interaction is just for fun.
 const WAKE = [
-  { pose: "wkSleep" as PoseName, say: "still loading…", alt: "Muskaan slumped with her head on her folded arms, half awake, a loading bar under her" },
-  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "Muskaan still slumped on her arms, bargaining" },
+  { pose: "wkSleep" as PoseName, say: "z z z", alt: "Muskaan asleep with her head buried in her folded arms, only her hair and bun showing, a loading bar under her" },
+  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "Muskaan still face-down in her arms, mumbling" },
   { pose: "wkAwake" as PoseName, say: "I'm up! I'm up! What are we building?", alt: "A small Muskaan sprung awake, arms out, eyes wide" },
 ];
 
@@ -303,14 +308,14 @@ function WakeHerUp() {
         <h3 className="display" style={{ fontSize: "clamp(32px, 3.4vw, 48px)", margin: 0 }}>{awake ? "She's up" : "Wake her up"}</h3>
         <p className="hand wake-copy">{awake
           ? "Hiring, building something, or need a fourth for board-game night? Say hi. She replies fast."
-          : "It's the end of her day and she's still loading. Tap her to wake her up."}</p>
+          : "It's the end of her day. Tap her to wake her up."}</p>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
           <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
           <Chamfer onClick={() => go("#/about")}>Who is she?</Chamfer>
         </div>
       </div>
       <button className="wake-me" onClick={() => setStep(x => (x + 1) % WAKE.length)}
-        aria-label={awake ? "She's awake. Tap to let her rest again." : "Tap to wake her up"}>
+        aria-label={awake ? "She's awake. Tap to let her sleep again." : "Tap to wake her up"}>
         <span className="wake-bubble hand" aria-live="polite">{w.say}</span>
         <span key={step} className="wake-fig pop"><MiniFig pose={w.pose} label={w.alt} /></span>
       </button>

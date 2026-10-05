@@ -825,3 +825,8 @@ main.sheet-in { padding-top: 0 !important; }
 @media (prefers-reduced-motion: reduce) { .nm2-a2 .nm2-ch, .nm2-spark { animation: none; } .nm2-ch { transition: none; } }
 /* a chamfer button that can't go further (e.g. Next at the end of the prints line) */
 .chamfer:disabled { opacity: .35; cursor: default; pointer-events: none; }
+
+/* home: faint engineering drawings behind the main sections, like every other page (2026-10-05) */
+.home-right > section.tx-has-bg { position: relative; }
+.home-right .tb { width: min(92%, 680px); top: 24px; }
+@media (max-width: 760px) { .home-right .tb { width: 120%; top: 30px; } }
