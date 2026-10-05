@@ -83,7 +83,7 @@ function SideName() {
       <p className="name-now">Open to work · Open to relocation (USA)</p>
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <Chamfer solid onClick={() => go("#/work")}>See the work</Chamfer>
-        <Chamfer onClick={() => go("#/resume")}>Résumé →</Chamfer>
+        <Chamfer onClick={() => go("#/resume")}>Resume</Chamfer>
       </div>
     </aside>
   );
@@ -228,7 +228,7 @@ function PartsList() {
   );
 }
 
-// ── Working with AI: a short teaser; the details live on the AI page (#/ai) ──
+// ── Working with AI: a short teaser; the details (and ASCII Hands) live on the Lab page (#/lab) ──
 const AI_ROWS: [string, string][] = [
   ["Certified", "Agents and Workflows · OpenAI Academy"],
   ["Learning now", "Model Context Protocol + the Claude API · Claude Academy"],
@@ -244,8 +244,7 @@ function WorkingWithAI() {
         {AI_ROWS.map(([k, v]) => <div key={k}><dt className="label" style={{ color: "var(--accent)" }}>{k}</dt><dd>{v}</dd></div>)}
       </dl>
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 18 }}>
-        <Chamfer solid onClick={() => go("#/ai")}>See how I work with AI →</Chamfer>
-        <Chamfer onClick={() => go("#/play")}>Try ASCII Hands on Play</Chamfer>
+        <Chamfer solid onClick={() => go("#/lab")}>Open the Lab →</Chamfer>
       </div>
     </section>
   );

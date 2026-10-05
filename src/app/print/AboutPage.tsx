@@ -1,7 +1,7 @@
-// ABOUT — the person, not the portfolio. Hello (tap the name for snaps) → how I got here (her own story,
-// a little her walks it) → facts nobody asked for → side hustles → say hi.
+// ABOUT — the person, not the portfolio. Hello (a wall of her snapshots) → how I got here (her own story,
+// a little her walks it) → facts nobody asked for (each with its photo) → side hustles → say hi.
 // Every small her on this page is a different pose (Minis.tsx).
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Mini, type PoseName } from "./Minis";
 import { Chamfer, SpecTable, useInView, useReducedMotion } from "./ui";
 import { go } from "./nav";
@@ -17,41 +17,45 @@ function Photo({ src, alt, caption, tilt = -2 }: { src: string; alt: string; cap
 }
 
 // ── 01 hello ────────────────────────────────────────────────────────────────
-// Tap her name and a few snapshots fan out of it (after Andrea Da Silva's about page). Add more by adding
-// photos to public/about/ and a row here; positions are px from the name at desktop size (scaled on phones).
+// A wall of her snapshots that fly out of the MD logo when the page opens (the logo leads here, after
+// Andrea Da Silva's site; on About, clicking MD replays it via the "md-snaps" event). Tap a photo to bring
+// it to the front. Positions are % of the wall.
+type P2 = [number, number];
 const SNAPS: { src: string; alt: string; cap: string; x: number; y: number; r: number }[] = [
-  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", cap: "hi, it's me", x: -60, y: 0, r: -7 },
-  { src: "coding.webp", alt: "Code open in a dark editor.", cap: "where it started: code", x: 100, y: 46, r: 4 },
-  { src: "michigan.webp", alt: "The atrium of a University of Michigan building, with a giant yellow block M hanging from the glass roof.", cap: "Go Blue", x: 250, y: -6, r: -3 },
-  { src: "automotive-ux.webp", alt: "A red race car numbered 21 on a rooftop parking deck.", cap: "now: automotive UX", x: 400, y: 40, r: 6 },
+  { src: "me-bench.webp", alt: "Muskaan smiling on a bench in a scarf and coat, in front of an old timber-framed building.", cap: "hi, it's me", x: 0, y: 3, r: -6 },
+  { src: "graduation.webp", alt: "Muskaan in a white dress and a maize Michigan stole, tossing her graduation cap in front of a stone university building.", cap: "cap toss. Go Blue", x: 50, y: 0, r: 5 },
+  { src: "coding.webp", alt: "Code open in a dark editor.", cap: "where it started: code", x: 5, y: 50, r: 4 },
+  { src: "automotive-ux.webp", alt: "A red race car numbered 21 on a rooftop parking deck.", cap: "now: automotive UX", x: 50, y: 47, r: -4 },
 ];
 
 function Hello() {
-  const [snap, setSnap] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [top, setTop] = useState<number | null>(null);
+  const [from, setFrom] = useState<P2[]>([]);
+  const wall = useRef<HTMLDivElement>(null);
+  const play = useCallback(() => { // start each photo on top of the MD logo, then let it fly to its spot
+    setOpen(false); setTop(null);
+    const logo = document.querySelector(".logo-stamp")?.getBoundingClientRect(), w = wall.current;
+    if (logo && w) {
+      const r = w.getBoundingClientRect();
+      setFrom([...w.querySelectorAll<HTMLElement>(".ab-wsnap")].map(el => [
+        logo.left + logo.width / 2 - (r.left + el.offsetLeft + el.offsetWidth / 2),
+        logo.top + logo.height / 2 - (r.top + el.offsetTop + el.offsetHeight / 2)]));
+    }
+    setTimeout(() => setOpen(true), 40); // after the reset has painted
+  }, []);
   useEffect(() => {
-    if (!snap) return;
-    const on = (e: KeyboardEvent) => { if (e.key === "Escape") setSnap(false); };
-    addEventListener("keydown", on); return () => removeEventListener("keydown", on);
-  }, [snap]);
+    const id = setTimeout(play, 160);
+    addEventListener("md-snaps", play);
+    return () => { clearTimeout(id); removeEventListener("md-snaps", play); };
+  }, [play]);
   return (
     <section className="sheet ab-hello" aria-labelledby="ab-title" style={{ minHeight: "min(86vh, 760px)" }}>
       <div className="rail" aria-hidden><span className="rail-label">About · 01 hello</span><span className="rail-line" /></div>
       <div className="ab-hello-grid">
         <div>
           <p className="label mid">About · sincere. vivid. deliberate.</p>
-          <h1 id="ab-title" className="display ab-h1">Hi, I'm{" "}
-            <button className={`ab-name ${snap ? "on" : ""}`} onClick={() => setSnap(v => !v)} aria-expanded={snap} aria-controls="ab-snaps">
-              Muskaan<span className="ab-name-hint label" aria-hidden>{snap ? "tap to tidy up" : "tap me"}</span>
-            </button>.</h1>
-          <div id="ab-snaps" className={`ab-snaps ${snap ? "open" : ""}`} aria-hidden={!snap}>
-            {SNAPS.map((p, i) => (
-              <figure key={p.src} className="ab-snap" onClick={() => setSnap(false)}
-                style={{ ["--x" as string]: `${p.x}px`, ["--y" as string]: `${p.y}px`, ["--r" as string]: `${p.r}deg`, transitionDelay: snap ? `${i * 70}ms` : "0ms" }}>
-                <img src={`/about/${p.src}`} alt={snap ? p.alt : ""} loading="lazy" />
-                <figcaption className="hand">{p.cap}</figcaption>
-              </figure>
-            ))}
-          </div>
+          <h1 id="ab-title" className="display ab-h1">Hi, I'm <span className="ab-name">Muskaan</span>.</h1>
           <p className="ab-lede">I'm a UX engineer: I design the interface, then build it myself, so nothing gets lost between the Figma file and the thing people use.</p>
           <blockquote className="ab-philo">
             <span className="label">design philosophy · rev. 1</span>
@@ -67,8 +71,19 @@ function Hello() {
           </div>
         </div>
         <div className="ab-hello-me">
-          <span className="ab-bubble hand">hello! you found the fun page.</span>
-          <Mini pose="abWave" label="A small Muskaan waving hello" unit="var(--ab-u)" />
+          <div ref={wall} className={`ab-wall ${open ? "open" : ""}`} role="group" aria-label="Snapshots of Muskaan">
+            {SNAPS.map((p, i) => (
+              <button key={p.src} className={`ab-wsnap ${top === i ? "top" : ""}`} onClick={() => setTop(t => (t === i ? null : i))} aria-pressed={top === i}
+                style={{ ["--x" as string]: `${p.x}%`, ["--y" as string]: `${p.y}%`, ["--r" as string]: `${p.r}deg`, ["--fx" as string]: `${from[i]?.[0] ?? 0}px`, ["--fy" as string]: `${from[i]?.[1] ?? -40}px`, transitionDelay: open && top === null ? `${i * 110}ms` : "0ms" }}>
+                <img src={`/about/${p.src}`} alt={p.alt} />
+                <span className="hand">{p.cap}</span>
+              </button>
+            ))}
+          </div>
+          <div className="ab-hello-wave">
+            <span className="ab-bubble hand">hello! you found the fun page.</span>
+            <Mini pose="abWave" label="A small Muskaan holding a tablet and waving hello" unit="var(--ab-u)" />
+          </div>
         </div>
       </div>
     </section>
@@ -76,8 +91,10 @@ function Hello() {
 }
 
 // ── 02 how I got here: her own story, one stop at a time, a small her walks the path ──
-const STOPS: { tag: string; title: string; text: string }[] = [
-  { tag: "start", title: "The rigid logic of code", text: "My story began in the rigid logic of Computer Science Engineering. I learned how systems speak, but I quickly realized I wanted to know how they felt to the person using them." },
+const STOPS: { tag: string; title: string; text: string; photos?: [string, string, string][] }[] = [
+  { tag: "start", title: "The rigid logic of code", text: "My story began in the rigid logic of Computer Science Engineering. I learned how systems speak, but I quickly realized I wanted to know how they felt to the person using them.",
+    photos: [["face-api-neutral.webp", "A laptop running face-api.js on a webcam feed of Muskaan: face landmarks traced, labelled neutral (0.99).", "face-api.js, reading me: neutral (0.99)"],
+      ["face-api-happy.webp", "Code in an editor next to the same webcam test, now labelled happy (0.99) as Muskaan smiles.", "…then: happy (0.99)"]] },
   { tag: "UX", title: "Learning by doing", text: "That curiosity led me to UX and the world of entrepreneurship. I co-founded a startup because I believed, and still do, that the best way to learn is by doing." },
   { tag: "trenches", title: "In the trenches", text: "I spent my time in the trenches: building SaaS platforms, designing for the fitness sector, and mastering branding as a way to tell human stories." },
   { tag: "AR/VR + IoT", title: "The world went 3D", text: "I was looking for something deeper than a flat screen. In AR/VR and IoT I fell in love with the idea that design could be an environment you live in, not just an interface you touch." },
@@ -115,10 +132,13 @@ function Journey() {
           ))}
         </ol>
       </div>
-      <div className="ab-beat" aria-live="polite">
-        <span className="label">{String(i + 1).padStart(2, "0")} / 05 · {s.tag}</span>
-        <span className="display" style={{ fontSize: "clamp(26px, 3vw, 38px)", lineHeight: 1.05 }}>{s.title}</span>
-        <p style={{ margin: 0 }}>{s.text}</p>
+      <div className="ab-beat-row">
+        <div className="ab-beat" aria-live="polite">
+          <span className="label">{String(i + 1).padStart(2, "0")} / 05 · {s.tag}</span>
+          <span className="display" style={{ fontSize: "clamp(26px, 3vw, 38px)", lineHeight: 1.05 }}>{s.title}</span>
+          <p style={{ margin: 0 }}>{s.text}</p>
+        </div>
+        {s.photos && <div className="ab-photos" key={s.tag}>{s.photos.map(([src, alt, cap], k) => <Photo key={src} src={src} alt={alt} caption={cap} tilt={k ? 2.4 : -2} />)}</div>}
       </div>
       <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
         <Chamfer onClick={() => setI(v => Math.max(0, v - 1))} ariaLabel="Previous stop">←</Chamfer>
@@ -128,37 +148,54 @@ function Journey() {
   );
 }
 
-// ── 03 facts nobody asked for ──────────────────────────────────────────────
-const FACTS: { pose: PoseName; title: string; line: string; evidence: string; alt: string; photo?: [string, string] }[] = [
-  { pose: "abPlant", title: "Serial plant killer", line: "I research every plant before I buy it. Light, water, soil, the works. They die anyway.", evidence: "Turns out user research doesn't work on succulents.", alt: "A small Muskaan holding a very droopy plant, looking guilty", photo: ["plants.webp", "A shelf of plant pots, most of them suspiciously empty."] },
-  { pose: "abDice", title: "Board-game person", line: "Game night is my love language. I will absolutely read the rulebook out loud.", evidence: "I also have notes on the rulebook's information hierarchy.", alt: "A small Muskaan rolling two dice", photo: ["board-games.webp", "A cupboard stacked with board games."] },
-  { pose: "abBake", title: "Stress-baker", line: "Deadline week smells like cookies. I have strong opinions about mise en place.", evidence: "Mise en place is just a design system for your kitchen.", alt: "A small Muskaan whisking a bowl, tongue out in concentration" },
-  { pose: "abLabel", title: "Compulsive reorganizer", line: "I reorganize things that were already organized. I call it information architecture.", evidence: "Yes, the drawers have labels. Yes, the labels have a naming convention.", alt: "A small Muskaan labelling a cardboard box" },
-  { pose: "abPaddle", title: "Weekend kayaker", line: "Give me a river and a paddle. It's the one place I don't check my phone.", evidence: "Photographic proof, from the back seat of my own kayak.", alt: "A small Muskaan holding a kayak paddle, grinning", photo: ["kayaking.webp", "Muskaan from behind, in a life vest and cap, paddling a green kayak on a river."] },
-  { pose: "abMovie", title: "Bad-movie connoisseur", line: "Will defend Cats (2019). Unironically.", evidence: "Taking recommendations. The worse, the better.", alt: "A small Muskaan sitting with popcorn, wide-eyed at a screen" },
+// ── 03 facts nobody asked for: each one comes with its photo, no clicking needed ──
+const FACTS: { pose: PoseName; title: string; line: string; evidence: string; alt: string; photo: [string, string] }[] = [
+  { pose: "abPlant", title: "Serial plant killer", line: "I research every plant before I buy it. Light, water, soil, the works. They die anyway.", evidence: "Turns out user research doesn't work on succulents.", alt: "A small Muskaan watering a very droopy plant", photo: ["plants.webp", "A shelf of plant pots, most of them suspiciously empty."] },
+  { pose: "abDice", title: "Board-game person", line: "Game night is my love language. I will absolutely read the rulebook out loud.", evidence: "I also have notes on the rulebook's information hierarchy.", alt: "A small Muskaan crouched, rolling two dice", photo: ["board-games.webp", "A cupboard stacked with board games."] },
+  { pose: "abPaddle", title: "Weekend kayaker", line: "Give me a river and a paddle. It's the one place I don't check my phone.", evidence: "Photographic proof, from the back seat of my own kayak.", alt: "A small Muskaan sitting in a kayak with a paddle, grinning", photo: ["kayaking.webp", "Muskaan from behind, in a life vest and cap, paddling a green kayak on a river."] },
+];
+
+// no photos of these (yet), so they're told with a sketch instead of evidence
+const SKETCHED: { pose: PoseName; title: string; line: string; aside: string; alt: string }[] = [
+  { pose: "abBake", title: "Stress-baker", line: "Deadline week smells like cookies. I have strong opinions about mise en place.", aside: "Mise en place is just a design system for your kitchen.", alt: "A small Muskaan whisking a bowl, tongue out in concentration" },
+  { pose: "abLabel", title: "Compulsive reorganizer", line: "I reorganize things that were already organized. I call it information architecture.", aside: "Yes, the drawers have labels. Yes, the labels have a naming convention.", alt: "A small Muskaan holding a labelled box, one finger up" },
+  { pose: "abMovie", title: "Bad-movie connoisseur", line: "Will defend Cats (2019). Unironically.", aside: "Taking recommendations. The worse, the better.", alt: "A small Muskaan sitting cross-legged with popcorn, wide-eyed at a screen" },
 ];
 
 function Facts() {
-  const [open, setOpen] = useState<boolean[]>(FACTS.map(() => false));
-  const n = open.filter(Boolean).length;
   return (
     <section className="sheet" aria-labelledby="ab-facts-title" style={{ minHeight: 0 }}>
       <div className="rail" aria-hidden><span className="rail-label">About · 03 facts</span><span className="rail-line" /></div>
       <div className="ab-head">
         <h2 id="ab-facts-title" className="display ab-h2">Facts nobody asked for</h2>
-        <span className="label" aria-live="polite">{n}/{FACTS.length} pieces of evidence found{n === FACTS.length ? " · case closed ✓" : " · tap a card"}</span>
+        <span className="label mid">with photographic evidence</span>
       </div>
       <div className="ab-facts">
         {FACTS.map((f, i) => (
-          <button key={f.title} className={`ab-fact ${open[i] ? "open" : ""}`} aria-expanded={open[i]} onClick={() => setOpen(o => o.map((v, j) => (j === i ? !v : v)))}
-            style={{ ["--tilt" as string]: `${[-1.2, 0.8, -0.6, 1.1, -0.9, 0.7][i]}deg` }}>
-            <span className="ab-fact-art"><Mini pose={f.pose} label={f.alt} unit={1.25} /></span>
-            <span className="display ab-fact-title">{f.title}</span>
-            <span className="ab-fact-line">{f.line}</span>
-            <span className="ab-fact-ev">{open[i] ? <><b className="label">Evidence:</b> <span className="hand">{f.evidence}</span></> : <span className="label">tap for evidence ↓</span>}</span>
-            {open[i] && f.photo && <img className="ab-fact-photo" src={`/about/${f.photo[0]}`} alt={f.photo[1]} loading="lazy" />}
-          </button>
+          <article key={f.title} className="ab-fact" style={{ ["--tilt" as string]: `${[-1.2, 0.8, -0.6][i]}deg` }}>
+            <Photo src={f.photo[0]} alt={f.photo[1]} caption={f.evidence} tilt={[-2, 1.6, -1.2][i]} />
+            <div className="ab-fact-head">
+              <span className="ab-fact-art"><Mini pose={f.pose} label={f.alt} unit={1} /></span>
+              <h3 className="display ab-fact-title">{f.title}</h3>
+            </div>
+            <p className="ab-fact-line">{f.line}</p>
+          </article>
         ))}
+      </div>
+      <div className="ab-more">
+        <span className="label mid">also true · sketched from memory</span>
+        <ul className="ab-more-list">
+          {SKETCHED.map(f => (
+            <li key={f.title} className="ab-more-item">
+              <span className="ab-more-art"><Mini pose={f.pose} label={f.alt} unit={1} /></span>
+              <span>
+                <span className="display ab-more-title">{f.title}</span>
+                <span className="ab-more-line">{f.line}</span>
+                <span className="hand ab-more-aside">{f.aside}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -184,7 +221,8 @@ const HUSTLES: { pose: PoseName; tag: string; title: string; line: string; proof
   { pose: "abArt", tag: "Sketchbook", title: "Illustrator",
     line: "The big drawings of me on this site are mine. Pen, paper, too many versions of the same bun.",
     proof: "see: every box on the homepage", alt: "A small Muskaan painting at a tiny easel",
-    photos: [["sketching.webp", "A pocket sketchbook with an ink drawing of a whale carrying a tiny astronaut.", "pocket sketchbook"], ["sketch-2.webp", "An ink drawing of an astronaut in a sketchbook, next to a pair of glasses.", "ink, glasses for scale"]] },
+    photos: [["ink-tiger.webp", "An ink drawing of a tiger's head: one half fur and stripes, the other half intricate mandala patterns.", "half tiger, half mandala"], ["ink-wolf.webp", "An ink drawing of a wolf's face splitting into a skull, wrapped in flowers, bones and an arrow.", "wolf, skull, flowers"],
+      ["sketching.webp", "A pocket sketchbook with an ink drawing of a whale carrying a tiny astronaut.", "pocket sketchbook"], ["sketch-2.webp", "An ink drawing of an astronaut in a sketchbook, next to a pair of glasses.", "ink, glasses for scale"]] },
 ];
 
 function SideHustles() {

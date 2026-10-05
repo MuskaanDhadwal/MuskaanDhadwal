@@ -20,19 +20,19 @@ import { ContactPage } from "./print/ContactPage";
 import { ResumePage } from "./print/ResumePage";
 import { CaseStudy } from "./print/CaseStudy";
 import { Loader } from "./print/Loader";
-import { PlayPage } from "./print/PlayPage";
 import { GaragePage } from "./print/GaragePage";
-import { AIPage } from "./print/AIPage";
+import { LabPage } from "./print/LabPage";
 import { RailWalker, TapCursor } from "./print/ui";
 import { missionBySlug } from "./print/story";
 import { go } from "./print/nav";
-import { Dock, LogoSnaps } from "./print/Dock";
+import { Dock } from "./print/Dock";
 
 type Route = { page: string; slug?: string; anchor?: string };
 function parse(hash: string): Route {
   const h = hash.replace(/^#\/?/, "");
   if (h.startsWith("case/")) return { page: "case", slug: h.slice(5) };
   if (h === "work") return { page: "home", anchor: h };
+  if (h === "play" || h === "ai") return { page: "lab" }; // Play + AI became one page, the Lab (old links still work)
   return { page: h || "home" };
 }
 
@@ -65,10 +65,10 @@ export default function App() {
       <TapCursor />
       {!booted && <Loader onDone={boot} />}
       <header className="nav">
-        <LogoSnaps />
+        <button className="logo-stamp" onClick={() => { if (route.page === "about") { scrollTo(0, 0); dispatchEvent(new Event("md-snaps")); } else go("#/about"); }} aria-label="About Muskaan">MD</button>
         <button className="nav-menu-btn label" aria-expanded={menu} aria-controls="main-nav" onClick={() => setMenu(v => !v)}>{menu ? "Close ✕" : "Menu ☰"}</button>
         <nav id="main-nav" className={`nav-links ${menu ? "open" : ""}`} aria-label="Main">
-          {([["Work", "#/work", isWork], ["Play", "#/play", route.page === "play"], ["AI", "#/ai", route.page === "ai"], ["Garage", "#/garage", route.page === "garage"], ["About", "#/about", route.page === "about"], ["Contact", "#/contact", route.page === "contact"], ["Resume", "#/resume", route.page === "resume"]] as [string, string, boolean][]).map(([l, h, on]) => (
+          {([["Work", "#/work", isWork], ["Lab", "#/lab", route.page === "lab"], ["Garage", "#/garage", route.page === "garage"], ["About", "#/about", route.page === "about"], ["Contact", "#/contact", route.page === "contact"], ["Resume", "#/resume", route.page === "resume"]] as [string, string, boolean][]).map(([l, h, on]) => (
             <button key={l} className="nav-link dimlink" aria-current={on ? "page" : undefined} onClick={() => { setMenu(false); go(h); }}>{l}</button>
           ))}
         </nav>
@@ -79,14 +79,13 @@ export default function App() {
       <main key={sheetKey} className={`sheet-in ${route.page !== "home" ? "has-dock" : ""}`}>
         {route.page === "home" && <Home />}
         {route.page === "case" && (mission ? <CaseStudy mission={mission} /> : <Home />)}
-        {route.page === "play" && <PlayPage />}
         {route.page === "garage" && <GaragePage />}
-        {route.page === "ai" && <AIPage />}
+        {route.page === "lab" && <LabPage />}
         {route.page === "about" && <AboutPage />}
         {route.page === "contact" && <ContactPage />}
         {route.page === "resume" && <ResumePage />}
         {route.page === "char" && <CharSheet />}
-        {!["home", "case", "play", "garage", "ai", "char", "about", "contact", "resume"].includes(route.page) && <Home />}
+        {!["home", "case", "lab", "garage", "char", "about", "contact", "resume"].includes(route.page) && <Home />}
       </main>
       {booted && route.page !== "home" && !menu && <Dock page={route.page} />}
     </>

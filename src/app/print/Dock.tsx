@@ -1,5 +1,5 @@
 // The way back: a small floating bar at the bottom of every page except Home (after Andrea Da Silva's
-// site). Needed because the logo now opens About instead of Home.
+// site). Needed because the MD logo opens About instead of Home.
 import { go } from "./nav";
 
 const ICONS: Record<string, string> = {
@@ -25,16 +25,5 @@ export function Dock({ page }: { page: string }) {
         </button>
       ))}
     </nav>
-  );
-}
-
-/** The logo: three of her snapshots in a little stack. Hover fans them out; click opens About. */
-export function LogoSnaps() {
-  return (
-    <button className="logo-snaps" onClick={() => go("#/about")} aria-label="About Muskaan">
-      {["coding.webp", "michigan.webp", "me-bench.webp"].map((src, i) => (
-        <img key={src} className={`logo-snap s${i}`} src={`/about/${src}`} alt="" />
-      ))}
-    </button>
   );
 }

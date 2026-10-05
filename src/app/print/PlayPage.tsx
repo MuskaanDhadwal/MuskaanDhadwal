@@ -1,9 +1,8 @@
-// PLAY — things to poke. The shelf is data (play.ts); this file renders it and holds the built-in games.
+// The toy shelf: renders each toy from play.ts (shown on the Lab page) and holds any built-in games.
 import { useState, type ReactNode } from "react";
-import { Mini } from "./Minis";
 import { Chamfer } from "./ui";
 import { go } from "./nav";
-import { TOYS, type Toy } from "./play";
+import { type Toy } from "./play";
 
 // ── embed: another app, loaded only when the visitor asks (it may want the camera) ──
 // With a promo video, the stage has two tabs: watch first, then try it (the video is the default view).
@@ -52,7 +51,7 @@ function EmbedToy({ t }: { t: Toy }) {
 // built-in games: write a component and register it here by the `game` id used in play.ts
 const GAMES: Record<string, () => ReactNode> = {};
 
-function ToySection({ t, n }: { t: Toy; n: number }) {
+export function ToySection({ t, n }: { t: Toy; n: number }) {
   return (
     <section className="tx-band pl-toy" aria-labelledby={`toy-${t.id}`}>
       <div className="pl-toy-grid">
@@ -68,33 +67,6 @@ function ToySection({ t, n }: { t: Toy; n: number }) {
         <div>
           {t.kind === "embed" && <EmbedToy t={t} />}
           {t.kind === "game" && t.game && GAMES[t.game]?.()}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function PlayPage() {
-  return (
-    <section className="sheet" aria-labelledby="pl-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">Play · the toy shelf</span><span className="rail-line" /></div>
-      <div className="rs-head">
-        <div>
-          <p className="label mid">Play · things to poke</p>
-          <h1 id="pl-title" className="display ab-h1">Play</h1>
-          <p className="ab-lede">Toys and experiments. Some I designed, some I built with AI. Each one is all here: what it is, how it was made, and the real thing to poke.</p>
-        </div>
-        <div className="rs-me">
-          <span className="ab-bubble hand">pick a toy!</span>
-          <Mini pose="plController" label="A small Muskaan gripping a game controller, ready to play" unit="var(--ab-u)" />
-        </div>
-      </div>
-      {TOYS.map((t, i) => <ToySection key={t.id} t={t} n={i + 1} />)}
-      <div className="ab-end">
-        <h2 className="display ab-h2">More toys are in the workshop.</h2>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <Chamfer solid onClick={() => go("#/contact")}>Suggest one →</Chamfer>
-          <Chamfer onClick={() => go("#/work")}>See the real work</Chamfer>
         </div>
       </div>
     </section>

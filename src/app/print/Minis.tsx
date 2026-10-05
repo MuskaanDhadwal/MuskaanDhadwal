@@ -731,7 +731,7 @@ export const POSES = {
   }),
 
   // PLAY PAGE
-  /** gripping a game controller with both hands, ready: Play hero */
+  /** "Pick a toy": gripping a game controller with both hands, wide stance (unused since Play became the Lab) */
   plController: mk("-30 -90 60 94", () => {
     const r: Rig = { hip: [0, -25], armL: [44, 104], armR: [-44, -104], legL: [-30, -4], legR: [30, 4], eyes: "wide", mouth: "grin", blush: true };
     const j = joints(r);

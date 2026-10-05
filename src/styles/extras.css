@@ -73,20 +73,6 @@
 .ai-status { color: var(--accent); }
 .ai-course-title { font-size: clamp(24px, 2.4vw, 32px); margin: 0; }
 
-/* ── LOGO: three of her snapshots in a stack (opens About); hover fans them out ── */
-.logo-snaps { all: unset; box-sizing: border-box; cursor: pointer; position: relative; width: 48px; height: 48px; flex: none; }
-.logo-snap { position: absolute; left: 6px; top: 6px; width: 34px; height: 34px; object-fit: cover; background: #fff;
-  border: 2.5px solid #fff; border-bottom-width: 6px; box-shadow: 2px 2px 0 var(--shadow, rgba(0,0,0,.25));
-  transition: transform var(--dur-ui, .25s) var(--ease-spring, ease-out); }
-.logo-snap.s0 { transform: rotate(-12deg) translate(-3px, 1px); }
-.logo-snap.s1 { transform: rotate(9deg) translate(3px, 0); }
-.logo-snap.s2 { transform: rotate(-3deg); }
-.logo-snaps:hover .s0, .logo-snaps:focus-visible .s0 { transform: rotate(-20deg) translate(-12px, 2px); }
-.logo-snaps:hover .s1, .logo-snaps:focus-visible .s1 { transform: rotate(16deg) translate(12px, 0); }
-.logo-snaps:hover .s2, .logo-snaps:focus-visible .s2 { transform: rotate(-2deg) translateY(-2px) scale(1.08); }
-.logo-snaps:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-@media (max-width: 600px) { .logo-snaps { width: 40px; height: 40px; } .logo-snap { left: 5px; top: 4px; width: 29px; height: 29px; } }
-
 /* ── DOCK: the floating way back (every page except Home) ── */
 .dock { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 60; display: flex; gap: 2px; padding: 4px;
   background: var(--blueprint-dk); border: 1.5px solid var(--white); box-shadow: 4px 4px 0 var(--shadow, rgba(0,0,0,.3)); }
@@ -97,4 +83,3 @@
 .dock-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 main.has-dock { padding-bottom: 76px; }
 @media (max-width: 520px) { .dock-btn { padding: 0 10px; } .dock-label { display: none; } .dock-btn[aria-current="page"] .dock-label, .dock-btn:hover .dock-label { display: none; } }
-@media (prefers-reduced-motion: reduce) { .logo-snap { transition: none; } }

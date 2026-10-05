@@ -1,8 +1,10 @@
-// AI — how she works with AI: what she's certified in, what she's learning now, and how it shows up in the
-// day job. The thing she built entirely with AI (ASCII Hands: promo video + the live app) lives on Play only;
-// this page points there instead of repeating it.
+// LAB — Play and AI in one place (she found them too alike as two pages, 2026-10-05): the toy shelf first
+// (things to poke, from play.ts; ASCII Hands was built entirely with AI), then how she works with AI:
+// certified, learning now, and the day job.
 // Facts: the OpenAI Academy credential page, the two Claude Academy course pages, the app itself.
 import { Mini } from "./Minis";
+import { ToySection } from "./PlayPage";
+import { TOYS } from "./play";
 import { Chamfer, SpecTable } from "./ui";
 import { Band } from "./TraxenCase";
 import { go } from "./nav";
@@ -13,24 +15,23 @@ const COURSES: { t: string; d: string; url: string }[] = [
   { t: "Building with the Claude API", d: "The whole range of building on the Claude API: prompting, tool use, retrieval (RAG), agents, MCP, and patterns for production.", url: "https://academy.claude.com/courses/building-with-the-claude-api" },
 ];
 
-export function AIPage() {
+export function LabPage() {
   return (
     <section className="sheet" aria-labelledby="ai-page-title" style={{ minHeight: 0 }}>
-      <div className="rail" aria-hidden><span className="rail-label">AI · how I work with it</span><span className="rail-line" /></div>
+      <div className="rail" aria-hidden><span className="rail-label">Lab · experiments + AI</span><span className="rail-line" /></div>
       <div className="rs-head">
         <div>
-          <p className="label mid">AI · certified in it, building with it, still learning it</p>
-          <h1 id="ai-page-title" className="display ab-h1">Working with AI</h1>
-          <p className="ab-lede">I use AI the way I use Figma and Kotlin: as a tool to design, build and test faster. Here's what I'm certified in, what I'm learning right now, and how it shows up in my day job.</p>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <Chamfer onClick={() => go("#/play")}>Something I built entirely with AI: ASCII Hands, on Play →</Chamfer>
-          </div>
+          <p className="label mid">Lab · things to poke, and how I work with AI</p>
+          <h1 id="ai-page-title" className="display ab-h1">The Lab</h1>
+          <p className="ab-lede">I use AI the way I use Figma and Kotlin: as a tool to design, build and test faster. First, something to poke that I built entirely with AI. Then what I'm certified in, what I'm learning right now, and how it shows up in my day job.</p>
         </div>
         <div className="rs-me">
           <span className="ab-bubble hand">high five, robot.</span>
           <Mini pose="hmAI" label="A small Muskaan high-fiving a little robot" unit="var(--ab-u)" />
         </div>
       </div>
+
+      {TOYS.map((t, i) => <ToySection key={t.id} t={t} n={i + 1} />)}
 
       <Band no="AI.1" kicker="certified" title="Agents and Workflows">
         <div className="tx-split" style={{ alignItems: "start" }}>
@@ -67,7 +68,7 @@ export function AIPage() {
         <h2 className="display ab-h2">Building something with AI?</h2>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
-          <Chamfer onClick={() => go("#/play")}>Go play</Chamfer>
+          <Chamfer onClick={() => go("#/work")}>See the real work</Chamfer>
         </div>
       </div>
     </section>

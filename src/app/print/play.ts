@@ -2,7 +2,7 @@
 //   kind "embed": another site/app shown inside the page (only loads when the visitor presses Start).
 //                 url = the app, poster = an image in /public/play, allow = iframe permissions it needs.
 //                 video (optional) = a promo clip; the stage then gets "Watch the promo" / "Try it live" tabs.
-//   kind "game":  a toy built into this site; `game` picks the component in PlayPage.tsx (GAMES).
+//   kind "game":  a toy built into this site; `game` picks the component in PlayPage.tsx (GAMES). The shelf shows on the Lab page.
 //   kind "link":  just opens somewhere else (for things that can't be embedded).
 // Each toy lives here only: its story, video and the live thing together (the AI page just links to it).
 export type Toy = {
