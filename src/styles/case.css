@@ -243,3 +243,8 @@
 @media (max-width: 700px) { .np-row { grid-template-columns: 52px minmax(0, 1fr); gap: 4px 12px; } .np-meta, .np-go { grid-column: 2; } }
 .tx-say-who img.mn-art { width: auto; height: 100%; max-width: none; border: 0; border-radius: 0; background: none; object-fit: contain; }
 .tx-walk { max-width: 820px; }
+
+/* one size for every drawing in the same kind of slot (2026-10-05): cards 62% of the art panel, speech-bubble figures 130px */
+.tx-loop-art img.mn-art, .tx-loop-art > img[src*="/art/"] { position: static; inset: auto; height: 62%; width: auto; max-width: 84%; max-height: 62%; object-fit: contain; }
+.tx-say-who, .tx-say-who.tx-say-art { height: 130px; }
+.tx-say-who img.mn-art, .tx-say-who.tx-say-art img { height: 100%; width: auto; max-height: none; }

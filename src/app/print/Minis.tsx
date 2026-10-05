@@ -800,26 +800,26 @@ export const ART: Partial<Record<PoseName, [string, number]>> = {
   txUmbrella: ["at-debug", 112],
   csThumbs: ["at-thumbs", 100],
   csSign: ["at-hips", 132],
-  csPoint: ["at-phoneui", 106],
+  csPoint: ["at-bulb", 106],
   bmsPhone: ["at-phone", 88],
   csMagnify: ["at-compare", 102],
   bmsSlider: ["at-puzzled", 113],
   bmsOops: ["at-brokenui", 111],
   csPencil: ["at-erase", 112],
   csBox: ["at-laptopclosed", 95],
-  bmsTalk: ["at-interview2", 92],
-  bmsGuide: ["at-readnotes", 116],
+  bmsTalk: ["at-interview", 92],
+  bmsGuide: ["at-designui", 116],
   bmsLoop: ["at-testing", 100],
   bmsTapApp: ["at-fistpump", 121],
   bmsBoomerang: ["at-celebrate", 122],
-  bmsSwatch: ["at-designcode", 101],
+  bmsSwatch: ["at-phoneui", 101],
   csFlag: ["at-final", 100],
-  csHeart: ["at-interview", 115],
+  csHeart: ["at-floor", 115],
   csBinoc: ["at-think", 104],
   csCheck: ["at-writing", 101],
   csLaptop: ["at-focused", 124],
   csTrophy: ["at-victory", 112],
-  gmWheel: ["at-designui", 113],
+  gmWheel: ["at-headphones", 113],
   gmTrend: ["at-connect", 105],
   gmScreen: ["at-wireframe", 111],
   gmStars: ["at-stars", 104],
@@ -848,7 +848,7 @@ export function Mini({ pose, label, className, style, tone, unit, at }: {
     const src = `/art/${art[0]}-${tone === "paper" ? "ink" : "white"}.png`;
     if (at) return <image href={src} x={at[0]} y={at[1]} width={w * at[2]} height={h * at[2]} preserveAspectRatio="xMidYMax meet" aria-label={label} />;
     const u = unit === undefined ? undefined : typeof unit === "number" ? `${unit}px` : unit;
-    const sized: CSSProperties = { ...(u ? { height: `calc(${h} * ${u})` } : {}), width: "auto", maxHeight: Math.round(art[1] * 1.2), ...style };
+    const sized: CSSProperties = { ...(u ? { height: `calc(${h} * ${u})` } : {}), width: "auto", maxHeight: Math.round(art[1] * (art[0].startsWith("at-") ? 2.4 : 1.2)), ...style };
     return <img src={src} alt={label ?? ""} aria-hidden={label ? undefined : true} className={`mn mn-art ${className ?? ""}`} style={sized} />;
   }
   if (at) {

@@ -762,3 +762,6 @@ main.sheet-in { padding-top: 0 !important; }
   .sheet { padding-left: max(52px, clamp(16px, 5vw, 72px)); }
   .sheet .rail { display: none; }
 }
+/* walker circle: a touch bigger and lifted so it reads on every page */
+.side-rail-me > .walk-fig, .side-rail-me > .mn, .side-rail-me > img { width: 52px; height: 52px; box-shadow: 3px 3px 0 var(--shadow); }
+@media (max-width: 1000px) { .side-rail-me > .walk-fig { width: 40px; height: 40px; } }

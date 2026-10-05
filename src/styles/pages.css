@@ -196,3 +196,26 @@
 .ab-story-row .ab-photo { max-width: 210px; }
 .ab-story-row .ab-story-side { gap: 0; }
 @media (max-width: 1100px) { .ab-story-row .ab-story-side { flex-direction: row; } }
+
+/* About on tablet (after yashraut.com/about): text and photos side by side, no stacked gaps */
+@media (min-width: 701px) and (max-width: 1100px) {
+  .ab-tri, .ab-hello .ab-tri { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); grid-template-areas: "m l" "m r"; gap: 0 32px; align-items: start; }
+  .ab-tri > .ab-mid { grid-area: m; max-width: none; }
+  .ab-tri > .ab-side-l { grid-area: l; }
+  .ab-tri > .ab-side-r { grid-area: r; }
+  .ab-tri > div:empty { display: none; }
+  .ab-side, .ab-hello .ab-side-l, .ab-hello .ab-side-r { order: 0; flex-direction: column; align-items: center; gap: 18px; padding: 0; margin: 0; }
+  .ab-hello .ab-side-r { margin-top: 18px; }
+  .ab-hello .ab-float { width: min(100%, 230px); }
+  .ab-story-row { align-items: center; }
+  .ab-story-row .ab-story-side { margin: 0; }
+  .ab-story-row .ab-photo { max-width: 200px; }
+  .ab-tri:has(> .ab-side-l:empty) > .ab-side-r { grid-row: 1 / span 2; align-self: center; }
+  .ab-tri:has(> .ab-side-r:empty) > .ab-side-l { grid-row: 1 / span 2; align-self: center; }
+}
+/* phones: photos in one row above the text */
+@media (max-width: 700px) {
+  .ab-tri { display: flex; flex-direction: column; }
+  .ab-side { order: -1; flex-direction: row; justify-content: center; gap: 12px; margin: 0 0 14px; padding: 0; }
+  .ab-story-row .ab-photo, .ab-hello .ab-float { max-width: 46%; }
+}
