@@ -7,7 +7,7 @@ import type { Mission } from "../blueprint/data";
 import { Callout, Chamfer, Dim, Specimen, SpecTable, Stamp, TitleBlock, useInView, useReducedMotion } from "./ui";
 import { go } from "./nav";
 import { TruckDrawing, type TruckView } from "./TruckDrawings";
-import { TxHeroVideo, TxBuild, TxBuildWide, TxDefine, TxDefineWide, TxDesign, TxDesignWide, TxImpactWide, TxOverview, TxOverviewWide, TxResearch, TxResearchWide } from "./TraxenCase";
+import { TxBuild, TxBuildWide, TxDefine, TxDefineWide, TxDesign, TxDesignWide, TxImpactWide, TxOverview, TxOverviewWide, TxResearch, TxResearchWide } from "./TraxenCase";
 import { BmDefine, BmDefineWide, BmDesign, BmDesignWide, BmHandoff, BmHandoffWide, BmImpact, BmImpactWide, BmOverview, BmOverviewWide, BmResearch, BmResearchWide } from "./BuyMySpotCase";
 import { ParkingDrawing, type ParkingView } from "./ParkingDrawings";
 import { CarDrawing, type CarView } from "./CarDrawings";
@@ -200,20 +200,22 @@ function NextPrints({ current }: { current: string }) {
       <div className="rail" aria-hidden><span className="rail-label">Pick the next print</span><span className="rail-line" /></div>
       <h2 id="np-title" className="display ab-h2">Pick the next print</h2>
       <p className="label mid" style={{ margin: "6px 0 24px" }}>four case studies · open any of them</p>
-      <div className="np-grid">
+      <ol className="np-list">
         {MISSIONS.map(n => {
           const here = n.slug === current, pr = PRINT[n.slug];
           return (
-            <a key={n.slug} href={`#/case/${n.slug}`} className={`np-card ${here ? "here" : ""}`} aria-current={here ? "page" : undefined}
-              onClick={e => { e.preventDefault(); if (here) scrollTo({ top: 0, behavior: "smooth" }); else go(`#/case/${n.slug}`); }}>
-              <span className="np-shot"><img src={pr.shot} alt="" loading="lazy" /></span>
-              <span className="np-meta"><span className="display np-code">{pr.code}</span><span className="label">{here ? "you're here · back to top ↑" : pr.result}</span></span>
-              <span className="display np-name">{n.label}</span>
-              <span className="label mid">{n.role} · {n.year}</span>
-            </a>
+            <li key={n.slug}>
+              <a href={`#/case/${n.slug}`} className={`np-row ${here ? "here" : ""}`} aria-current={here ? "page" : undefined}
+                onClick={e => { e.preventDefault(); if (here) scrollTo({ top: 0, behavior: "smooth" }); else go(`#/case/${n.slug}`); }}>
+                <span className="np-code display">{pr.code}</span>
+                <span className="np-name display">{n.label}</span>
+                <span className="np-meta label">{n.role} · {n.year}</span>
+                <span className="np-go label">{here ? "you're here ↑" : "open →"}</span>
+              </a>
+            </li>
           );
         })}
-      </div>
+      </ol>
     </section>
   );
 }
@@ -244,7 +246,6 @@ export function CaseStudy({ mission: m }: { mission: Mission }) {
         </div>
 
         {m.slug === "guardiancare" && <div className="gc-hero-video">{GC_VIDEO}</div>}
-        {m.slug === "traxen" && <TxHeroVideo />}
         <div className="hero-cs">
           <div className="drawing" data-tap="">
             <Exploded slug={m.slug} brief={brief} active={active} setActive={setActive} onPick={k => scrollToSection(m.slug, k)} cameo={(CAMEOS[m.slug] ?? CAMEOS.traxen).hero} />

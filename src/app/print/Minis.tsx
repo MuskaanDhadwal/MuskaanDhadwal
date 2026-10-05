@@ -782,6 +782,59 @@ export const POSES = {
 } satisfies Record<string, PoseFn>;
 
 export type PoseName = keyof typeof POSES;
+
+/** Her own drawings replace the code-drawn poses (2026-10-05): pose → [art file in /art, natural height px].
+ *  Each drawing is used once. Images never render taller than ~1.2× their natural height, so nothing goes soft. */
+export const ART: Partial<Record<PoseName, [string, number]>> = {
+  wkSleep: ["at-headdesk", 106],
+  wkAwake: ["at-armsup", 113],
+  walkA: ["at-walk", 100],
+  walkB: ["at-walk", 100],
+  txTablet: ["at-tablet", 104],
+  txRetain: ["at-presentteam", 92],
+  txCalm: ["ld-listening", 225],
+  txHappy: ["at-highfive", 108],
+  csTape: ["at-magnify", 108],
+  csWrench: ["at-fixbug", 94],
+  txListen: ["at-listen", 117],
+  txUmbrella: ["at-debug", 112],
+  csThumbs: ["at-thumbs", 100],
+  csSign: ["at-hips", 132],
+  csPoint: ["at-phoneui", 106],
+  bmsPhone: ["at-phone", 88],
+  csMagnify: ["at-compare", 102],
+  bmsSlider: ["at-puzzled", 113],
+  bmsOops: ["at-brokenui", 111],
+  csPencil: ["at-erase", 112],
+  csBox: ["at-laptopclosed", 95],
+  bmsTalk: ["at-interview2", 92],
+  bmsGuide: ["at-readnotes", 116],
+  bmsLoop: ["at-testing", 100],
+  bmsTapApp: ["at-fistpump", 121],
+  bmsBoomerang: ["at-celebrate", 122],
+  bmsSwatch: ["at-designcode", 101],
+  csFlag: ["at-final", 100],
+  csHeart: ["at-interview", 115],
+  csBinoc: ["at-think", 104],
+  csCheck: ["at-writing", 101],
+  csLaptop: ["at-focused", 124],
+  csTrophy: ["at-victory", 112],
+  gmWheel: ["at-designui", 113],
+  gmTrend: ["at-connect", 105],
+  gmScreen: ["at-wireframe", 111],
+  gmStars: ["at-stars", 104],
+  gmThermo: ["at-coffee", 98],
+  gmIcon: ["at-debug2", 88],
+  gmKeys: ["at-goodbye", 99],
+  abTrek: ["ld-idea", 205],
+  abLabel: ["at-sticky", 104],
+  abMovie: ["at-cheeks", 106],
+  abBake: ["at-hair", 101],
+  abPitch: ["at-present", 104],
+  abJuggle: ["at-overwhelmed", 103],
+  abCrop: ["at-readbook", 106],
+  rsHand: ["at-card", 102],
+};
 /** `unit` sets a consistent scale across poses: CSS length per drawing unit (e.g. 1.4 → px, or "0.011em"). */
 export function Mini({ pose, label, className, style, tone, unit, at }: {
   pose: PoseName; label?: string; className?: string; style?: CSSProperties; tone?: "paper" | "dark"; unit?: number | string;
@@ -789,6 +842,15 @@ export function Mini({ pose, label, className, style, tone, unit, at }: {
   at?: [number, number, number];
 }) {
   const fn = POSES[pose];
+  const art = ART[pose];
+  if (art) {
+    const [, , w, h] = fn.vb.split(" ").map(Number);
+    const src = `/art/${art[0]}-${tone === "paper" ? "ink" : "white"}.png`;
+    if (at) return <image href={src} x={at[0]} y={at[1]} width={w * at[2]} height={h * at[2]} preserveAspectRatio="xMidYMax meet" aria-label={label} />;
+    const u = unit === undefined ? undefined : typeof unit === "number" ? `${unit}px` : unit;
+    const sized: CSSProperties = { ...(u ? { height: `calc(${h} * ${u})` } : {}), width: "auto", maxHeight: Math.round(art[1] * 1.2), ...style };
+    return <img src={src} alt={label ?? ""} aria-hidden={label ? undefined : true} className={`mn mn-art ${className ?? ""}`} style={sized} />;
+  }
   if (at) {
     const [, , w, h] = fn.vb.split(" ").map(Number);
     return <>{fn({ label, className, tone, place: [at[0], at[1], w * at[2], h * at[2]], style: { width: w * at[2], height: h * at[2] } })}</>;

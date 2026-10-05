@@ -693,3 +693,18 @@ main:has(article) section.sheet .rail { opacity: .55; }
 .mini-tired { left: 50%; bottom: 92%; transform: translateX(-52%); } .mini-tired .mini-fig { height: .36em; }
 .mini-stretch { left: 50%; bottom: 92%; transform: translateX(-46%); } .mini-stretch .mini-fig { height: .54em; }
 .mini-fig img { filter: drop-shadow(0 0 0 var(--white)); }
+
+/* her drawings standing in for the old code poses: never stretched, sit on the baseline */
+img.mn-art { display: block; width: auto; object-fit: contain; object-position: 50% 100%; }
+.tx-loop-art img.mn-art { position: static; inset: auto; width: auto; height: auto; max-width: 84%; }
+
+/* name v4 (Aesha-style): on top of the M, inside the U, perched on the K, lying on the A, holding up the N */
+.name-letters { margin-top: .95em; }
+.mini-on-m { left: 50%; bottom: 88%; transform: translateX(-50%); } .mini-on-m .mini-fig { height: .78em; }
+.mini-in-u { left: 50%; bottom: .2em; transform: translateX(-50%); } .mini-in-u .mini-fig { height: .46em; }
+.mini-on-k { left: 34%; bottom: 82%; } .mini-on-k .mini-fig { height: .6em; }
+.mini-on-a { left: 50%; bottom: 90%; transform: translateX(-50%); } .mini-on-a .mini-fig { height: .44em; }
+.mini-under-n { left: 50%; top: 96%; transform: translateX(-50%); } .mini-under-n .mini-fig { height: .66em; }
+.mini-fig img { filter: none; }
+.mini-over-s { left: 50%; bottom: 74%; transform: translateX(-50%); } .mini-over-s .mini-fig { height: .4em; }
+.mini-under-n { transform: translateX(-62%); }

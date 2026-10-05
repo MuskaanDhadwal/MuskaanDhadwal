@@ -123,9 +123,14 @@ export function TxOverviewWide() {
           <Shot src={A("final-max.png")} alt="The final floating window, maximized: current speed 65, a car icon with 12.0 secs headway, a microphone button, minimize and open-app icons." caption="SPEC. T1-01-A · floating window · maximized" />
           <div className="tx-pair-col">
             <Shot src={A("final-min.png")} alt="The final floating window, minimized to a single strip: speed 65, 12.0 secs headway and a microphone button." caption="SPEC. T1-01-B · minimized" />
+            <div className="tx-ref">
+              <span className="label">how it works · a familiar reference</span>
+              <p>Think of Google Maps: start navigating, switch to another app, and a small floating navigation window stays on top of it. The Traxen window works the same way. It overlays whatever third-party app the driver has open, so speed, headway and alerts never disappear behind another screen.</p>
+            </div>
             <Say pose="txTablet" alt="A small Muskaan holding up a tablet" side="right">It sits on top of every app in the cab. Navigation, hours-of-service, anything.</Say>
           </div>
         </div>
+        <TxWalkthrough />
       </Band>
       <Band no="01.2" kicker="so what did I do to solve this?" title="Seven steps, one person">
         <ol className="tx-steps">
@@ -673,16 +678,19 @@ export function TxImpactWide({ next }: { next: { slug: string; label: string } }
   );
 }
 
-/** The walkthrough, at the top of the case study (like GuardianCare): plays muted on its own, sound on demand. */
-export function TxHeroVideo() {
+
+/** The walkthrough: plays muted on its own (sound from the controls), with the window sizes it shows. */
+function TxWalkthrough() {
   const ref = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
-  useEffect(() => { const v = ref.current; if (!v) return; v.muted = true; v.setAttribute("muted", ""); if (!reduced) v.play().catch(() => {}); }, [reduced]);
+  const on = useInView(ref);
+  useEffect(() => { const v = ref.current; if (!v) return; v.muted = true; v.setAttribute("muted", ""); }, []);
+  useEffect(() => { const v = ref.current; if (!v || reduced) return; if (on) v.play().catch(() => {}); else v.pause(); }, [on, reduced]);
   return (
-    <figure className="specimen tx-shot gc-hero-video">
-      <video ref={ref} src={A("walkthrough.mp4")} muted autoPlay={!reduced} loop playsInline controls preload="auto" poster={A("alerts-expand-still.jpg")}
-        aria-label="Video walkthrough of the Traxen floating window and all its features." />
-      <figcaption>SPEC. T1-00 · the whole thing, start to finish · playing muted, unmute in the controls</figcaption>
+    <figure className="specimen tx-shot tx-walk">
+      <video ref={ref} src={A("walkthrough.mp4")} muted loop playsInline controls preload="metadata" poster={A("alerts-expand-still.jpg")}
+        aria-label="Video walkthrough of the Traxen floating window over other apps, and all its features." />
+      <figcaption>SPEC. T1-01-C · the window in use, start to finish · playing muted, unmute in the controls</figcaption>
     </figure>
   );
 }

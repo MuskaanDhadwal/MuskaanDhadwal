@@ -27,7 +27,7 @@ export function LabPage() {
           <p className="ab-lede">I use AI the way I use Figma and Kotlin: as a tool to design, build and test faster. First, something to poke that I built entirely with AI. Then what I'm certified in, what I'm learning right now, and how it shows up in my day job.</p>
         </div>
         <div className="rs-me">
-          <span className="ab-bubble hand">high five, robot.</span>
+          <span className="ab-bubble hand">wait. what if…</span>
           <img className="kit-hero" src="/art/kit-idea-white.png" alt="Muskaan with a lightbulb idea, one finger up, holding a notebook" />
         </div>
       </div>

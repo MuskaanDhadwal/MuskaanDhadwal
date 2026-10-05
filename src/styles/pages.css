@@ -181,3 +181,11 @@
 @media (prefers-reduced-motion: reduce) { .ab-story-row .ab-story-side > * { opacity: 1; transform: none; transition: none; } }
 .ab-hustle-art img { height: 100%; width: auto; display: block; }
 .ct-art { display: block; width: min(100%, 340px); height: auto; }
+/* About hello: both photo columns start level; on narrow screens every photo sits above the text */
+.ab-hello .ab-side-r { padding-top: 24px; }
+@media (max-width: 1100px) {
+  .ab-hello .ab-tri { grid-template-columns: minmax(0, 1fr); }
+  .ab-hello .ab-side-l, .ab-hello .ab-side-r { order: -1; margin: 0; padding: 0; }
+  .ab-hello .ab-side-r { margin-bottom: 20px; }
+  .ab-hello .ab-float-me { width: 120px; }
+}

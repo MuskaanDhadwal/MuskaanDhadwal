@@ -13,14 +13,14 @@ const art = (name: string) => `/art/${name}-white.png`;
 
 // ── Name, with her character drawings sitting on the letters (after Aesha Koshti's PORTFOLIO lettering) ──
 type Mini = { img: string; alt: string; quip: string; cls: string };
-// all drawn in the same white line as the letters, so name + drawings read as one piece
+// After Aesha Koshti's PORTFOLIO lettering: her drawings live in, on, beside and under the letters, in the
+// same white line as the letters, so the name and the drawings read as one piece.
 const MINIS: Record<string, Mini> = {
-  focused: { img: "ld-focused", alt: "Muskaan sitting cross-legged on top of the M with her laptop", quip: "just one more tweak…", cls: "mini-focused" },
-  peek: { img: "ld-peek", alt: "Muskaan peeking over the top of the U", quip: "that's 1px off. I can feel it.", cls: "mini-peek2" },
-  reading: { img: "ld-reading", alt: "Muskaan sitting on the S, reading, a stack of books beside her", quip: "chapter 3: affordances", cls: "mini-reading" },
-  move: { img: "ld-move", alt: "Muskaan running across the top of the K with her laptop", quip: "standup in 2 minutes!", cls: "mini-move" },
-  tired: { img: "ld-tired", alt: "Muskaan lying across the top of the A, chin on her arms, waiting", quip: "is it deployed yet?", cls: "mini-tired" },
-  stretch: { img: "ld-stretch", alt: "Muskaan stretching, arms up, on top of the N", quip: "*yawns in Figma*", cls: "mini-stretch" },
+  focused: { img: "ld-focused", alt: "Muskaan sitting cross-legged on top of the M with her laptop", quip: "just one more tweak…", cls: "mini-on-m" },
+  peek: { img: "ld-peek", alt: "Muskaan peeking over the top of the S", quip: "that's 1px off. I can feel it.", cls: "mini-over-s" },
+  daydream: { img: "ld-daydream", alt: "Muskaan leaning on the K, chin in her hand, daydreaming", quip: "v1 of 47…", cls: "mini-on-k" },
+  tired: { img: "ld-tired", alt: "Muskaan lying across the top of the A, waiting", quip: "is it deployed yet?", cls: "mini-on-a" },
+  stretch: { img: "ld-stretch", alt: "Muskaan under the N, arms up, holding the letter up", quip: "it's load-bearing. don't touch.", cls: "mini-under-n" },
 };
 
 function MiniOnLetter({ m }: { m: Mini }) {
@@ -49,7 +49,7 @@ function NameLetters() {
   return (
     <h1 className="name-letters display">
       <span className="sr-only">Muskaan Dhadwal</span>
-      {line("MUSKAAN", { 0: { mini: MINIS.focused }, 1: { mini: MINIS.peek }, 2: { mini: MINIS.reading }, 3: { mini: MINIS.move }, 5: { mini: MINIS.tired }, 6: { mini: MINIS.stretch } })}
+      {line("MUSKAAN", { 0: { mini: MINIS.focused }, 2: { mini: MINIS.peek }, 3: { mini: MINIS.daydream }, 5: { mini: MINIS.tired }, 6: { mini: MINIS.stretch, lift: true } })}
     </h1>
   );
 }

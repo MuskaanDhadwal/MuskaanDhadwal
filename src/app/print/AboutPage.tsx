@@ -154,7 +154,6 @@ function Facts() {
             <Photo src={f.photo[0]} alt={f.photo[1]} caption={f.evidence} tilt={[-2, 1.6, -1.2, 1.4][i]} />
             {f.more && <div className="ab-fact-more">{f.more.map(([src, alt], k) => <img key={src} src={`/about/${src}`} alt={alt} loading="lazy" style={{ ["--t" as string]: `${[-4, 3, -2][k]}deg` }} />)}</div>}
             <div className="ab-fact-head">
-              <span className="ab-fact-art"><Mini pose={f.pose} label={f.alt} unit={1} /></span>
               <h3 className="display ab-fact-title">{f.title}</h3>
             </div>
             <p className="ab-fact-line">{f.line}</p>

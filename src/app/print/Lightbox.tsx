@@ -1,5 +1,6 @@
 // Full-size image viewer shared by the Garage and the BuyMySpot persona boards.
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Chamfer } from "./ui";
 
 /** Full-size image viewer (also used for the BuyMySpot persona boards). Esc closes, ←/→ step, focus returns. */
@@ -21,7 +22,8 @@ export function Lightbox({ title, imgs, start = 0, onClose, wide }: { title: str
     return () => { removeEventListener("keydown", on); document.body.style.overflow = ""; prev?.focus(); };
   }, [n]);
   const img = imgs[i];
-  return (
+  // rendered on <body>, above the sticky nav (inside <main> it sat under the nav and hid the close button)
+  return createPortal(
     <div className="rs-lb" role="dialog" aria-modal="true" aria-label={`${title}, image ${i + 1} of ${n}`} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className={`rs-lb-frame ${wide ? "wide" : ""}`}>
         <div className="rs-lb-bar">
@@ -37,6 +39,7 @@ export function Lightbox({ title, imgs, start = 0, onClose, wide }: { title: str
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
