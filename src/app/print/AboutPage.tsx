@@ -101,14 +101,15 @@ function StoryStop({ s, n }: { s: (typeof STOPS)[number]; n: number }) {
   const flip = [false, false, true, true, false][n - 1] ?? n % 2 === 0; // single photos zig-zag left/right
   const left = items.filter((_, k) => (k % 2 === 0) !== flip), right = items.filter((_, k) => (k % 2 === 0) === flip);
   return (
+    // both photo columns come before the text in the page, so on phones they sit together above it
     <div ref={ref} className={`ab-tri ab-story-row ${seen ? "in" : ""}`}>
       <div className="ab-side ab-side-l ab-story-side">{left}</div>
+      <div className="ab-side ab-side-r ab-story-side">{right}</div>
       <div className="ab-mid ab-story-text">
         <span className="label mid">{String(n).padStart(2, "0")} · {s.tag}</span>
         <h3 className="display ab-story-title">{s.title}</h3>
         <p><Marked text={s.text} mark={s.mark} /></p>
       </div>
-      <div className="ab-side ab-side-r ab-story-side">{right}</div>
     </div>
   );
 }
@@ -130,16 +131,17 @@ function Journey() {
 
 // ── 03 out and about: Andrea's layout (words in the middle, snapshots scattered on both sides)
 // with one Yash-style live tile (yashraut.com/about) that flips through her MoMA photos by itself.
-const OUT_L: [string, string, string, number][] = [
-  ["aurora.webp", "Northern lights over a dark building: green near the horizon, rising into pink and red, with stars.", "the night the sky turned pink", -4],
-  ["chicago-bean.webp", "The Cloud Gate sculpture in Chicago reflecting skyscrapers and a grey sky, people with umbrellas around it.", "Chicago, in the rain", 3],
-  ["statue-of-liberty.webp", "The Statue of Liberty under a cloudy sky, seen across the water with a small boat passing.", "New York, from the water", -2],
+// no captions here (her call): the text beside them says where they are
+const OUT_L: [string, string, number][] = [
+  ["aurora.webp", "Northern lights over a dark building: green near the horizon, rising into pink and red, with stars.", -4],
+  ["chicago-bean.webp", "The Cloud Gate sculpture in Chicago reflecting skyscrapers and a grey sky, people with umbrellas around it.", 3],
+  ["statue-of-liberty.webp", "The Statue of Liberty under a cloudy sky, seen across the water with a small boat passing.", -2],
 ];
-const MOMA: [string, string, string][] = [
-  ["moma-starry-night.webp", "Van Gogh's The Starry Night in its dark frame on a museum wall.", "The Starry Night, Van Gogh"],
-  ["moma-roulin.webp", "Van Gogh's Portrait of Joseph Roulin, a bearded postman in a blue cap against green swirling flowers, beside its wall label.", "Joseph Roulin, Van Gogh"],
-  ["moma-soup-cans.webp", "Warhol's Campbell's Soup Cans: 32 small canvases hung in four rows on a white gallery wall.", "Campbell's Soup Cans, Warhol"],
-  ["moma-abstract.webp", "A huge abstract painting of soft orange, pink, yellow and blue blocks on a white gallery wall.", "one I stood in front of"],
+const MOMA: [string, string][] = [
+  ["moma-starry-night.webp", "At MoMA: Van Gogh's The Starry Night in its dark frame on a museum wall."],
+  ["moma-roulin.webp", "At MoMA: Van Gogh's Portrait of Joseph Roulin, a bearded postman in a blue cap against green swirling flowers."],
+  ["moma-soup-cans.webp", "At MoMA: Warhol's Campbell's Soup Cans, 32 small canvases hung in four rows on a white gallery wall."],
+  ["moma-abstract.webp", "At MoMA: a huge abstract painting of soft orange, pink, yellow and blue blocks on a white gallery wall."],
 ];
 
 /** a gallery frame that flips through her museum photos on its own (tap to skip ahead) */
@@ -155,14 +157,10 @@ function MomaFrame() {
   }, [seen, hold]);
   return (
     <figure ref={ref} className="ab-moma" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)}>
-      <button className="ab-moma-wall" onClick={() => setI(v => (v + 1) % MOMA.length)} aria-label={`Next painting (showing ${i + 1} of ${MOMA.length}: ${MOMA[i][2]})`}>
+      <button className="ab-moma-wall" onClick={() => setI(v => (v + 1) % MOMA.length)} aria-label={`Next painting (showing ${i + 1} of ${MOMA.length})`}>
         {MOMA.map(([src, alt], k) => <img key={src} src={`/about/${src}`} alt={k === i ? alt : ""} aria-hidden={k !== i} className={k === i ? "on" : ""} loading="lazy" />)}
       </button>
-      <figcaption>
-        <span className="label">MoMA, New York</span>
-        <span className="ab-moma-dots">{MOMA.map(([src, , cap], k) => <button key={src} className={k === i ? "on" : ""} aria-label={`Show ${cap}`} aria-pressed={k === i} onClick={() => setI(k)} />)}</span>
-        <span className="hand ab-moma-cap">{MOMA[i][2]}</span>
-      </figcaption>
+      <span className="ab-moma-dots">{MOMA.map(([src], k) => <button key={src} className={k === i ? "on" : ""} aria-label={`Show painting ${k + 1}`} aria-pressed={k === i} onClick={() => setI(k)} />)}</span>
     </figure>
   );
 }
@@ -175,10 +173,9 @@ function OutAndAbout() {
       <div className="rail" aria-hidden><span className="rail-label">About · 03 out and about</span><span className="rail-line" /></div>
       <div ref={ref} className={`ab-tri ab-story-row ${seen ? "in" : ""}`}>
         <div className="ab-side ab-side-l ab-scatter">
-          {OUT_L.map(([src, alt, cap, r], k) => (
+          {OUT_L.map(([src, alt, r], k) => (
             <figure key={src} className={`ab-float ab-out-${src.split(".")[0]}`} style={{ ["--r" as string]: `${r}deg`, animationDelay: `${k * -1.7}s` }}>
               <img src={`/about/${src}`} alt={alt} loading="lazy" />
-              <figcaption className="hand">{cap}</figcaption>
             </figure>
           ))}
         </div>
@@ -193,7 +190,6 @@ function OutAndAbout() {
           <MomaFrame />
           <figure className="ab-float" style={{ ["--r" as string]: "3deg", animationDelay: "-2.6s" }}>
             <img src="/about/bao.webp" alt="Three bao buns with glazed chicken and a slaw salad on a long black plate." loading="lazy" />
-            <figcaption className="hand">bao, briefly</figcaption>
           </figure>
         </div>
       </div>

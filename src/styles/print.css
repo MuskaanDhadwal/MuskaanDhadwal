@@ -765,3 +765,50 @@ main.sheet-in { padding-top: 0 !important; }
 /* walker circle: a touch bigger and lifted so it reads on every page */
 .side-rail-me > .walk-fig, .side-rail-me > .mn, .side-rail-me > img { width: 52px; height: 52px; box-shadow: 3px 3px 0 var(--shadow); }
 @media (max-width: 1000px) { .side-rail-me > .walk-fig { width: 40px; height: 40px; } }
+
+/* ═══ Name v6 (2026-10-05), after Aesha Koshti's PORTFOLIO lettering ═══
+   --F is the base letter size; everything (letters, drawings, books, sparkles) is measured in it, so the
+   whole composition scales as one drawing from phones to 1920. Cap height ≈ .705F, stem ≈ .13F. */
+.nm2 { --F: min(calc(100cqw / 3.98), 170px); font-size: var(--F); line-height: .74; margin: 0; padding-top: calc(var(--F) * .8); }
+.nm2-word { display: flex; align-items: flex-end; }
+.nm2-l { position: relative; display: inline-block; isolation: isolate; }
+.nm2-ch { display: block; transform-origin: 50% 100%; transition: transform .35s var(--ease-spring); }
+.nm2-m .nm2-ch { font-size: 1.14em; transform: rotate(-3deg); }
+.nm2-u { margin: 0 calc(var(--F) * .035); }
+.nm2-ushape { width: calc(var(--F) * .7); height: calc(var(--F) * .76); box-sizing: border-box; border: calc(var(--F) * .13) solid var(--white); border-top: 0;
+  border-radius: 0 0 calc(var(--F) * .35) calc(var(--F) * .35); transform: rotate(2deg); }
+.nm2-s .nm2-ch { transform: translateY(calc(var(--F) * .05)) rotate(9deg); }
+.nm2-k .nm2-ch { font-size: 1.06em; transform: rotate(-5deg); }
+.nm2-a2 { margin-left: calc(var(--F) * .03); }
+.nm2-a2 .nm2-ch { transform: translateY(calc(var(--F) * -.6)) rotate(2deg); }
+.nm2-n .nm2-ch { font-size: 1.1em; transform: rotate(3deg); }
+@keyframes nm2Hold { 0%, 100% { transform: translateY(calc(var(--F) * -.71)) rotate(6deg); } 50% { transform: translateY(calc(var(--F) * -.735)) rotate(3.5deg); } }
+/* letters wobble when you pass over them (BOIL) */
+@media (hover: hover) {
+  .nm2-l:not(.nm2-a2):not(.nm2-m):not(.nm2-n):hover .nm2-ch { transform: rotate(-8deg) translateY(calc(var(--F) * -.04)); }
+}
+
+/* her drawings, one job each */
+.nm2 .mini { width: max-content; }
+.nm2 .mini .mini-fig { height: calc(var(--F) * var(--h)); }
+.nm2-on-m { --h: .78; left: 48%; bottom: calc(var(--F) * .75); transform: translateX(-50%); }
+.nm2-in-u { --h: .66; left: 50%; bottom: calc(var(--F) * .1); transform: translateX(-50%); }
+.nm2-over-s { --h: .42; left: 66%; bottom: calc(var(--F) * .66); transform: translateX(-50%) rotate(6deg); }
+.nm2-hold-a { --h: .5; left: 50%; bottom: calc(var(--F) * .155); transform: translateX(-49%); }
+.nm2-lean-n { --h: .5; left: 53%; bottom: calc(var(--F) * .77); transform: translateX(-50%); }
+.nm2 .mini-back { z-index: -1 !important; }
+
+/* the stack of books she stands on */
+.nm2-books { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 3; }
+.nm2-books i { display: block; height: calc(var(--F) * .055); box-sizing: border-box; border: max(1.5px, calc(var(--F) * .012)) solid var(--white); background: var(--blueprint);
+  background-image: linear-gradient(90deg, transparent 18%, var(--white) 18% 21%, transparent 21%); }
+.nm2-books i:nth-child(1) { width: calc(var(--F) * .48); transform: translateX(calc(var(--F) * .03)) rotate(-3deg); }
+.nm2-books i:nth-child(2) { width: calc(var(--F) * .6); margin-top: -1px; transform: rotate(1.5deg); }
+.nm2-books i:nth-child(3) { width: calc(var(--F) * .54); margin-top: -1px; transform: translateX(calc(var(--F) * -.02)); }
+
+/* sparkles (the only yellow in the name) */
+.nm2-spark { position: absolute; width: calc(var(--F) * .1); height: auto; fill: var(--accent); pointer-events: none; animation: nm2Twinkle 2.4s ease-in-out infinite; }
+.nm2-spark-a { left: 50%; bottom: calc(var(--F) * .05); margin-left: calc(var(--F) * -.05); }
+.nm2-spark-k { right: calc(var(--F) * -.02); top: calc(var(--F) * .3); animation-delay: -1.2s; }
+@keyframes nm2Twinkle { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(.7) rotate(45deg); } }
+@media (prefers-reduced-motion: reduce) { .nm2-a2 .nm2-ch, .nm2-spark { animation: none; } .nm2-ch { transition: none; } }

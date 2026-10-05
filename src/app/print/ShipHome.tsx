@@ -11,24 +11,39 @@ import { go } from "./nav";
 const BUILD = "2026.10";
 const art = (name: string) => `/art/${name}-white.png`;
 
-// After Aesha Koshti's PORTFOLIO lettering: her drawings are part of the letters. Each one is a solid
-// silhouette (filled with the page blue), so where she overlaps a letter she covers it, and the ones marked
-// `back` sit behind the letter and rise out of it. Same white line as the letters: one drawing.
+// After Aesha Koshti's PORTFOLIO lettering: every letter has its own height and tilt, and each drawing of her
+// does something different with one: sits on the M, is framed in the U, peeks over the S, holds the second A
+// up while standing on a stack of books, leans on the N. Each drawing is a solid silhouette (filled
+// with the page blue, `scripts/make-solid.py`), so where she overlaps a letter she covers it; the ones marked
+// `back` sit behind the letter. Same white line as the letters: one drawing.
 type Mini = { img: string; alt: string; quip: string; cls: string; back?: boolean };
 const MINIS: Record<string, Mini> = {
-  artist: { img: "kit-artist", alt: "Muskaan sitting cross-legged on top of the M, sketching in her notebook", quip: "v1 of 47", cls: "mini-on-m" },
-  wave: { img: "at-wave", alt: "Muskaan waving from inside the U", quip: "the U is my office now", cls: "mini-in-u", back: true },
-  peek: { img: "ld-peek", alt: "Muskaan peeking over the top of the S, fingers on the edge", quip: "that's 1px off. I can feel it.", cls: "mini-over-s" },
-  notes: { img: "kit-notetaker", alt: "Muskaan leaning on the top of the A, chin in her hand, taking notes", quip: "noted. and noted again.", cls: "mini-lean-a" },
-  idea: { img: "kit-idea", alt: "Muskaan rising from behind the N with a lightbulb idea", quip: "wait. what if…", cls: "mini-behind-n", back: true },
+  artist: { img: "kit-artist", alt: "Muskaan sitting cross-legged on top of the M, sketching in her notebook", quip: "v1 of 47", cls: "nm2-on-m" },
+  wave: { img: "at-wave", alt: "Muskaan waving from inside the U", quip: "the U is my office now", cls: "nm2-in-u", back: true },
+  peek: { img: "ld-peek", alt: "Muskaan peeking over the top of the S, fingers on the edge", quip: "that's 1px off. I can feel it.", cls: "nm2-over-s" },
+  hold: { img: "ld-stretch", alt: "Muskaan standing on a stack of books, holding the second A up over her head", quip: "holding it all together", cls: "nm2-hold-a" },
+  dream: { img: "ld-daydream", alt: "Muskaan leaning on top of the N, chin in her hand, daydreaming", quip: "wait. what if…", cls: "nm2-lean-n" },
 };
+
+/** a small four-point sparkle, like the diamonds tucked into Aesha's letters */
+const Spark = ({ cls }: { cls: string }) => (
+  <svg className={`nm2-spark ${cls}`} viewBox="0 0 10 10" aria-hidden><path d="M5 0 6.1 3.9 10 5 6.1 6.1 5 10 3.9 6.1 0 5 3.9 3.9Z" /></svg>
+);
 
 function MiniOnLetter({ m }: { m: Mini }) {
   const [said, setSaid] = useState(false);
   const [k, setK] = useState(0);
+  // the bubble closes by itself after a moment; tapping her again or pressing Esc closes it sooner
+  useEffect(() => {
+    if (!said) return;
+    const t = setTimeout(() => setSaid(false), 2600);
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setSaid(false); };
+    addEventListener("keydown", esc);
+    return () => { clearTimeout(t); removeEventListener("keydown", esc); };
+  }, [said, k]);
   return (
     <span className={`mini ${m.cls} ${m.back ? "mini-back" : ""}`}>
-      <button onClick={() => { setSaid(true); setK(x => x + 1); }} aria-label={`${m.alt}. Tap to hear her.`}>
+      <button onClick={() => { if (said) { setSaid(false); return; } setSaid(true); setK(x => x + 1); }} aria-expanded={said} aria-label={`${m.alt}. Tap to hear her.`}>
         <span key={k} className={`mini-fig ${k ? "pop" : ""}`}><img src={`/art/${m.img}-solid.png`} alt="" /></span>
       </button>
       {said && <span className="mini-say" role="status">{m.quip}</span>}
@@ -37,19 +52,19 @@ function MiniOnLetter({ m }: { m: Mini }) {
 }
 
 function NameLetters() {
-  const line = (word: string, extras: Record<number, { mini?: Mini; lift?: boolean; custom?: ReactNode }>) => (
-    <span className="name-line" aria-hidden>
-      {[...word].map((ch, i) => extras[i]?.custom ?? (
-        <span key={i} className={`nl ${extras[i]?.lift ? "nl-lift" : ""}`}>
-          {ch}{extras[i]?.mini && <MiniOnLetter m={extras[i].mini!} />}
-        </span>
-      ))}
-    </span>
-  );
+  const ch = (c: string) => <span className="nm2-ch" aria-hidden>{c}</span>;
   return (
-    <h1 className="name-letters display">
+    <h1 className="nm2 display">
       <span className="sr-only">Muskaan Dhadwal</span>
-      {line("MUSKAAN", { 0: { mini: MINIS.artist }, 1: { mini: MINIS.wave }, 2: { mini: MINIS.peek }, 4: { mini: MINIS.notes }, 6: { mini: MINIS.idea } })}
+      <span className="nm2-word">
+        <span className="nm2-l nm2-m">{ch("M")}<MiniOnLetter m={MINIS.artist} /></span>
+        <span className="nm2-l nm2-u"><span className="nm2-ch nm2-ushape" aria-hidden /><MiniOnLetter m={MINIS.wave} /></span>
+        <span className="nm2-l nm2-s">{ch("S")}<MiniOnLetter m={MINIS.peek} /></span>
+        <span className="nm2-l nm2-k">{ch("K")}<Spark cls="nm2-spark-k" /></span>
+        <span className="nm2-l nm2-a1">{ch("A")}<Spark cls="nm2-spark-a" /></span>
+        <span className="nm2-l nm2-a2">{ch("A")}<span className="nm2-books" aria-hidden><i /><i /><i /></span><MiniOnLetter m={MINIS.hold} /></span>
+        <span className="nm2-l nm2-n">{ch("N")}<MiniOnLetter m={MINIS.dream} /></span>
+      </span>
     </h1>
   );
 }
@@ -257,8 +272,8 @@ function Recommendations() {
 // ── Wake her up: she's asleep (it's 23:00 on the rail). Tap her — first she bargains, then she's up.
 // The contact buttons are always there; the interaction is just for fun.
 const WAKE = [
-  { pose: "wkSleep" as PoseName, say: "z z z", alt: "A small Muskaan curled up asleep on a pillow under a blanket" },
-  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "A small Muskaan still asleep, mumbling" },
+  { pose: "wkSleep" as PoseName, say: "z z z", alt: "Muskaan asleep with her head on her folded arms, a loading bar under her" },
+  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "Muskaan still asleep on her arms, mumbling" },
   { pose: "wkAwake" as PoseName, say: "I'm up! I'm up! What are we building?", alt: "A small Muskaan sprung awake, arms out, eyes wide" },
 ];
 

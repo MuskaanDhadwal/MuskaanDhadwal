@@ -267,6 +267,42 @@
   .ab-moma { width: 56%; }
 }
 
+/* (later the same evening) no captions in Out and about; story photo columns come before the text in the
+   page, and the grid puts them back on both sides */
+.ab-out .ab-float { padding: 7px; }
+.ab-moma { padding: 10px; }
+.ab-moma-dots { display: flex; justify-content: center; gap: 2px; padding-top: 6px; }
+@media (min-width: 1101px) {
+  .ab-story-row { grid-template-areas: "l m r"; }
+  .ab-story-row > .ab-side-l { grid-area: l; }
+  .ab-story-row > .ab-side-r { grid-area: r; }
+  .ab-story-row > .ab-mid { grid-area: m; }
+}
+/* tablet + desktop: smaller snapshots, and a second one tucks over the first (Andrea's loose clusters),
+   so a stop with two photos is barely taller than its text */
+@media (min-width: 701px) {
+  .ab-story-row .ab-photo { max-width: 184px; }
+  .ab-story-row .ab-photo figcaption { font-size: 16px; }
+  .ab-story-side .ab-photo + .ab-photo { margin-top: -34px; margin-left: 48px; position: relative; z-index: 1; }
+  .ab-story-side .ab-photo + .ab-photo::before { display: none; }
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+  .ab-story-col > .ab-story-row .ab-story-side { align-items: flex-start; }
+}
+
+/* phones: a stop's photos sit together in one tight row above its text, small and overlapping, no captions */
+@media (max-width: 700px) {
+  .ab-story-col { gap: 40px; }
+  .ab-story-col > .ab-story-row { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
+  .ab-story-col > .ab-story-row > .ab-side { order: 0; flex: 0 0 auto; flex-direction: row; gap: 0; margin: 0 0 14px; padding: 0; }
+  .ab-story-col > .ab-story-row > .ab-side:empty { display: none; }
+  .ab-story-col > .ab-story-row > .ab-mid { flex: 1 1 100%; }
+  .ab-story-row .ab-photo { width: 132px; max-width: 40vw; padding: 5px; margin: 0 -6px; }
+  .ab-story-row .ab-photo::before { display: none; }
+  .ab-story-row .ab-photo figcaption { display: none; }
+  .ab-story-walk { height: 96px; margin-left: 10px; }
+}
+
 /* facts: five photo cards, 3 + 2 centred like polaroids on a desk */
 .ab-facts { display: flex; flex-wrap: wrap; justify-content: center; }
 .ab-facts > .ab-fact { width: calc((100% - 40px) / 3); }

@@ -786,7 +786,7 @@ export type PoseName = keyof typeof POSES;
 /** Her own drawings replace the code-drawn poses (2026-10-05): pose → [art file in /art, natural height px].
  *  Each drawing is used once. Images never render taller than ~1.2× their natural height, so nothing goes soft. */
 export const ART: Partial<Record<PoseName, [string, number]>> = {
-  wkSleep: ["at-headdesk", 106],
+  wkSleep: ["ld-tired", 150],
   wkAwake: ["at-armsup", 113],
   walkA: ["at-walk", 100],
   walkB: ["at-walk", 100],
