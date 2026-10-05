@@ -1,0 +1,147 @@
+/* Luxury Vehicle × GM case study (gm-). Tokens from print.css; bands, specimens and bubbles from case.css.
+   The car's own dark UI only appears inside screen bezels and the live recreations (like BuyMySpot's live style guide). */
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&display=swap");
+
+/* screens + phones */
+.gm-screen { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.gm-bezel { border: 2px solid var(--white); border-radius: 18px; padding: 6px; background: var(--blueprint-dk); overflow: hidden; position: relative; }
+.gm-bezel img { display: block; width: 100%; height: auto; border-radius: 12px; background: #0b0c14; }
+.gm-small { max-width: 240px; }
+.gm-tall .gm-bezel { max-width: 320px; }
+.gm-phone { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.gm-phone-body { width: 100%; max-width: 200px; aspect-ratio: 393 / 852; border: 2px solid var(--white); border-radius: 26px; padding: 6px; background: var(--blueprint-dk); box-sizing: border-box; overflow: hidden; }
+.gm-phone-body img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 20px; background: #000; }
+.gm-phones { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+.gm-phones .gm-phone { flex: 0 1 180px; }
+.gm-link { all: unset; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.gm-link:focus-visible, .gm-answer:focus-visible, .gm-pillar:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gm-h4 { font-size: clamp(22px, 2.2vw, 28px); margin: 0 0 6px; }
+.gm-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-bottom: 24px; }
+
+/* 01.1 cabin map: the real cabin with a button over each surface */
+.gm-cabin { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.gm-cabin-img { position: relative; border: 1.5px solid var(--white); background: #0b0c14; }
+.gm-cabin-img img { display: block; width: 100%; height: auto; }
+.gm-hot { all: unset; box-sizing: border-box; position: absolute; cursor: pointer; border: 1.5px dashed rgba(255,255,255,.55); transition: background var(--dur-micro), border-color var(--dur-micro); }
+.gm-hot .tx-pin { position: absolute; left: -10px; top: -10px; width: 26px; height: 26px; font-size: 12px; }
+.gm-hot:hover { background: rgba(255,255,255,.08); border-color: var(--white); }
+.gm-hot.on { border: 2.5px solid var(--white); background: rgba(255,255,255,.1); }
+.gm-hot.on .tx-pin { background: var(--accent); }
+.gm-hot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gm-cabin-side { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.gm-cabin-side p { margin: 0; }
+.gm-cabin-name { font-size: clamp(28px, 3vw, 40px); margin: 6px 0 0; }
+.gm-mid { max-width: 760px; }
+
+/* 02 research */
+.gm-bench { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.gm-bench li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line-mid); }
+.gm-bench .display { font-size: clamp(24px, 2.4vw, 32px); }
+.gm-trends { display: grid; gap: 14px; }
+.gm-trend { border: 1.5px solid var(--white); padding: 14px 16px; }
+.gm-trend .tx-loop-no { margin: 0; font-size: 28px; }
+.gm-trend h4 { font-size: clamp(22px, 2.2vw, 28px); margin: 2px 0 6px; }
+.gm-trend p { margin: 0; }
+.gm-prob { font-size: clamp(28px, 3vw, 40px); margin: 8px 0 6px; }
+.gm-answers { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+.gm-answer { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border: 1.5px solid var(--white); transition: background var(--dur-micro); }
+.gm-answer:hover { background: var(--blueprint-dk); }
+
+/* 03 define */
+.gm-pillars { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.gm-pillar { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1.5px solid var(--white); background: var(--blueprint-dk); transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro); }
+.gm-pillar:hover { transform: translateY(-3px); box-shadow: 4px 4px 0 var(--shadow); }
+.gm-pillar .display { font-size: clamp(24px, 2.2vw, 30px); }
+.gm-pillar .label { margin-top: auto; }
+.gm-size { font-size: clamp(48px, 6vw, 80px); margin: 6px 0; }
+
+/* 04.1 sky theme: the live recreation (the car's own UI, so its own colours) */
+.gm-kd1 { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 8px; }
+.gm-kd1-real { display: grid; gap: 16px; }
+.gm-kd1-foot { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 32px; align-items: start; margin-top: 32px; }
+.gm-live-screen { aspect-ratio: 2 / 1; padding: 0; border-radius: 18px; }
+.gm-sky-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gm-ui { position: relative; height: 100%; display: grid; grid-template-rows: auto auto 1fr auto; gap: 4%; padding: 2% 3% 0; color: #fff; font-family: "Karla", var(--body); container-type: inline-size; }
+.gm-ui-status { display: flex; justify-content: flex-end; font-size: max(10px, 2cqi); font-weight: 500; }
+.gm-ui-default { all: unset; box-sizing: border-box; cursor: pointer; justify-self: center; width: 62%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 2.4cqi 0; border: 1px solid rgba(255,255,255,.4); border-radius: 6px; font-size: max(10px, 2cqi); font-weight: 700; background: rgba(0,0,0,.25); }
+.gm-ui-default.on { border-color: #fff; background: rgba(255,255,255,.14); }
+.gm-ui-default svg, .gm-ui-ico svg { width: 1.3em; height: 1.3em; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.gm-ui-tiles { display: flex; justify-content: center; gap: 4%; align-items: flex-start; }
+.gm-ui-tile { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: max(9px, 1.7cqi); font-weight: 700; width: 15%; }
+.gm-ui-ico { width: 100%; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.35); border-radius: 8px; background: #141414; font-size: 4cqi; transition: background var(--dur-micro), transform var(--dur-micro) var(--ease-spring); }
+.gm-ui-tile.on .gm-ui-ico { background: #1463FD; border-color: #1463FD; box-shadow: 0 0 0 3px rgba(20,99,253,.35); transform: scale(1.06); }
+.gm-ui-tile.on.warm .gm-ui-ico { background: #E8B931; border-color: #E8B931; box-shadow: 0 0 0 3px rgba(232,185,49,.35); }
+.gm-ui-tile:focus-visible .gm-ui-ico, .gm-ui-default:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.gm-ui-nav { display: flex; justify-content: space-around; align-items: center; height: 15cqi; max-height: 54px; margin: 0 -3.4%; padding: 0 3%; background: rgba(0,0,0,.6); border-top: 1px solid rgba(255,255,255,.15); }
+.gm-ui-nav i { width: 3.4cqi; height: 3.4cqi; border: 1.5px solid rgba(255,255,255,.85); border-radius: 3px; }
+.gm-ui-nav i.on { border-color: #1463FD; background: rgba(20,99,253,.4); box-shadow: 0 0 10px 4px rgba(20,99,253,.45); }
+.gm-live { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+/* 04.2 the wheel */
+.gm-wheel-live { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr); gap: 28px; align-items: center; }
+.gm-wheel-ctrl { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.gm-wheel-menu { display: flex; gap: 6px; flex-wrap: wrap; }
+.gm-wheel-menu span { padding: 6px 10px; border: 1px solid var(--line-mid); font: 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.gm-wheel-menu span.sel { border-color: var(--white); }
+.gm-wheel-menu span.on { background: var(--white); color: var(--blueprint-dk); }
+.gm-pad { position: relative; width: 168px; height: 168px; border-radius: 50%; border: 2px solid var(--white); background: var(--blueprint-dk); display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); place-items: center; }
+.gm-pad button { all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; font: 700 14px var(--mono); color: var(--white); transition: background var(--dur-micro); }
+.gm-pad button:hover { background: rgba(255,255,255,.15); }
+.gm-pad button:focus-visible { outline: 2px solid var(--accent); }
+.gm-pad .up { grid-area: 1 / 2; } .gm-pad .prev { grid-area: 2 / 1; } .gm-pad .ok { grid-area: 2 / 2; background: var(--white); color: var(--blueprint-dk); } .gm-pad .next { grid-area: 2 / 3; } .gm-pad .down { grid-area: 3 / 2; }
+.gm-pad .ok:hover { background: var(--accent); }
+.gm-wheel-refs { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 24px; }
+
+/* 04.3 alerts */
+.gm-adas { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: start; margin-top: 28px; }
+.gm-adas-screen { max-width: 340px; }
+
+/* 04.4 climate + the live number pad */
+.gm-kd3 { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 28px; align-items: start; }
+.gm-kd3-side { display: flex; flex-direction: column; gap: 12px; }
+.gm-numpad .gm-phone-body { max-width: 220px; }
+.gm-np { background: #000; color: #fff; font-family: "Karla", var(--body); display: flex; flex-direction: column; padding: 18px 12px 12px; gap: 10px; }
+.gm-np-cap { margin: 8px 0 0; text-align: center; font-size: 13px; font-weight: 500; }
+.gm-np-now { margin: 0 0 6px; text-align: center; font-size: 34px; font-weight: 700; }
+.gm-np-field { display: flex; border: 1px solid #333; border-radius: 6px; overflow: hidden; font-size: 12px; }
+.gm-np-field span { flex: 1; padding: 8px; color: #aaa; }
+.gm-np-field button, .gm-np-keys button { all: unset; box-sizing: border-box; cursor: pointer; text-align: center; }
+.gm-np-field button { background: #1463FD; padding: 8px 14px; font-weight: 700; }
+.gm-np-keys { display: grid; grid-template-columns: repeat(3, 1fr) 1fr; grid-auto-rows: 36px; gap: 6px; margin-top: auto; }
+.gm-np-keys button { background: #1c1c1e; border-radius: 6px; font-size: 15px; display: grid; place-items: center; }
+.gm-np-keys button:hover { background: #2c2c2e; }
+.gm-np-keys button:focus-visible, .gm-np-field button:focus-visible { outline: 2px solid #59C1FA; outline-offset: 1px; }
+.gm-np-keys .zero { grid-row: 4; grid-column: 1 / span 2; }
+.gm-np-keys .unit { grid-column: 4; }
+.gm-np-keys .unit.c { grid-row: 1 / span 2; }
+.gm-np-keys .unit.f { grid-row: 3 / span 2; }
+.gm-np-keys .unit.on { border: 1.5px solid #1463FD; }
+
+/* 05 system */
+.gm-swatches { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+.gm-swatch { display: flex; flex-direction: column; gap: 4px; }
+.gm-chip { display: block; aspect-ratio: 4 / 3; border: 1.5px solid var(--white); margin-bottom: 6px; }
+.gm-swatch .display { font-size: 22px; }
+.gm-type { background: #111; color: #fff; font-family: "Karla", var(--body); padding: 20px; border: 1.5px solid var(--white); display: grid; gap: 14px; }
+.gm-type p { margin: 0; max-width: none; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+.gm-type .label { font-family: var(--mono); font-weight: 400; font-size: 11px; color: rgba(255,255,255,.65); min-width: 96px; }
+
+/* 06 outcome */
+.gm-refs { margin: 0; padding-left: 20px; display: grid; gap: 10px; max-width: 900px; overflow-wrap: anywhere; }
+
+@media (max-width: 1100px) {
+  .gm-pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gm-kd3 { grid-template-columns: minmax(0, 1fr) auto; }
+  .gm-kd3-side { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: flex-end; }
+}
+@media (max-width: 900px) {
+  .gm-cabin, .gm-kd1, .gm-kd1-foot, .gm-wheel-live, .gm-adas, .gm-two { grid-template-columns: 1fr; }
+  .gm-swatches { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .gm-pillars, .gm-kd3 { grid-template-columns: 1fr; }
+  .gm-swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gm-kd3 .gm-tall .gm-bezel { max-width: 100%; }
+  .gm-phones .gm-phone { flex-basis: 140px; }
+}
+@media (prefers-reduced-motion: reduce) { .gm-pillar, .gm-ui-ico { transition: none; } }

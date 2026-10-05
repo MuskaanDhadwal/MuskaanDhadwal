@@ -1,0 +1,20 @@
+# dependencies and build output
+node_modules/
+dist/
+# local tool settings
+.claude/settings.local.json
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+*.log
+
+# private working notes (they name teammates and hold personal details) - kept locally, never published
+PROGRESS.md
+knowledge.md
+CLAUDE.md
+ART-BRIEF.md
+.claude/
+# old, unused drafts and reference material (not part of the site)
+src/app/_cockpit/
+src/app/_draft/
+src/imports/

@@ -1,16 +1,23 @@
-### Hi there 👋
+### Hi, I'm Muskaan 👋
 
-<!--
-**MuskaanDhadwal/MuskaanDhadwal** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+UX engineer in Ann Arbor, Michigan. I design interfaces, then build them myself: right now, in-cab software for truck drivers at Traxen.
 
-Here are some ideas to get you started:
+- 🎓 MSI in Human-Computer Interaction, University of Michigan · B.Tech in Computer Science
+- 🛠️ Figma · Android Studio · Kotlin · Claude Code · Cursor
+- 💼 Open to work · open to relocation (USA)
+- 🔗 [LinkedIn](https://www.linkedin.com/in/muskaan-dhadwal/)
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+---
+
+#### This repo: my portfolio site
+
+An engineering-blueprint × comic portfolio: case studies told as drawing sheets, small versions of me drawn in code, and things to poke (a cabin simulator with voice, a robot companion, tiny games).
+
+Built with Vite + React + TypeScript.
+
+```bash
+npm install
+npm run dev
+```
+
+`npm run build` writes the static site to `dist/`.

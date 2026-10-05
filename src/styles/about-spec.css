@@ -1,0 +1,27 @@
+/* About: the design-philosophy stamp + the exploded "spec sheet" of her (AboutPage.tsx). */
+.ab-philo { margin: 4px 0 0; max-width: 560px; padding: 12px 16px; border: 1.5px dashed var(--white); transform: rotate(-.6deg); }
+.ab-philo .label { color: var(--accent); }
+.ab-philo p { margin: 6px 0 0; font: 400 clamp(19px, 1.7vw, 22px)/1.35 var(--body); font-style: italic; }
+
+.ab-spec { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.ab-spec-draw { --ab-spec-u: 4.2px; position: relative; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; border: 1.5px solid var(--white);
+  background-color: var(--blueprint-dk); background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 10% 10%; }
+.ab-spec-grid { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ab-spec-grid .bp { stroke-width: .3; vector-effect: non-scaling-stroke; }
+.ab-spec-fig { position: absolute; left: 50%; top: 4%; transform: translateX(-50%); height: 92%; display: flex; align-items: flex-end; }
+.ab-spec-fig .mn { height: 100%; width: auto; }
+.ab-spec-pin { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; display: flex; align-items: center; gap: 0; transform: translate(-50%, -50%); }
+.ab-spec-pin .tx-pin { width: 30px; height: 30px; font-size: 12px; position: relative; z-index: 1; box-shadow: 0 0 0 4px rgba(18,39,94,.6); }
+.ab-spec-pin.on .tx-pin { background: var(--accent); transform: scale(1.15); }
+.ab-spec-lead { width: clamp(24px, 6vw, 56px); height: 0; border-top: 1.5px dashed var(--white); }
+.ab-spec-tag { white-space: nowrap; background: var(--blueprint-dk); padding: 2px 6px; border: 1px solid var(--white); }
+.ab-spec-pin.l { flex-direction: row-reverse; transform: translate(calc(-100% + 15px), -50%); }
+.ab-spec-pin.r { transform: translate(-15px, -50%); }
+.ab-spec-pin:focus-visible .tx-pin { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ab-spec-pin:hover .ab-spec-tag, .ab-spec-pin.on .ab-spec-tag { background: var(--white); color: var(--blueprint-dk); }
+.ab-spec-card { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; border-left: 3px solid var(--accent); padding-left: 20px; }
+.ab-spec-card p { margin: 0; }
+.ab-spec-val { color: var(--accent); }
+.ab-spec-card .title-block { position: static; margin-top: 12px; }
+@media (max-width: 900px) { .ab-spec { grid-template-columns: 1fr; } .ab-spec-draw { --ab-spec-u: 3.4px; } }
+@media (max-width: 480px) { .ab-spec-draw { --ab-spec-u: 2.6px; } .ab-spec-tag { display: none; } .ab-spec-lead { width: 14px; } }

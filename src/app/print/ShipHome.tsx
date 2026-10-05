@@ -1,0 +1,353 @@
+// HOME — name in a sticky side column (with small versions of Muskaan living on the letters),
+// everything else on the right: A day of shipping (4 tap-able boxes) → Fresh prints (hanging line) → Reviews + say hi.
+// A small Muskaan walks down the left rail as you scroll.
+// Big drawings are Muskaan's own (public/art/*); the small ones are drawn in code in her style (Minis.tsx).
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { MISSIONS, PRINT, TRANSMISSIONS } from "./story";
+import { Chamfer, useInView, useReducedMotion } from "./ui";
+import { Mini as MiniFig, type PoseName } from "./Minis";
+import { go } from "./nav";
+
+const BUILD = "2026.10";
+const art = (name: string) => `/art/ship-${name}-white.png`;
+
+// ── Name, with small versions of her on the letters (after Aesha Koshti's PORTFOLIO lettering) ──
+type Mini = { pose: PoseName; alt: string; quip: string; cls: string; unit: string };
+const MINIS: Record<string, Mini> = {
+  typing: { pose: "nmTyping", alt: "Muskaan sitting cross-legged on top of the M, laptop on her lap", quip: "just one more tweak…", cls: "mini-typing", unit: ".0155em" },
+  peek: { pose: "nmPeek", alt: "Muskaan peeking over the top of the A", quip: "that's 1px off. I can feel it.", cls: "mini-peek", unit: ".014em" },
+  frame: { pose: "nmFrame", alt: "Muskaan grinning out of the U, like she's in a bathtub", quip: "the U is my office now", cls: "mini-frame", unit: ".0086em" },
+  sketch: { pose: "nmSketch", alt: "Muskaan sitting on top of the S, sketching", quip: "v1 of 47", cls: "mini-sketch", unit: ".0118em" },
+  hold: { pose: "nmHold", alt: "Muskaan standing on a stack of books, holding up the N", quip: "it's load-bearing. don't touch.", cls: "mini-hold", unit: ".0088em" },
+};
+
+function MiniOnLetter({ m }: { m: Mini }) {
+  const [said, setSaid] = useState(false);
+  const [k, setK] = useState(0);
+  return (
+    <span className={`mini ${m.cls}`}>
+      <button onClick={() => { setSaid(true); setK(x => x + 1); }} aria-label={`${m.alt}. Tap to hear her.`}>
+        <span key={k} className={`mini-fig ${k ? "pop" : ""}`}><MiniFig pose={m.pose} unit={m.unit} /></span>
+      </button>
+      {said && <span className="mini-say" role="status">{m.quip}</span>}
+    </span>
+  );
+}
+
+function NameLetters() {
+  const line = (word: string, extras: Record<number, { mini?: Mini; lift?: boolean; custom?: ReactNode }>) => (
+    <span className="name-line" aria-hidden>
+      {[...word].map((ch, i) => extras[i]?.custom ?? (
+        <span key={i} className={`nl ${extras[i]?.lift ? "nl-lift" : ""}`}>
+          {ch}{extras[i]?.mini && <MiniOnLetter m={extras[i].mini!} />}
+        </span>
+      ))}
+    </span>
+  );
+  return (
+    <h1 className="name-letters display">
+      <span className="sr-only">Muskaan Dhadwal</span>
+      {line("MUSKAAN", { 0: { mini: MINIS.typing }, 1: { mini: MINIS.frame }, 2: { mini: MINIS.sketch }, 4: { mini: MINIS.peek }, 6: { mini: MINIS.hold, lift: true } })}
+    </h1>
+  );
+}
+
+/** Section head, after her references: title (optionally framed) + an optional hand-lettered one-liner. */
+function SecHead({ id, title, sub, framed, aside }: { id: string; title: string; sub?: ReactNode; framed?: boolean; aside?: ReactNode }) {
+  return (
+    <div className="sec-head">
+      <div className="sec-head-main">
+        <div>
+          <h2 id={id} className={`display sec-title ${framed ? "sec-framed" : ""}`}>{title}</h2>
+          {sub && <p className="sec-sub hand">{sub}</p>}
+        </div>
+      </div>
+      {aside && <div className="sec-head-aside">{aside}</div>}
+    </div>
+  );
+}
+
+function SideName() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => { // let CSS know how tall the column is, so a tall column sticks by its bottom edge
+    const el = ref.current; if (!el) return;
+    const ro = new ResizeObserver(() => el.style.setProperty("--side-h", `${el.offsetHeight}px`));
+    ro.observe(el); return () => ro.disconnect();
+  }, []);
+  return (
+    <aside ref={ref} id="top" className="name-side" data-section="top">
+      <p className="kicker display">UX Engineer</p>
+      <NameLetters />
+      <p className="name-tagline display">I design it.<br />Then I build it.</p>
+      <p className="name-intro">I design interfaces and write the code that ships them. Right now: in-cab software for truck drivers at Traxen.</p>
+      <p className="name-now">Open to work · Open to relocation (USA)</p>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <Chamfer solid onClick={() => go("#/work")}>See the work</Chamfer>
+        <Chamfer onClick={() => go("#/resume")}>Résumé →</Chamfer>
+      </div>
+    </aside>
+  );
+}
+
+// ── A day of shipping: four boxes, all Muskaan's own drawings. Each works on its own;
+// one box's "after" is the next box's "before" (the day flows box to box).
+const BOXES = [
+  { no: "01", time: "09:00", title: "one pixel off", before: "hunched", after: "straight", act: "Sit up straight ↑", done: "posture fixed. pixel: still off.",
+    altB: "Muskaan hunched over her laptop, nose almost on the screen.", altA: "Muskaan sitting up straight again, tired, a scribble over her head." },
+  { no: "02", time: "11:00", title: "refuel", before: "straight", after: "coffee", act: "Let her have her coffee", done: "caffeine restored ✓",
+    altB: "Muskaan sitting up, tired, at her laptop.", altA: "Muskaan beaming with her “UX is my passion” mug, fist pumped." },
+  { no: "03", time: "16:00", title: "ship it", before: "coffee", after: "deploy", act: `● Deploy v${BUILD}`, done: "it's live. nobody panic ✓",
+    altB: "Muskaan with her coffee, ready.", altA: "Muskaan with both arms up, celebrating: it deployed." },
+  { no: "04", time: "23:00", title: "lights out", before: "deploy", after: "nap", act: "Call it a day", done: "shipped. asleep. thumbs still up.",
+    altB: "Muskaan celebrating at her laptop.", altA: "Muskaan asleep face-down by her laptop, still giving a thumbs-up." },
+];
+
+function HowIShip() {
+  const [done, setDone] = useState<boolean[]>([false, false, false, false]);
+  const n = done.filter(Boolean).length;
+  const flip = (i: number) => setDone(d => d.map((v, j) => (j === i ? !v : v)));
+  return (
+    <section id="ship" data-section="ship" className="ship-strip" aria-labelledby="ship-title">
+      <SecHead id="ship-title" title="How I ship" sub="A day-in-the-life comic by a UX engineer who designs and codes." 
+        aside={<span className="label" aria-live="polite">{n}/4 done{n === 4 ? " · shipped ✓" : " · any order"}</span>} />
+      <div className="ship-grid">
+        {BOXES.map((b, i) => (
+          <figure key={b.no} className={`ship-panel ${done[i] ? "is-done" : ""}`}>
+            <figcaption className="ship-cap"><b>{b.no}</b><span>{b.time}</span><span className="ship-cap-title">{b.title}</span></figcaption>
+            <button className="ship-art" onClick={() => flip(i)} aria-pressed={done[i]} aria-label={done[i] ? `${b.done}. Tap to undo.` : b.act}>
+              <img key={String(done[i])} src={art(done[i] ? b.after : b.before)} alt={done[i] ? b.altA : b.altB} className="pop" />
+            </button>
+            <div className="ship-act">
+              {done[i]
+                ? <><span className="label">{b.done}</span><button className="ship-undo label" onClick={() => flip(i)} aria-label={`Undo ${b.title}`}>↺</button></>
+                : <button className={`ship-btn ${i === 2 ? "deploy" : ""}`} onClick={() => flip(i)}>{b.act}</button>}
+            </div>
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ── The work, hung on a line to dry. Slides in from the side; scroll or use the arrows. ──
+function HangingPrints() {
+  const track = useRef<HTMLDivElement>(null);
+  const seen = useInView(track, true);
+  const prints = MISSIONS.map(m => ({ code: PRINT[m.slug].code, label: m.label, meta: `${m.role} · ${m.year}`, result: PRINT[m.slug].result, shot: PRINT[m.slug].shot, href: `#/case/${m.slug}`, external: false }));
+  const nudge = (dir: number) => track.current?.scrollBy({ left: dir * 300, behavior: "smooth" });
+  return (
+    <section id="work" data-section="work" className="prints-line" aria-labelledby="prints-title" style={{ scrollMarginTop: 80 }}>
+      <SecHead id="prints-title" title="Selected prints"
+        sub="Pinned work I can talk about for hours. Scroll sideways, or open one for the full teardown."
+        aside={<div style={{ display: "flex", gap: 8 }}>
+          <Chamfer onClick={() => nudge(-1)} ariaLabel="Previous prints">← Prev</Chamfer>
+          <Chamfer onClick={() => nudge(1)} ariaLabel="More prints">Next →</Chamfer>
+        </div>} />
+      <div className="line-wrap">
+        <svg className="line-wire" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden><path d="M0 8 Q500 34 1000 8" /></svg>
+        <div ref={track} className={`line-track ${seen ? "in" : ""}`} role="list">
+          {prints.map((p, i) => (
+            <a key={p.code} role="listitem" href={p.href} target={p.external ? "_blank" : undefined} rel={p.external ? "noreferrer" : undefined}
+              className="hang" style={{ transitionDelay: `${i * 120}ms`, ["--tilt" as string]: `${[-2, 1.5, -1, 2][i % 4]}deg` }}
+              aria-label={`${p.label}${p.external ? " (opens Figma)" : " case study"}: ${p.result}`}>
+              <span className="peg" aria-hidden />
+              <span className="hang-code display">{p.code}</span>
+              <span className="display" style={{ fontSize: 24 }}>{p.label}</span>
+              <span className="label" style={{ fontSize: 10 }}>{p.meta}</span>
+              <img src={p.shot} alt="" aria-hidden loading="lazy" />
+              <span className="stamp" style={{ fontSize: 11, alignSelf: "flex-start" }}>{p.result}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── My story: a blueprint timeline — a dimension line across the top, one node per beat, "now" highlighted ──
+const STORY: { when: string; title: string; text: string }[] = [
+  { when: "2017–21", title: "Wrote code first", text: "Computer science at SRM IST taught me to think in systems and build things that work. I even published a machine-learning paper on predicting crop yields. (My houseplants remain unconvinced.)" },
+  { when: "2022–24", title: "Kept fixing the interfaces", text: "Every tool I used, I wanted to redesign. So I went to the University of Michigan for an MSI in Human-Computer Interaction and learned to do it properly." },
+  { when: "2023", title: "Learned users > specs", text: "Drivers hunting for parking and seniors who wanted to keep their independence taught me that the best engineering fits how people already live, so well nobody notices it." },
+  { when: "2024 → now", title: "Started doing both", text: "At Traxen I design the interface and write the code that ships it. The Figma file and the Kotlin are both mine. The gap between them is where I live." },
+];
+
+function MyStory() {
+  return (
+    <section id="story" data-section="story" className="story-sec" aria-labelledby="story-title">
+      <SecHead id="story-title" title="My story" sub="From writing code, to questioning it, to shipping both halves." />
+      <div className="tl" aria-hidden>
+        <span className="tl-arrow tl-arrow-l" /><span className="tl-line" /><span className="tl-arrow tl-arrow-r" />
+        <span className="tl-dim label">2017 ——— 2024 → now</span>
+      </div>
+      <ol className="tl-beats">
+        {STORY.map((b, i) => (
+          <li key={b.when} className={i === STORY.length - 1 ? "now" : ""}>
+            <span className="tl-node" aria-hidden />
+            <span className="tl-when label">{b.when}</span>
+            <h3 className="display tl-title">{b.title}</h3>
+            <p>{b.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+// ── Parts list: the spec table + the tool manifest (only things that are true) ──
+const SPEC: [string, string][] = [
+  ["Building", "In-cab software for truck drivers, Traxen"],
+  ["Studied", "MSI in Human-Computer Interaction, University of Michigan"],
+  ["Based", "Ann Arbor, Michigan"],
+  ["Open to", "Full-time UX engineer roles · relocation within the USA"],
+];
+const TOOLS: [string, string][] = [
+  ["Figma", "daily · primary design surface"],
+  ["Android Studio · Kotlin", "building the real thing"],
+  ["HTML · CSS · JS · Python", "prototypes"],
+  ["Penpot · Miro", "mockups · workshops"],
+  ["Maze · Dovetail", "user research · usability testing"],
+  ["Notion · Atlassian", "keeping it all straight"],
+];
+
+function PartsList() {
+  return (
+    <section id="parts" data-section="parts" className="parts-sec" aria-labelledby="parts-title">
+      <SecHead id="parts-title" title="Parts list" />
+      <div className="parts-grid">
+        <div>
+          <p className="label mid parts-cap">Spec table · rev {BUILD}</p>
+          <dl className="parts-spec">{SPEC.map(([k, v]) => <div key={k}><dt className="label">{k}</dt><dd>{v}</dd></div>)}</dl>
+        </div>
+        <div>
+          <p className="label mid parts-cap">Tool manifest</p>
+          <dl className="parts-tools">{TOOLS.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Working with AI: a short teaser; the details live on the AI page (#/ai) ──
+const AI_ROWS: [string, string][] = [
+  ["Certified", "Agents and Workflows · OpenAI Academy"],
+  ["Learning now", "Model Context Protocol + the Claude API · Claude Academy"],
+  ["Built with AI", "ASCII Hands, a globe you steer with your webcam"],
+  ["Every day", "Claude Code + Cursor, shipping the Traxen app"],
+];
+
+function WorkingWithAI() {
+  return (
+    <section id="ai" data-section="ai" className="parts-sec" aria-labelledby="ai-title">
+      <SecHead id="ai-title" title="Working with AI" sub="I design with it, build with it, and I'm still learning it." />
+      <dl className="parts-spec">
+        {AI_ROWS.map(([k, v]) => <div key={k}><dt className="label" style={{ color: "var(--accent)" }}>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 18 }}>
+        <Chamfer solid onClick={() => go("#/ai")}>See how I work with AI →</Chamfer>
+        <Chamfer onClick={() => go("#/play")}>Try ASCII Hands on Play</Chamfer>
+      </div>
+    </section>
+  );
+}
+
+// ── Reviews (sort of) + say hi ─────────────────────────────────────────────
+function Recommendations() {
+  return (
+    <section id="reviews" data-section="contact" className="recs" aria-labelledby="recs-title" style={{ scrollMarginTop: 80 }}>
+      <SecHead id="recs-title" title="Reviews (sort of)" sub="Unsolicited, unverified, mostly true." />
+      <div className="recs-grid">
+        {TRANSMISSIONS.map((t, i) => (
+          <figure key={t.sender} className="rec" style={{ ["--tilt" as string]: `${[-1.5, 1, -0.8, 1.6][i]}deg` }}>
+            <blockquote>{t.text.replace(/^"|"$/g, "")}</blockquote>
+            <figcaption className="label">— {t.sender.replace(/_/g, " ").toLowerCase()} · <span style={{ color: "var(--accent)" }}>{t.status.toLowerCase()}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+      <WakeHerUp />
+    </section>
+  );
+}
+
+// ── Wake her up: she's asleep (it's 23:00 on the rail). Tap her — first she bargains, then she's up.
+// The contact buttons are always there; the interaction is just for fun.
+const WAKE = [
+  { pose: "wkSleep" as PoseName, say: "z z z", alt: "A small Muskaan curled up asleep on a pillow under a blanket" },
+  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "A small Muskaan still asleep, mumbling" },
+  { pose: "wkAwake" as PoseName, say: "I'm up! I'm up! What are we building?", alt: "A small Muskaan sprung awake, arms out, eyes wide" },
+];
+
+function WakeHerUp() {
+  const [step, setStep] = useState(0);
+  const w = WAKE[step], awake = step === WAKE.length - 1;
+  return (
+    <div className="say-hi wake">
+      <div>
+        <h3 className="display" style={{ fontSize: "clamp(32px, 3.4vw, 48px)", margin: 0 }}>{awake ? "She's up" : "Wake her up"}</h3>
+        <p className="hand wake-copy">{awake
+          ? "Hiring, building something, or need a fourth for board-game night? Say hi. She replies fast."
+          : "It's the end of her day. Tap her to wake her up."}</p>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
+          <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
+          <Chamfer onClick={() => go("#/about")}>Who is she?</Chamfer>
+        </div>
+      </div>
+      <button className="wake-me" onClick={() => setStep(x => (x + 1) % WAKE.length)}
+        aria-label={awake ? "She's awake. Tap to let her sleep again." : "Tap to wake her up"}>
+        <span className="wake-bubble hand" aria-live="polite">{w.say}</span>
+        <span key={step} className="wake-fig pop"><MiniFig pose={w.pose} label={w.alt} /></span>
+      </button>
+    </div>
+  );
+}
+
+// ── Rail: a small Muskaan walks down the left rail as you scroll (two-frame walk cycle). ──
+const RAIL: Record<string, string> = { top: "09:00 · logging on", ship: "11:00 · shipping", work: "16:00 · showing work", story: "18:00 · backstory", parts: "20:00 · inventory", ai: "21:00 · learning", contact: "23:00 · say hi" };
+
+function SideRail() {
+  const reduced = useReducedMotion();
+  const [sec, setSec] = useState("top");
+  const [p, setP] = useState(0);
+  const [step, setStep] = useState(0);
+  const [moving, setMoving] = useState(false);
+  useEffect(() => {
+    let stop = 0;
+    const on = () => {
+      let cur = "top";
+      document.querySelectorAll<HTMLElement>(".home-right [data-section]").forEach(el => { if (el.getBoundingClientRect().top < innerHeight * 0.35 && scrollY > 80) cur = el.dataset.section!; });
+      setSec(cur);
+      const max = document.documentElement.scrollHeight - innerHeight;
+      setP(max > 0 ? Math.min(1, scrollY / max) : 0);
+      setStep(Math.floor(scrollY / 40) % 2); // a step every 40px scrolled
+      setMoving(true); clearTimeout(stop); stop = window.setTimeout(() => setMoving(false), 160);
+    };
+    on(); addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
+    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); clearTimeout(stop); };
+  }, []);
+  return (
+    <div className="side-rail" aria-hidden>
+      <span className="side-rail-line" />
+      <div className="side-rail-me" style={{ top: `calc(${p.toFixed(4)} * (100% - 210px))` }}>
+        <MiniFig pose={reduced || !moving || step === 0 ? "walkA" : "walkB"} unit={0.62} />
+        <span className="label">{RAIL[sec] ?? RAIL.top}</span>
+      </div>
+    </div>
+  );
+}
+
+export function ShipHome() {
+  return (
+    <div className="home-v4">
+      <SideRail />
+      <SideName />
+      <div className="home-right">
+        <HowIShip />
+        <HangingPrints />
+        <MyStory />
+        <PartsList />
+        <WorkingWithAI />
+        <Recommendations />
+      </div>
+    </div>
+  );
+}

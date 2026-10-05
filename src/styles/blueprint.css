@@ -1,0 +1,112 @@
+/* Blueprint × comic — a comic sheet laid on a drafting table.
+   Blue page = blueprint paper. Cream sheet = comic page. Ink panels = story beats. */
+
+:root {
+  --blue: #1A52D4;
+  --blue-dark: #153FB0;
+  --blue-light: #4A7AE8;
+  --blue-tint: #DCE4F5;
+  --paper: #F5F0E6;
+  --paper-2: #ECE4D2;
+  --ink: #1A2744;
+  --ink-2: #4A5878;
+  --red: #D9381E;
+  --teal: #0E7C86;
+  --orange: #C2410C;
+  --yellow: #F4C430;
+
+  --serif: 'DM Serif Display', Georgia, serif;
+  --hand: 'Caveat', cursive;
+  --mono: 'Space Mono', ui-monospace, monospace;
+  --sans: 'Space Grotesk', system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-stamp: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+html, body, #root { height: auto; min-height: 100%; overflow-anchor: none; }
+body {
+  margin: 0; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased;
+  background-color: var(--blue);
+  background-image:
+    linear-gradient(#FFFFFF22 1px, transparent 1px), linear-gradient(90deg, #FFFFFF22 1px, transparent 1px),
+    linear-gradient(#FFFFFF0E 1px, transparent 1px), linear-gradient(90deg, #FFFFFF0E 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
+}
+:focus-visible { outline: 2.5px solid var(--yellow); outline-offset: 3px; }
+button { font: inherit; color: inherit; }
+
+/* Paper grain over everything */
+.bp-grain { position: fixed; inset: 0; pointer-events: none; z-index: 900; opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.15 0 0 0 0 0.27 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* ── Type helpers ──────────────────────────────────────────── */
+.serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
+.hand { font-family: var(--hand); }
+.mono { font-family: var(--mono); letter-spacing: 0.06em; }
+.label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+.muted { color: var(--ink-2); }
+
+/* ── Nav: Elaine-style stepper on the blueprint ───────────── */
+.bp-nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 24px;
+  padding: 14px clamp(16px, 4vw, 48px); background: color-mix(in srgb, var(--blue) 92%, transparent); backdrop-filter: blur(6px);
+  border-bottom: 1.5px solid #FFFFFF33; }
+.bp-logo { font-family: var(--hand); font-size: 26px; color: #fff; text-decoration: none; white-space: nowrap; line-height: 1; background: none; border: 0; cursor: pointer; padding: 0; }
+.bp-steps { flex: 1; display: flex; justify-content: space-between; position: relative; max-width: 640px; margin-left: auto; }
+.bp-steps::before { content: ""; position: absolute; left: 8px; right: 8px; top: 8px; height: 2px; background: #FFFFFF55; }
+.bp-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0 4px; cursor: pointer; color: #FFFFFFAA; font-family: var(--mono); font-size: 12px; min-width: 48px; min-height: 44px; }
+.bp-step i { width: 17px; height: 17px; border-radius: 50%; border: 2px solid #fff; background: var(--blue); transition: background .3s, box-shadow .3s; }
+.bp-step[aria-current="page"] { color: #fff; font-weight: 700; }
+.bp-step[aria-current="page"] i { background: #fff; box-shadow: 0 0 0 6px #FFFFFF33; }
+.bp-step:hover i { background: #FFFFFF66; }
+
+/* ── Comic sheet + panels ──────────────────────────────────── */
+.sheet { position: relative; max-width: 1180px; margin: 32px auto 56px; padding: 22px 24px 28px; background: var(--paper);
+  box-shadow: 10px 10px 0 var(--blue-dark); }
+.sheet-tag { font-family: var(--mono); font-size: 12px; color: var(--ink); margin-bottom: 14px; display: flex; justify-content: space-between; }
+.panel { position: relative; border: 2px solid var(--ink); background: var(--paper); overflow: hidden; }
+.panel.tint { background-color: var(--blue-tint); background-image: radial-gradient(#1A52D422 1px, transparent 1.2px); background-size: 6px 6px; }
+.panel.ink { background: var(--ink); color: var(--paper); }
+.panel.blue { background: var(--blue); color: #fff; }
+.grid-bg { background-image: linear-gradient(#1A52D41A 1px, transparent 1px), linear-gradient(90deg, #1A52D41A 1px, transparent 1px); background-size: 16px 16px; }
+
+.caption { display: inline-block; border: 1.5px solid var(--ink); background: var(--paper); padding: 6px 10px; font-family: var(--mono); font-size: 12px; line-height: 1.5; color: var(--ink); }
+.caption.blue { border-color: var(--blue); color: var(--blue); }
+
+.bubble { position: relative; background: #fff; border: 2px solid var(--ink); border-radius: 18px; padding: 10px 14px; font-family: var(--hand); font-size: 21px; line-height: 1.15; color: var(--ink); }
+.bubble::after { content: ""; position: absolute; left: 28px; bottom: -12px; width: 16px; height: 16px; background: #fff; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: rotate(45deg) skew(12deg, 12deg); }
+
+.arrow-down { font-family: var(--mono); color: var(--ink); text-align: center; line-height: 1; }
+
+/* Rubber stamp */
+.stamp { display: inline-block; font-family: var(--mono); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px;
+  color: var(--red); border: 2.5px solid var(--red); padding: 4px 10px; transform: rotate(-8deg); background: #F5F0E6E6; }
+.stamp.pop { animation: stampIn .45s var(--ease-stamp) both; }
+@keyframes stampIn { 0% { transform: scale(1.8) rotate(-8deg); opacity: 0; } 100% { transform: scale(1) rotate(-8deg); opacity: 1; } }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 12px 18px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; text-decoration: none;
+  box-shadow: 3px 3px 0 var(--ink); transition: transform .15s, box-shadow .15s; min-height: 44px; }
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+.btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.btn.primary { background: var(--blue); color: #fff; }
+
+/* Hand-drawn line art */
+.ink-art { stroke: var(--ink); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Gentle bob for idle characters */
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes drawIn { from { stroke-dashoffset: 1200; } to { stroke-dashoffset: 0; } }
+.fade-up { animation: fadeUp .5s var(--ease) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 720px) {
+  .sheet { margin: 16px 12px 40px; padding: 16px 14px 20px; box-shadow: 6px 6px 0 var(--blue-dark); }
+  .bp-nav { gap: 12px; }
+  .bp-logo { font-size: 22px; }
+  .bp-step { font-size: 10px; min-width: 40px; }
+}
