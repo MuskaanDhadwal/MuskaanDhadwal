@@ -823,3 +823,5 @@ main.sheet-in { padding-top: 0 !important; }
 .nm2-spark-k { right: calc(var(--F) * -.02); top: calc(var(--F) * .3); animation-delay: -1.2s; }
 @keyframes nm2Twinkle { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(.7) rotate(45deg); } }
 @media (prefers-reduced-motion: reduce) { .nm2-a2 .nm2-ch, .nm2-spark { animation: none; } .nm2-ch { transition: none; } }
+/* a chamfer button that can't go further (e.g. Next at the end of the prints line) */
+.chamfer:disabled { opacity: .35; cursor: default; pointer-events: none; }

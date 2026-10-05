@@ -151,13 +151,29 @@ function HangingPrints() {
   const seen = useInView(track, true);
   const prints = MISSIONS.map(m => ({ code: PRINT[m.slug].code, label: m.label, meta: `${m.role} · ${m.year}`, result: PRINT[m.slug].result, shot: PRINT[m.slug].shot, href: `#/case/${m.slug}`, external: false }));
   const nudge = (dir: number) => track.current?.scrollBy({ left: dir * 300, behavior: "smooth" });
+  // where the line is scrolled to: Prev is off at the start, Next is off at the end, both hide if everything fits
+  const [edge, setEdge] = useState({ start: true, end: false, fits: false });
+  useEffect(() => {
+    const el = track.current; if (!el) return;
+    // the line snaps to prints, so judge by whether the first / last print is fully in view
+    const on = () => {
+      const box = el.getBoundingClientRect(), kids = el.children;
+      if (!kids.length) return;
+      const first = kids[0].getBoundingClientRect(), last = kids[kids.length - 1].getBoundingClientRect();
+      const start = first.left >= box.left - 8, end = last.right <= box.right + 8;
+      setEdge({ start, end, fits: start && end });
+    };
+    on(); el.addEventListener("scroll", on, { passive: true });
+    const ro = new ResizeObserver(on); ro.observe(el);
+    return () => { el.removeEventListener("scroll", on); ro.disconnect(); };
+  }, []);
   return (
     <section id="work" data-section="work" className="prints-line" aria-labelledby="prints-title" style={{ scrollMarginTop: 80 }}>
       <SecHead id="prints-title" title="Selected prints"
         sub="Pinned work I can talk about for hours. Scroll sideways, or open one for the full teardown."
-        aside={<div style={{ display: "flex", gap: 8 }}>
-          <Chamfer onClick={() => nudge(-1)} ariaLabel="Previous prints">← Prev</Chamfer>
-          <Chamfer onClick={() => nudge(1)} ariaLabel="More prints">Next →</Chamfer>
+        aside={edge.fits ? undefined : <div style={{ display: "flex", gap: 8 }}>
+          <Chamfer onClick={() => nudge(-1)} ariaLabel="Previous prints" disabled={edge.start}>← Prev</Chamfer>
+          <Chamfer onClick={() => nudge(1)} ariaLabel="More prints" disabled={edge.end}>Next →</Chamfer>
         </div>} />
       <div className="line-wrap">
         <svg className="line-wire" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden><path d="M0 8 Q500 34 1000 8" /></svg>
@@ -269,11 +285,12 @@ function Recommendations() {
   );
 }
 
-// ── Wake her up: she's asleep (it's 23:00 on the rail). Tap her — first she bargains, then she's up.
+// ── Wake her up: it's 23:00 and she's running on empty, head on her arms, still loading (her drawing has her
+// eyes open, so she's drowsy, not asleep: no "z z z"). Tap her: first she bargains, then she's up.
 // The contact buttons are always there; the interaction is just for fun.
 const WAKE = [
-  { pose: "wkSleep" as PoseName, say: "z z z", alt: "Muskaan asleep with her head on her folded arms, a loading bar under her" },
-  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "Muskaan still asleep on her arms, mumbling" },
+  { pose: "wkSleep" as PoseName, say: "still loading…", alt: "Muskaan slumped with her head on her folded arms, half awake, a loading bar under her" },
+  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "Muskaan still slumped on her arms, bargaining" },
   { pose: "wkAwake" as PoseName, say: "I'm up! I'm up! What are we building?", alt: "A small Muskaan sprung awake, arms out, eyes wide" },
 ];
 
@@ -286,14 +303,14 @@ function WakeHerUp() {
         <h3 className="display" style={{ fontSize: "clamp(32px, 3.4vw, 48px)", margin: 0 }}>{awake ? "She's up" : "Wake her up"}</h3>
         <p className="hand wake-copy">{awake
           ? "Hiring, building something, or need a fourth for board-game night? Say hi. She replies fast."
-          : "It's the end of her day. Tap her to wake her up."}</p>
+          : "It's the end of her day and she's still loading. Tap her to wake her up."}</p>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
           <Chamfer solid onClick={() => go("#/contact")}>Say hi →</Chamfer>
           <Chamfer onClick={() => go("#/about")}>Who is she?</Chamfer>
         </div>
       </div>
       <button className="wake-me" onClick={() => setStep(x => (x + 1) % WAKE.length)}
-        aria-label={awake ? "She's awake. Tap to let her sleep again." : "Tap to wake her up"}>
+        aria-label={awake ? "She's awake. Tap to let her rest again." : "Tap to wake her up"}>
         <span className="wake-bubble hand" aria-live="polite">{w.say}</span>
         <span key={step} className="wake-fig pop"><MiniFig pose={w.pose} label={w.alt} /></span>
       </button>

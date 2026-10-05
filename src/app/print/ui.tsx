@@ -122,12 +122,12 @@ export function Stamp({ children, accent }: { children: ReactNode; accent?: bool
   return <span className={`stamp ${accent ? "accent" : ""}`}>{children}</span>;
 }
 
-export function Chamfer({ children, onClick, href, solid, external, ariaLabel }: {
-  children: ReactNode; onClick?: () => void; href?: string; solid?: boolean; external?: boolean; ariaLabel?: string;
+export function Chamfer({ children, onClick, href, solid, external, ariaLabel, disabled }: {
+  children: ReactNode; onClick?: () => void; href?: string; solid?: boolean; external?: boolean; ariaLabel?: string; disabled?: boolean;
 }) {
   const cls = `chamfer ${solid ? "solid" : ""}`;
   if (href) return <a className={cls} href={href} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined} aria-label={ariaLabel}><span>{children}</span></a>;
-  return <button className={cls} onClick={onClick} aria-label={ariaLabel}><span>{children}</span></button>;
+  return <button className={cls} onClick={onClick} aria-label={ariaLabel} disabled={disabled}><span>{children}</span></button>;
 }
 
 // ── Crosshair "TAP" cursor over illustrations ──────────────────────────────
