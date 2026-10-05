@@ -1,6 +1,6 @@
 ### Hi, I'm Muskaan 👋
 
-UX engineer in Ann Arbor, Michigan. I design interfaces, then build them myself: right now, in-cab software for truck drivers at Traxen.
+UX engineer in the USA. I design interfaces, then build them myself: right now, in-cab software for truck drivers at Traxen.
 
 - 🎓 MSI in Human-Computer Interaction, University of Michigan · B.Tech in Computer Science
 - 🛠️ Figma · Android Studio · Kotlin · Claude Code · Cursor

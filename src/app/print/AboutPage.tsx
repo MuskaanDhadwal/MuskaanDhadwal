@@ -41,7 +41,7 @@ function Hello() {
           </blockquote>
           <div style={{ maxWidth: 560, marginTop: 24 }}>
             <SpecTable caption="Quick facts" rows={[
-              ["Based", "Ann Arbor, Michigan"],
+              ["Based", "USA"],
               ["Day job", "UX / UI Engineer, Traxen"],
               ["Studied", "MSI in HCI, U of Michigan · B.Tech CS, SRM IST"],
               ["Off the clock", "board games, kayaking, stress-baking, drawing, plant crimes"],

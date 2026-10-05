@@ -198,7 +198,7 @@ function MyStory() {
 const SPEC: [string, string][] = [
   ["Building", "In-cab software for truck drivers, Traxen"],
   ["Studied", "MSI in Human-Computer Interaction, University of Michigan"],
-  ["Based", "Ann Arbor, Michigan"],
+  ["Based", "USA"],
   ["Open to", "Full-time UX engineer roles · relocation within the USA"],
 ];
 const TOOLS: [string, string][] = [

@@ -72,7 +72,7 @@ export function ContactPage() {
               <input id="ct-name" value={name} onChange={e => setName(e.target.value)} placeholder="your name" className="hand" autoComplete="name" />
             </div>
             <div className="ct-card-right">
-              <span className="ct-stamp" aria-hidden><span className="display">MD</span><span>Ann Arbor · MI</span></span>
+              <span className="ct-stamp" aria-hidden><span className="display">MD</span><span>USA</span></span>
               <div className="ct-addr">
                 <span className="label">To</span><span className="hand">Muskaan Dhadwal</span>
                 <span className="label">Re</span><span className="hand">{subject}</span>
