@@ -556,7 +556,7 @@ button.ship-art > img { position: absolute; inset: 12px; width: calc(100% - 24px
 .wake-copy { margin: 10px 0 0; max-width: 440px; font-size: 21px; line-height: 1.3; }
 .wake-me { all: unset; box-sizing: border-box; cursor: pointer; justify-self: center; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px; min-width: 220px; }
 .wake-me:focus-visible { outline: 2px solid var(--white); outline-offset: 4px; }
-.wake-fig { display: block; height: 150px; transform-origin: 50% 100%; }
+.wake-fig { display: block; height: clamp(120px, 34vw, 170px); transform-origin: 50% 100%; }
 .wake-fig .mn { height: 100%; width: auto; }
 .wake-bubble { position: relative; background: #fff; color: var(--blueprint-dk); border: 1.5px solid var(--blueprint-dk); border-radius: 16px; padding: 6px 14px; font-size: 20px; }
 .wake-bubble::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 12px; height: 12px; margin-left: -6px; background: #fff; border-right: 1.5px solid var(--blueprint-dk); border-bottom: 1.5px solid var(--blueprint-dk); transform: rotate(45deg); }

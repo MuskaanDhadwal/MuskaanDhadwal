@@ -290,12 +290,12 @@ function Recommendations() {
   );
 }
 
-// ── Wake her up: it's 23:00 and she's asleep, head down on her arms (only her hair and bun show), a loading
-// bar under her. Tap her: first she bargains, then she's up.
+// ── Wake her up: it's 23:00 and she's asleep on her desk (her own drawing, with its own z z z, so no bubble at
+// first). Tap her: first she bargains, then she's up.
 // The contact buttons are always there; the interaction is just for fun.
 const WAKE = [
-  { pose: "wkSleep" as PoseName, say: "z z z", alt: "Muskaan asleep with her head buried in her folded arms, only her hair and bun showing, a loading bar under her" },
-  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "Muskaan still face-down in her arms, mumbling" },
+  { pose: "wkSleep" as PoseName, say: "", alt: "Muskaan asleep on her desk, head on her folded arms, glasses on, z z z floating up, her M laptop open beside a stack of books and a pencil" },
+  { pose: "wkSleep" as PoseName, say: "five more minutes…", alt: "Muskaan still asleep on her desk, mumbling" },
   { pose: "wkAwake" as PoseName, say: "I'm up! I'm up! What are we building?", alt: "A small Muskaan sprung awake, arms out, eyes wide" },
 ];
 
@@ -316,7 +316,7 @@ function WakeHerUp() {
       </div>
       <button className="wake-me" onClick={() => setStep(x => (x + 1) % WAKE.length)}
         aria-label={awake ? "She's awake. Tap to let her sleep again." : "Tap to wake her up"}>
-        <span className="wake-bubble hand" aria-live="polite">{w.say}</span>
+        {w.say ? <span className="wake-bubble hand" aria-live="polite">{w.say}</span> : <span className="sr-only" aria-live="polite">asleep</span>}
         <span key={step} className="wake-fig pop"><MiniFig pose={w.pose} label={w.alt} /></span>
       </button>
     </div>
